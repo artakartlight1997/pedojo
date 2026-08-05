@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PEファンド道場 — Private Equity Investment Dojo</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div id="boot" class="boot">読み込み中…</div>
+
+<header class="topbar" hidden>
+  <div class="brand" data-nav="home">
+    <span class="brand-mark">道</span>
+    <span class="brand-text">PEファンド道場<small>Private Equity Investment Dojo</small></span>
+  </div>
+  <nav class="topnav">
+    <button data-nav="home">ホーム</button>
+    <button data-nav="curriculum">カリキュラム</button>
+    <button data-nav="drill">実戦ドリル</button>
+    <button data-nav="review">復習箱</button>
+    <button data-nav="exam">模擬IC試験</button>
+    <button data-nav="glossary">用語集</button>
+    <button data-nav="progress">進捗</button>
+  </nav>
+  <div class="topbar-right">
+    <input id="globalSearch" type="search" placeholder="検索 (座学・問題・用語)" autocomplete="off">
+    <button id="themeToggle" title="表示モード切替">◑</button>
+  </div>
+</header>
+
+<main id="app" hidden></main>
+
+<footer class="foot" hidden>
+  <span>PEファンド道場 — スクラッチから投資委員会で発言できる人材へ</span>
+  <span id="footStats"></span>
+</footer>
+
+<!-- ===== core ===== -->
+<script src="assets/md.js"></script>
+<script src="data/curriculum.js"></script>
+
+<!-- ===== content loader (works over file:// too) ===== -->
+<script src="assets/loader.js"></script>
+<script src="assets/store.js"></script>
+<script src="assets/engine.js"></script>
+<script src="assets/ui.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>
