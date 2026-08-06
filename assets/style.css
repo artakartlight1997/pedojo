@@ -136,7 +136,15 @@ html[data-theme="dark"] .badge.a{background:#3d1519;color:#f0999f;border-color:#
 .verdict.ok{color:var(--ok)} .verdict.ng{color:var(--ng)}
 .exp{background:var(--panel-2);border:1px solid var(--line);border-radius:8px;padding:14px 16px;margin-top:10px}
 .exp h5{margin:0 0 6px;font-size:13px;color:var(--accent);letter-spacing:.05em}
-.exp .body{font-size:14px;line-height:1.9;white-space:pre-wrap}
+.exp .body{font-size:14px;line-height:1.9}
+.exp .body p{margin:8px 0}
+.exp .body ul,.exp .body ol{margin:8px 0 8px 4px;padding-left:22px}
+.exp .body li{margin:3px 0}
+.exp .body pre{background:var(--panel);border:1px solid var(--line);border-radius:6px;
+  padding:10px 12px;overflow-x:auto;font-family:var(--mono);font-size:12px;line-height:1.6;margin:8px 0}
+.exp .body code{background:var(--panel);padding:1px 5px;border-radius:4px;font-family:var(--mono);font-size:12.5px}
+.exp .body pre code{background:none;padding:0}
+.exp .body h1,.exp .body h2,.exp .body h3,.exp .body h4{font-size:14px;margin:10px 0 4px;border:0;color:var(--ink)}
 .exp .body table{border-collapse:collapse;margin:8px 0;font-size:13px}
 .exp .body th,.exp .body td{border:1px solid var(--line);padding:4px 8px}
 .progressline{height:5px;background:var(--panel-2);border-radius:99px;overflow:hidden;margin:12px 0 4px}
