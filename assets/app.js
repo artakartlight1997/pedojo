@@ -16,6 +16,7 @@
     switch (parts[0]) {
       case undefined:
       case 'home': UI.home(); break;
+      case 'path': UI.path(); break;
       case 'curriculum': UI.curriculum(); break;
       case 'topic': UI.topic(parts[1]); break;
       case 'lecture': UI.lecture(parts[1], parts[2] || 'b'); break;

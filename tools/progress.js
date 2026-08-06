@@ -40,15 +40,25 @@ function bar(p) { const n = Math.round(p * 20); return '█'.repeat(n) + '░'.r
 
 if (mode === 'queue') {
   const k = Number(process.argv[3] || 20);
+  // 学習ルート（DOJO.pathItems）の順序＝学習者が到達する順に作る
+  const order = new Map();
+  DOJO.pathItems().forEach((it, i) => order.set(it.topic.id + '-' + it.lv, i));
+  const stageOf = id => (DOJO.stageOf(id) || { short: '-' }).short;
   const jobs = [];
   rows.forEach(r => LV.forEach(l => {
-    if (r.lv[l].lack > 0) jobs.push({ file: 'data/quiz/' + r.id + '-' + l + '.js', lack: r.lv[l].lack, got: r.lv[l].got, tgt: r.lv[l].tgt, lec: r.lv[l].lec, topic: r.name, lv: l });
+    if (r.lv[l].lack > 0) jobs.push({
+      file: 'data/quiz/' + r.id + '-' + l + '.js', lack: r.lv[l].lack, got: r.lv[l].got,
+      tgt: r.lv[l].tgt, lec: r.lv[l].lec, topic: r.name, lv: l,
+      ord: order.has(r.id + '-' + l) ? order.get(r.id + '-' + l) : 9999,
+      stage: stageOf(r.id)
+    });
   }));
-  jobs.sort((a, b) => (a.got - b.got) || (b.lack - a.lack));   // 未着手を最優先、次に不足の大きい順
+  jobs.sort((a, b) => a.ord - b.ord);   // 学習ルート順
   console.log('残 ' + (tgtTot - gotTot) + ' 問 / 作業ファイル ' + jobs.length + ' 本');
-  console.log('（座学が未執筆の場合は「座学なし」と表示。座学を先に書くこと）\n');
+  console.log('並び順＝学習ルート（学習者が到達する順）。上から埋めること。');
+  console.log('★座学なし の行は、先に座学を書く。\n');
   jobs.slice(0, k).forEach((j, i) => {
-    console.log(String(i + 1).padStart(3) + '. ' + j.file.padEnd(28) +
+    console.log(String(i + 1).padStart(3) + '. [' + j.stage.padEnd(6) + '] ' + j.file.padEnd(26) +
       ' 現' + String(j.got).padStart(3) + ' / 目標' + String(j.tgt).padStart(3) +
       ' → 不足 ' + String(j.lack).padStart(3) +
       (j.lec ? '' : '   ★座学なし'));

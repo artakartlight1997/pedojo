@@ -119,6 +119,38 @@
       }
       return out;
     },
+    /** 学習ルート上の各項目の状態を返す */
+    pathStatus: function () {
+      var self = this;
+      return DOJO.pathItems().map(function (it) {
+        var m = self.mastery(it.topic.id, it.lv);
+        var read = self.isRead(it.topic.id, it.lv);
+        var qn = DOJO.questionsOf(it.topic.id, it.lv).length;
+        // 修了＝座学を読み、その水準の問題の6割以上を1回以上正解している
+        var done = read && qn > 0 && m.mastered >= Math.ceil(qn * 0.6);
+        var started = read || m.seen > 0;
+        return Object.assign({}, it, { read: read, m: m, qn: qn, done: done, started: started });
+      });
+    },
+    /** ルート上で「次にやるべき1件」 */
+    nextOnPath: function () {
+      var st = this.pathStatus();
+      for (var i = 0; i < st.length; i++) {
+        if (!st[i].ready) continue;              // 座学が未執筆の項目は飛ばす
+        if (!st[i].done) return st[i];
+      }
+      return null;
+    },
+    /** 周回ごとの到達率 */
+    lapProgress: function () {
+      var st = this.pathStatus();
+      return DOJO.LAPS.map(function (lap) {
+        var items = st.filter(function (x) { return x.lv === lap.lv && x.ready; });
+        var done = items.filter(function (x) { return x.done; }).length;
+        return { lap: lap, total: items.length, done: done, pct: items.length ? done / items.length : 0 };
+      });
+    },
+
     /** 次にやるべきこと（モチベーション設計の中核） */
     nextActions: function () {
       var acts = [], o = this.overall();
@@ -131,18 +163,17 @@
       if (t.n < goal) {
         acts.push({ pri: 2, icon: '◎', title: '今日の目標まであと ' + (goal - t.n) + '問', sub: '実戦ドリルで一気に片付ける。', go: '#/drill' });
       }
-      // 未読の座学（カリキュラム順）
-      var unread = null;
-      for (var i = 0; i < DOJO.TOPICS.length && !unread; i++) {
-        for (var j = 0; j < DOJO.LEVELS.length; j++) {
-          var tid = DOJO.TOPICS[i].id, lv = DOJO.LEVELS[j].id;
-          var has = DOJO.LECTURES[tid] && DOJO.LECTURES[tid][lv];
-          if (has && !this.isRead(tid, lv)) { unread = { t: DOJO.TOPICS[i], l: DOJO.LEVELS[j] }; break; }
+      // 学習ルート上の「次の1件」（順序が意味を持つので、ここが最優先の学習動線）
+      var nx = this.nextOnPath();
+      if (nx) {
+        var lvName = DOJO.levelById(nx.lv).name;
+        if (!nx.read) {
+          acts.push({ pri: 0, icon: '路', title: 'ルートの次：' + nx.stage.short + '／' + nx.topic.short + '・' + lvName,
+            sub: nx.stage.q + ' — まず座学を読む。', go: '#/lecture/' + nx.topic.id + '/' + nx.lv });
+        } else {
+          acts.push({ pri: 3, icon: '路', title: 'ルートの次：' + nx.topic.short + '・' + lvName + ' のクイズ',
+            sub: '座学は読了。あと ' + Math.max(0, Math.ceil(nx.qn * 0.6) - nx.m.mastered) + '問の正解で修了。', go: '#/quiz/' + nx.topic.id + '/' + nx.lv });
         }
-      }
-      if (unread) {
-        acts.push({ pri: 3, icon: '本', title: '次の座学：' + unread.t.short + '・' + unread.l.name,
-          sub: unread.l.name === '実践' ? '現場で何が起きるかを読む。' : '読んでからクイズへ。', go: '#/lecture/' + unread.t.id + '/' + unread.l.id });
       }
       // 最も弱いトピック
       var weak = DOJO.weakTopics()[0];

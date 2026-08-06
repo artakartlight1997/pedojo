@@ -106,10 +106,81 @@
   };
 
   /* ===================== カリキュラム ===================== */
+  /* ===================== 学習ルート ===================== */
+  UI.path = function () {
+    var S = DOJO.Store;
+    var st = S.pathStatus();
+    var laps = S.lapProgress();
+    var nx = S.nextOnPath();
+
+    var h = '<div class="card"><h1>学習ルート</h1>'
+      + '<p class="lead">投資プロセスを<b>遂行する順序</b>で並べた道順です。'
+      + '「案件がどこから来て → いくらなら買えて → どう調べて → どう買って → どう契約して → どう育てて → どう出るか」。'
+      + 'この順に学ぶと、ばらばらの知識が一本の線になります。</p>'
+      + '<div class="callout"><div class="ct">周回で深める</div>'
+      + '<p>縦（1トピックを初級→上級まで）ではなく、<b>横（全段の初級を一周）</b>から入ります。'
+      + '1周目で仕事の全体像がつながり、2周目以降で各段を深く掘ります。</p></div>';
+
+    // 周回の進捗
+    h += '<div class="grid g2" style="margin-top:14px">';
+    laps.forEach(function (lp) {
+      h += '<div style="border:1px solid var(--line);border-radius:8px;padding:12px 14px">'
+        + lvBadge(lp.lap.lv) + ' <b>' + esc(lp.lap.name) + '</b> <span class="small muted">' + esc(lp.lap.tag) + '</span>'
+        + '<div class="small muted" style="margin-top:6px">' + esc(lp.lap.desc) + '</div>'
+        + '<div class="bar" style="margin-top:8px"><i style="width:' + Math.round(lp.pct * 100) + '%"></i></div>'
+        + '<div class="small" style="margin-top:4px">修了 ' + lp.done + ' / ' + lp.total + '</div></div>';
+    });
+    h += '</div></div>';
+
+    if (nx) {
+      h += '<div class="card"><h2>いま、ここ</h2>'
+        + '<div class="act"><div class="act-ic">路</div><div class="act-b">'
+        + '<b>' + esc(nx.stage.name) + '　' + esc(nx.topic.name) + '・' + esc(DOJO.levelById(nx.lv).name) + '</b>'
+        + '<div class="small muted">' + esc(nx.stage.q) + '</div></div>'
+        + '<a class="act-go" href="#/' + (nx.read ? 'quiz' : 'lecture') + '/' + nx.topic.id + '/' + nx.lv + '">'
+        + (nx.read ? 'クイズへ' : '座学を読む') + '</a></div></div>';
+    }
+
+    // 段ごとの一覧（1周目の順序で表示。各行に4レベルの状態）
+    h += '<div class="card"><h2>段（ステージ）と到達目標</h2>'
+      + '<p class="small muted">各行の4つの印は 初級／中級／上級／実践。'
+      + '● 修了　◐ 着手中　○ 未着手　－ 準備中（コンテンツ未作成）</p></div>';
+
+    DOJO.STAGES.forEach(function (sg) {
+      var items = st.filter(function (x) { return x.stage.id === sg.id; });
+      var ready = items.filter(function (x) { return x.ready; });
+      var done = ready.filter(function (x) { return x.done; }).length;
+      h += '<div class="card">'
+        + '<h2>' + esc(sg.name) + (sg.optional ? ' <span class="badge">任意・随時</span>' : '') + '</h2>'
+        + '<p class="lead" style="margin-top:-4px">' + esc(sg.q) + '</p>'
+        + '<div class="small" style="margin:8px 0"><b>到達目標：</b>' + esc(sg.goal) + '</div>'
+        + '<div class="small muted">' + MD.inline(sg.why) + '</div>'
+        + (sg.goFirst ? '<div class="callout field"><div class="ct">読む順の例外</div><p>' + esc(sg.goFirst) + '</p></div>' : '')
+        + '<div class="bar" style="margin:10px 0 6px"><i style="width:' + (ready.length ? Math.round(done / ready.length * 100) : 0) + '%"></i></div>'
+        + '<table><thead><tr><th>トピック</th><th>初級</th><th>中級</th><th>上級</th><th>実践</th><th>問題数</th></tr></thead><tbody>';
+      sg.topics.forEach(function (tid) {
+        var t = DOJO.topicById(tid);
+        if (!t) return;
+        var cells = DOJO.LEVELS.map(function (l) {
+          var x = items.filter(function (y) { return y.topic.id === tid && y.lv === l.id; })[0];
+          if (!x || !x.ready) return '<td class="muted">－</td>';
+          var mark = x.done ? '●' : (x.started ? '◐' : '○');
+          return '<td><a href="#/' + (x.read ? 'quiz' : 'lecture') + '/' + tid + '/' + l.id + '">' + mark + '</a></td>';
+        }).join('');
+        var qn = DOJO.LEVELS.reduce(function (s, l) { return s + countOf(tid, l.id); }, 0);
+        h += '<tr><td><a href="#/topic/' + tid + '">' + esc(t.name) + '</a></td>' + cells + '<td>' + qn + '</td></tr>';
+      });
+      h += '</tbody></table></div>';
+    });
+
+    app.innerHTML = h;
+  };
+
   UI.curriculum = function () {
     var h = '<div class="card"><h1>カリキュラム</h1>'
-      + '<p class="lead">' + DOJO.TOPICS.length + 'トピック × 3レベル。'
-      + 'どこからでも入れますが、初学者は上から順に。各トピックは「座学」と「理解度クイズ」で構成されています。</p>';
+      + '<p class="lead">' + DOJO.TOPICS.length + 'トピック × ' + DOJO.LEVELS.length + 'レベル。'
+      + '順番に迷ったら <a href="#/path">学習ルート</a> を見てください。'
+      + '各トピックは「座学」と「理解度クイズ」で構成されています。</p>';
     h += '<div class="grid g3">';
     DOJO.LEVELS.forEach(function (l) {
       h += '<div style="border:1px solid var(--line);border-radius:8px;padding:12px 14px">'
