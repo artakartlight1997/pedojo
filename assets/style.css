@@ -173,3 +173,60 @@ select,input[type=number],input[type=text]{padding:7px 10px;border:1px solid var
 .tabs button.on{color:var(--accent);border-bottom-color:var(--accent)}
 .empty{text-align:center;padding:40px;color:var(--ink-2)}
 @media print{.topbar,.foot,.toc{display:none!important}main{max-width:none}}
+
+/* ===== 実践レベルのバッジ ===== */
+.badge.p{background:#e6f4ef;color:#0f6b4a;border-color:#bfe3d4}
+html[data-theme="dark"] .badge.p{background:#0f2a20;color:#6fd4a8;border-color:#1d4a37}
+
+/* ===== ヒーロー（段位・今日の進捗） ===== */
+.hero{padding:18px 20px}
+.hero-rank{display:flex;gap:16px;align-items:center}
+.rank-badge{flex:0 0 auto;display:grid;place-items:center;width:74px;height:74px;border-radius:14px;
+  background:linear-gradient(140deg,var(--accent),var(--accent-2));color:#fff;font-weight:800;font-size:19px;
+  letter-spacing:.02em;box-shadow:var(--shadow)}
+.rank-body{flex:1 1 auto;min-width:0}
+.rank-title{font-size:15px;margin-bottom:2px}
+.hero-stats{display:flex;gap:22px;align-items:center;flex-wrap:wrap;margin-top:18px;
+  padding-top:16px;border-top:1px solid var(--line)}
+.hs .v{font-size:24px;font-weight:800;line-height:1.1}
+.hs .v small{font-size:12px;font-weight:600;margin-left:2px}
+.hs .l{font-size:11.5px;color:var(--ink-2)}
+.ring{position:relative;width:80px;height:80px;flex:0 0 auto}
+.ring svg{transform:rotate(-90deg)}
+.ring .rbg{fill:none;stroke:var(--panel-2);stroke-width:7}
+.ring .rfg{fill:none;stroke:var(--accent);stroke-width:7;stroke-linecap:round;transition:stroke-dashoffset .5s}
+.ring .rtxt{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.1}
+.ring .rtxt b{font-size:15px}
+.ring .rtxt span{font-size:10px;color:var(--ink-2)}
+
+/* ===== 次の一手 ===== */
+.acts{display:grid;gap:8px;margin-top:10px}
+.act{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:12px 14px;
+  border:1px solid var(--line);border-radius:9px;background:var(--panel);color:var(--ink)}
+.act:hover{border-color:var(--accent);background:var(--panel-2)}
+.act-ic{flex:0 0 30px;height:30px;display:grid;place-items:center;border-radius:8px;
+  background:var(--panel-2);border:1px solid var(--line);font-size:14px;font-weight:700;color:var(--accent)}
+.act-b{flex:1 1 auto;display:flex;flex-direction:column;min-width:0}
+.act-b b{font-size:14.5px}
+.act-b span{font-size:12.5px;color:var(--ink-2)}
+.act-go{color:var(--ink-2);font-weight:700}
+
+/* ===== 学習カレンダー ===== */
+.cal{display:grid;grid-template-rows:repeat(7,12px);grid-auto-flow:column;grid-auto-columns:12px;
+  gap:3px;margin-top:10px;overflow-x:auto;padding-bottom:4px}
+.cal i{display:block;width:12px;height:12px;border-radius:3px;background:var(--panel-2);border:1px solid var(--line)}
+.cal i.c1{background:#cfe8dc;border-color:#b7dcc9}
+.cal i.c2{background:#8fcfb0;border-color:#7cc4a2}
+.cal i.c3{background:#4cae83;border-color:#3f9d74}
+.cal i.c4{background:#1f7f57;border-color:#1a6e4a}
+html[data-theme="dark"] .cal i.c1{background:#14392a;border-color:#1c4a37}
+html[data-theme="dark"] .cal i.c2{background:#1d5c42;border-color:#256e50}
+html[data-theme="dark"] .cal i.c3{background:#2b8a63;border-color:#33a074}
+html[data-theme="dark"] .cal i.c4{background:#43c08c;border-color:#4fd39b}
+.stat .v small{font-size:13px;font-weight:600;color:var(--ink-2)}
+
+/* ===== 実践編の囲み（現場メモ） ===== */
+.prose .callout.field{border-left-color:#0f6b4a}
+.prose .callout.field .ct{color:#0f6b4a}
+html[data-theme="dark"] .prose .callout.field{border-left-color:#4fd39b}
+html[data-theme="dark"] .prose .callout.field .ct{color:#4fd39b}

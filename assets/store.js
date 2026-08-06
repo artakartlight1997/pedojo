@@ -6,9 +6,11 @@
 
   var DEFAULT = {
     q: {},        // qid -> {n,c,w,box,due,last,flag}
-    lec: {},      // "topic-lv" -> {read:ts, sec:{}}
+    lec: {},      // "topic-lv" -> {read:ts}
     sessions: [], // 学習履歴
-    settings: { theme: 'light', shuffle: true, showTimer: false, hardMode: false }
+    daily: {},    // "YYYY-MM-DD" -> {n:回答数, c:正答数, lec:読了数}
+    streak: { cur: 0, best: 0, last: '' },
+    settings: { theme: 'light', shuffle: true, goal: 20, showTimer: false }
   };
 
   var S = null;
@@ -31,6 +33,28 @@
   // Leitner: box 0..5 / 復習間隔（日）
   var INTERVAL = [0, 1, 3, 7, 21, 60];
 
+  function dkey(d) {
+    d = d || new Date();
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  }
+  function daysBetween(a, b) {
+    return Math.round((new Date(b + 'T00:00:00') - new Date(a + 'T00:00:00')) / 86400000);
+  }
+
+  /* ===== 段位（10段階） ===== */
+  var RANKS = [
+    { id: 0, name: '入門',     need: 0,    label: '道場に入ったばかり。まずはPE概論・初級から。' },
+    { id: 1, name: '白帯',     need: 25,   label: '共通言語を覚え始めた。用語が「聞き取れる」段階。' },
+    { id: 2, name: '黄帯',     need: 60,   label: '基礎が固まってきた。会議の議論についていける。' },
+    { id: 3, name: '橙帯',     need: 110,  label: '初級を横断できる。指示された作業の意味が分かる。' },
+    { id: 4, name: '緑帯',     need: 180,  label: '実務の入口。モデルとDDの構造が見えている。' },
+    { id: 5, name: '青帯',     need: 260,  label: '担当者水準。自分で論点を立てられる。' },
+    { id: 6, name: '茶帯',     need: 350,  label: 'ディールを主担当で回せる水準。' },
+    { id: 7, name: '黒帯',     need: 450,  label: '専門家と対等に議論できる。ICで発言できる。' },
+    { id: 8, name: '師範代',   need: 560,  label: 'ストラクチャーを設計し、判断を主導できる。' },
+    { id: 9, name: '師範',     need: 680,  label: '現場・人・関係まで含めて、投資を完遂できる。' }
+  ];
+
   var Store = {
     get state() { return load(); },
     save: save,
@@ -48,9 +72,102 @@
       return s.q[qid] || null;
     },
 
-    /** 回答を記録し SRS を更新 */
+    /** 段位（習得数＋正答率で決まる） */
+    rank: function () {
+      var o = this.overall();
+      var acc = o.acc === null ? 0 : o.acc;
+      // 正答率が低いと段位が伸びない（実力の裏付け）
+      var score = Math.round(o.mastered * Math.min(1.2, 0.6 + acc * 0.6));
+      var cur = RANKS[0], next = RANKS[1];
+      for (var i = 0; i < RANKS.length; i++) {
+        if (score >= RANKS[i].need) { cur = RANKS[i]; next = RANKS[i + 1] || null; }
+      }
+      return {
+        score: score, cur: cur, next: next,
+        toNext: next ? Math.max(0, next.need - score) : 0,
+        pct: next ? Math.min(1, (score - cur.need) / (next.need - cur.need)) : 1,
+        all: RANKS
+      };
+    },
+
+    /** 今日の記録 */
+    today: function () {
+      var s = load(), k = dkey();
+      return s.daily[k] || { n: 0, c: 0, lec: 0 };
+    },
+    goal: function (v) {
+      var s = load();
+      if (typeof v === 'number') { s.settings.goal = Math.max(1, v); save(); }
+      return s.settings.goal || 20;
+    },
+    /** 連続学習日数 */
+    streakInfo: function () {
+      var s = load(), k = dkey();
+      var st = s.streak || { cur: 0, best: 0, last: '' };
+      // 直近が昨日でも今日でもなければ、表示上は途切れている
+      var alive = st.last === k || (st.last && daysBetween(st.last, k) === 1);
+      return { cur: alive ? st.cur : 0, best: st.best, last: st.last, doneToday: st.last === k };
+    },
+    /** 直近N日のヒートマップ用データ */
+    calendar: function (days) {
+      var s = load(), out = [], d = new Date();
+      d.setDate(d.getDate() - (days - 1));
+      for (var i = 0; i < days; i++) {
+        var k = dkey(d);
+        out.push({ key: k, date: new Date(d), n: (s.daily[k] || {}).n || 0 });
+        d.setDate(d.getDate() + 1);
+      }
+      return out;
+    },
+    /** 次にやるべきこと（モチベーション設計の中核） */
+    nextActions: function () {
+      var acts = [], o = this.overall();
+      var due = this.dueQuestions().length;
+      var t = this.today(), goal = this.goal();
+
+      if (due > 0) {
+        acts.push({ pri: 1, icon: '⟳', title: '復習箱を空にする', sub: '期限到来 ' + due + '問。ここを潰すのが最短の上達。', go: '#/review' });
+      }
+      if (t.n < goal) {
+        acts.push({ pri: 2, icon: '◎', title: '今日の目標まであと ' + (goal - t.n) + '問', sub: '実戦ドリルで一気に片付ける。', go: '#/drill' });
+      }
+      // 未読の座学（カリキュラム順）
+      var unread = null;
+      for (var i = 0; i < DOJO.TOPICS.length && !unread; i++) {
+        for (var j = 0; j < DOJO.LEVELS.length; j++) {
+          var tid = DOJO.TOPICS[i].id, lv = DOJO.LEVELS[j].id;
+          var has = DOJO.LECTURES[tid] && DOJO.LECTURES[tid][lv];
+          if (has && !this.isRead(tid, lv)) { unread = { t: DOJO.TOPICS[i], l: DOJO.LEVELS[j] }; break; }
+        }
+      }
+      if (unread) {
+        acts.push({ pri: 3, icon: '本', title: '次の座学：' + unread.t.short + '・' + unread.l.name,
+          sub: unread.l.name === '実践' ? '現場で何が起きるかを読む。' : '読んでからクイズへ。', go: '#/lecture/' + unread.t.id + '/' + unread.l.id });
+      }
+      // 最も弱いトピック
+      var weak = DOJO.weakTopics()[0];
+      if (weak) {
+        acts.push({ pri: 4, icon: '△', title: '弱点：' + weak.topic.short + '・' + weak.level.name,
+          sub: '正答率 ' + Math.round(weak.m.acc * 100) + '%。座学に戻って解き直す。', go: '#/quiz/' + weak.topic.id + '/' + weak.level.id });
+      }
+      if (o.seen >= 60 && o.acc !== null && o.acc >= 0.75) {
+        acts.push({ pri: 5, icon: '試', title: '模擬IC試験で実力を測る', sub: '通算正答率 ' + Math.round(o.acc * 100) + '%。試験モードで通しの判断力を確認。', go: '#/exam' });
+      }
+      return acts.sort(function (a, b) { return a.pri - b.pri; }).slice(0, 4);
+    },
+
+    /** 回答を記録し、SRS・日次記録・ストリークを更新 */
     answer: function (qid, correct) {
       var s = load();
+      var k = dkey();
+      var d = s.daily[k] || (s.daily[k] = { n: 0, c: 0, lec: 0 });
+      d.n++; if (correct) d.c++;
+      var st = s.streak || (s.streak = { cur: 0, best: 0, last: '' });
+      if (st.last !== k) {
+        st.cur = (st.last && daysBetween(st.last, k) === 1) ? st.cur + 1 : 1;
+        st.last = k;
+        if (st.cur > st.best) st.best = st.cur;
+      }
       var r = s.q[qid] || { n: 0, c: 0, w: 0, box: 0, due: 0, last: 0, flag: false };
       r.n++;
       if (correct) { r.c++; r.box = Math.min(5, r.box + 1); }
@@ -72,8 +189,21 @@
 
     markRead: function (topic, lv) {
       var s = load();
+      if (!s.lec[topic + '-' + lv]) {
+        var k = dkey();
+        var d = s.daily[k] || (s.daily[k] = { n: 0, c: 0, lec: 0 });
+        d.lec++;
+      }
       s.lec[topic + '-' + lv] = { read: Date.now() };
       save();
+    },
+    readCount: function () { return Object.keys(load().lec).length; },
+    lectureTotal: function () {
+      var n = 0;
+      DOJO.TOPICS.forEach(function (t) {
+        DOJO.LEVELS.forEach(function (l) { if (DOJO.LECTURES[t.id] && DOJO.LECTURES[t.id][l.id]) n++; });
+      });
+      return n;
     },
     isRead: function (topic, lv) { return !!load().lec[topic + '-' + lv]; },
 

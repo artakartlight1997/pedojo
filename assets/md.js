@@ -44,12 +44,13 @@
       }
       // callout  :::type タイトル ... :::
       if (/^:::/.test(ln)) {
-        var m0 = ln.match(/^:::\s*(.*)$/);
-        var title = (m0 && m0[1].trim()) || 'POINT';
+        var m0 = ln.match(/^:::(field|warn)?\s*(.*)$/);
+        var cls = (m0 && m0[1]) ? ' ' + m0[1] : '';
+        var title = (m0 && m0[2].trim()) || 'POINT';
         var cbuf = []; i++;
         while (i < lines.length && !/^:::\s*$/.test(lines[i])) { cbuf.push(lines[i]); i++; }
         i++;
-        html.push('<div class="callout"><div class="ct">' + inline(title) + '</div>' + render(cbuf.join('\n')) + '</div>');
+        html.push('<div class="callout' + cls + '"><div class="ct">' + inline(title) + '</div>' + render(cbuf.join('\n')) + '</div>');
         continue;
       }
       // table

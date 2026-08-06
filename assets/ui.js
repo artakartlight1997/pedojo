@@ -20,61 +20,86 @@
   }
   function countOf(t, l) { return DOJO.questionsOf(t, l).length; }
 
-  /* ===================== ホーム ===================== */
+  /* ===================== ホーム（ダッシュボード） ===================== */
+  function ring(pctVal, label, sub) {
+    var r = 34, c = 2 * Math.PI * r, off = c * (1 - Math.min(1, pctVal));
+    return '<div class="ring"><svg viewBox="0 0 80 80" width="80" height="80">'
+      + '<circle cx="40" cy="40" r="' + r + '" class="rbg"></circle>'
+      + '<circle cx="40" cy="40" r="' + r + '" class="rfg" stroke-dasharray="' + c.toFixed(1) + '" stroke-dashoffset="' + off.toFixed(1) + '"></circle>'
+      + '</svg><div class="rtxt"><b>' + label + '</b><span>' + sub + '</span></div></div>';
+  }
+
   UI.home = function () {
-    var o = DOJO.Store.overall();
-    var due = DOJO.Store.dueQuestions().length;
-    var wrong = DOJO.Store.wrongQuestions().length;
-    var weak = DOJO.weakTopics().slice(0, 3);
+    var S = DOJO.Store;
+    var o = S.overall(), rk = S.rank(), st = S.streakInfo(), t = S.today(), goal = S.goal();
+    var due = S.dueQuestions().length;
+    var acts = S.nextActions();
+    var lecTotal = S.lectureTotal(), lecRead = S.readCount();
 
     var h = '';
-    h += '<div class="card">';
-    h += '<h1>PEファンド道場</h1>';
-    h += '<p class="lead">白紙の状態から、投資委員会で自分の言葉で発言できる投資プロフェッショナルまで。'
-      + '座学 → 理解度クイズ → 誤答の反復、を' + DOJO.TOPICS.length + 'トピック×3レベルで徹底的に回す道場です。</p>';
-    h += '<div class="row">'
-      + '<button class="btn primary" data-go="#/curriculum">カリキュラムを見る</button>'
-      + (o.seen === 0
-        ? '<button class="btn" data-go="#/lecture/pe/b">まず第一講（PE概論・初級）から始める</button>'
-        : '<button class="btn" data-go="#/review">復習箱（' + due + '問）</button>')
-      + '<button class="btn" data-go="#/drill">実戦ドリルを組む</button>'
-      + '<button class="btn" data-go="#/exam">模擬IC試験</button>'
+    // ヒーロー：段位・ストリーク・今日
+    h += '<div class="card hero">'
+      + '<div class="hero-rank">'
+      + '<div class="rank-badge">' + esc(rk.cur.name) + '</div>'
+      + '<div class="rank-body"><div class="rank-title">現在の段位：<b>' + esc(rk.cur.name) + '</b>'
+      + (rk.next ? ' <span class="muted small">→ 次は ' + esc(rk.next.name) + '（あと ' + rk.toNext + '）</span>' : ' <span class="muted small">最高位</span>') + '</div>'
+      + '<div class="small muted">' + esc(rk.cur.label) + '</div>'
+      + '<div class="bar" style="margin-top:8px"><i style="width:' + Math.round(rk.pct * 100) + '%"></i></div></div>'
+      + '</div>'
+      + '<div class="hero-stats">'
+      + ring(goal ? t.n / goal : 0, t.n + '/' + goal, '今日')
+      + '<div class="hs"><div class="v">' + st.cur + '<small>日</small></div><div class="l">連続学習' + (st.best > st.cur ? '（最長 ' + st.best + '）' : '') + '</div></div>'
+      + '<div class="hs"><div class="v">' + due + '</div><div class="l">復習待ち</div></div>'
+      + '<div class="hs"><div class="v">' + (o.acc === null ? '—' : pct(o.acc)) + '</div><div class="l">通算正答率</div></div>'
       + '</div></div>';
 
-    h += '<div class="grid g4">';
-    h += '<div class="stat"><div class="v">' + o.total + '</div><div class="l">収録問題数</div></div>';
-    h += '<div class="stat"><div class="v">' + o.seen + '</div><div class="l">着手済み</div></div>';
-    h += '<div class="stat"><div class="v">' + o.mastered + '</div><div class="l">習得（Box3+）</div></div>';
-    h += '<div class="stat"><div class="v">' + (o.acc === null ? '—' : pct(o.acc)) + '</div><div class="l">通算正答率</div></div>';
-    h += '</div>';
-
-    if (due || wrong) {
-      h += '<div class="card"><div class="spread"><div><b>復習が溜まっています。</b> '
-        + '<span class="muted small">期限到来 ' + due + '問 / 誤答歴あり ' + wrong + '問。'
-        + '道場は「間違えた問題を潰す」ことでしか強くなりません。</span></div>'
-        + '<div class="row"><button class="btn primary" data-go="#/review">復習箱へ</button></div></div></div>';
+    // 次の一手
+    h += '<div class="card"><div class="spread"><h3 style="margin:0">次の一手</h3>'
+      + '<span class="muted small">迷ったら上から順に</span></div><div class="acts">';
+    if (!acts.length) {
+      h += '<div class="empty">今日やるべきことは終わっています。よくやりました。</div>';
     }
-    if (weak.length) {
-      h += '<div class="card"><h3>いま弱いところ</h3><table class="data"><tbody>';
-      weak.forEach(function (w) {
-        h += '<tr><td>' + lvBadge(w.level.id) + ' ' + esc(w.topic.name) + '</td>'
-          + '<td class="muted">正答率 ' + pct(w.m.acc) + '（' + w.m.seen + '/' + w.m.total + '問着手）</td>'
-          + '<td style="text-align:right">'
-          + '<button class="btn sm" data-go="#/lecture/' + w.topic.id + '/' + w.level.id + '">座学</button> '
-          + '<button class="btn sm" data-go="#/quiz/' + w.topic.id + '/' + w.level.id + '">再挑戦</button></td></tr>';
-      });
-      h += '</tbody></table></div>';
+    acts.forEach(function (a) {
+      h += '<button class="act" data-go="' + a.go + '"><span class="act-ic">' + esc(a.icon) + '</span>'
+        + '<span class="act-b"><b>' + esc(a.title) + '</b><span>' + esc(a.sub) + '</span></span><span class="act-go">→</span></button>';
+    });
+    h += '</div></div>';
+
+    // 学習カレンダー
+    var cal = S.calendar(70);
+    h += '<div class="card"><div class="spread"><h3 style="margin:0">学習カレンダー</h3>'
+      + '<span class="muted small">直近10週間・1マス＝1日</span></div><div class="cal">'
+      + cal.map(function (d) {
+        var lvl = d.n === 0 ? 0 : d.n < 5 ? 1 : d.n < 15 ? 2 : d.n < 30 ? 3 : 4;
+        return '<i class="c' + lvl + '" title="' + d.key + '：' + d.n + '問"></i>';
+      }).join('') + '</div>'
+      + '<div class="small muted" style="margin-top:8px">'
+      + '毎日20問でも、1年で7,300問。<b>間を空けないことだけ</b>が効きます。</div></div>';
+
+    // 全体進捗
+    h += '<div class="grid g4">'
+      + '<div class="stat"><div class="v">' + o.mastered + ' <small>/' + o.total + '</small></div><div class="l">習得（Box3+）</div></div>'
+      + '<div class="stat"><div class="v">' + o.seen + '</div><div class="l">着手済み</div></div>'
+      + '<div class="stat"><div class="v">' + lecRead + ' <small>/' + lecTotal + '</small></div><div class="l">座学 読了</div></div>'
+      + '<div class="stat"><div class="v">' + o.attempts + '</div><div class="l">延べ解答数</div></div>'
+      + '</div>';
+
+    // はじめての人向け
+    if (o.seen === 0) {
+      h += '<div class="card"><h1>PEファンド道場</h1>'
+        + '<p class="lead">白紙の状態から、投資委員会で自分の言葉で発言できる投資プロフェッショナルまで。'
+        + DOJO.TOPICS.length + 'トピック × 4レベル（初級・中級・上級・<b>実践</b>）で徹底的に回す道場です。</p>'
+        + '<div class="row"><button class="btn primary" data-go="#/lecture/pe/b">第一講（PE概論・初級）から始める</button>'
+        + '<button class="btn" data-go="#/curriculum">カリキュラムを見る</button></div></div>';
     }
 
-    h += '<div class="card"><h3>この道場の使い方（推奨ルート）</h3>'
+    h += '<div class="card"><h3>この道場の使い方</h3>'
       + '<ol>'
-      + '<li><b>初級を全トピック通す。</b>「PE概論 → 投資プロセス → 財務会計 → 財務分析 → バリュエーション → …」の順。'
-      + '各トピックで<b>座学を読む → クイズを解く → 誤答の解説を読む</b>。正答率85%を超えるまで同じレベルを回す。</li>'
-      + '<li><b>中級は「手を動かす」順。</b>LBOモデル・財務DD・タームシート・SPAを重点的に。'
-      + 'ここは自分でExcelを開いて再現しながら解くと定着が段違いになります。</li>'
-      + '<li><b>上級は横断で解く。</b>ストラクチャー・税務・会計・契約は相互に絡みます。'
-      + '模擬IC試験モードでトピック混在の出題を受け、「どの論点か」を自分で判別する訓練を。</li>'
-      + '<li><b>毎日、復習箱をゼロにする。</b>間隔反復（1日→3日→7日→21日→60日）で長期記憶に落とします。</li>'
+      + '<li><b>座学 → クイズ → 誤答の解説</b>を1セットとして回す。正答率85%を超えるまで同じ講を繰り返す。</li>'
+      + '<li><b>「実践」レベルを飛ばさない。</b>教科書の知識だけでは現場で通用しません。'
+      + '設備投資サイクルの読み方、人柄の見抜き方、銀行との距離の取り方——ここに現場の差が出ます。</li>'
+      + '<li><b>毎日、復習箱をゼロにする。</b>間隔反復（1→3→7→21→60日）で長期記憶に落とす。</li>'
+      + '<li><b>上級・実践は横断で解く。</b>模擬IC試験でトピック混在の出題を受け、「何の論点か」を自分で判別する訓練を。</li>'
       + '</ol></div>';
 
     app.innerHTML = h;
@@ -468,8 +493,9 @@
     var presets = [
       { id: 'b', name: '新人卒業試験', lv: ['b'], n: 60, pass: 0.8, desc: '初級全トピック混在。ここを80%取れないうちはディールに入っても議論についていけません。' },
       { id: 'i', name: 'アソシエイト実務試験', lv: ['b', 'i'], n: 80, pass: 0.8, desc: '初級＋中級。モデル・DD・タームシート・契約の実務論点を混在出題。' },
-      { id: 'a', name: '投資committee 試験', lv: ['i', 'a'], n: 100, pass: 0.75, desc: '中級＋上級。会計・税務・ストラクチャー・法務の判断論点。IC で発言する水準。' },
-      { id: 'x', name: '道場総覧（フル）', lv: ['b', 'i', 'a'], n: 150, pass: 0.75, desc: '全レベル混在。仕上げの総点検。' }
+      { id: 'a', name: '投資委員会試験', lv: ['i', 'a'], n: 100, pass: 0.75, desc: '中級＋上級。会計・税務・ストラクチャー・法務の判断論点。IC で発言する水準。' },
+      { id: 'p', name: '現場判断試験', lv: ['p'], n: 60, pass: 0.75, desc: '実践レベルのみ。人・現場・関係構築・修羅場対応。教科書に答えのない判断を問う。' },
+      { id: 'x', name: '道場総覧（フル）', lv: ['b', 'i', 'a', 'p'], n: 150, pass: 0.75, desc: '全レベル混在。仕上げの総点検。' }
     ];
     var h = '<div class="card"><h1>模擬IC試験</h1>'
       + '<p class="lead">トピック混在・ランダム出題。解説は最後にまとめて確認します（本番同様、途中で答え合わせをしない訓練）。</p></div>';
@@ -522,12 +548,36 @@
   UI.progress = function () {
     var o = DOJO.Store.overall();
     var st = DOJO.Store.state;
-    var h = '<div class="card"><h1>進捗</h1><div class="grid g4">'
+    var rk = DOJO.Store.rank(), st = DOJO.Store.streakInfo();
+    var h = '<div class="card"><h1>進捗</h1>'
+      + '<div class="hero-rank" style="margin-bottom:14px">'
+      + '<div class="rank-badge">' + esc(rk.cur.name) + '</div>'
+      + '<div class="rank-body"><div class="rank-title"><b>' + esc(rk.cur.name) + '</b>'
+      + (rk.next ? ' <span class="muted small">→ ' + esc(rk.next.name) + ' まであと ' + rk.toNext + '</span>' : '') + '</div>'
+      + '<div class="small muted">' + esc(rk.cur.label) + '</div>'
+      + '<div class="bar" style="margin-top:8px"><i style="width:' + Math.round(rk.pct * 100) + '%"></i></div>'
+      + '<div class="small muted" style="margin-top:6px">連続学習 ' + st.cur + '日（最長 ' + st.best + '日）</div></div></div>'
+      + '<div class="grid g4">'
       + '<div class="stat"><div class="v">' + o.seen + ' / ' + o.total + '</div><div class="l">着手</div></div>'
       + '<div class="stat"><div class="v">' + o.mastered + '</div><div class="l">習得（Box3+）</div></div>'
       + '<div class="stat"><div class="v">' + o.attempts + '</div><div class="l">延べ解答数</div></div>'
       + '<div class="stat"><div class="v">' + (o.acc === null ? '—' : pct(o.acc)) + '</div><div class="l">通算正答率</div></div>'
       + '</div></div>';
+
+    var cal2 = DOJO.Store.calendar(140);
+    h += '<div class="card"><h3>学習カレンダー（直近20週）</h3><div class="cal">'
+      + cal2.map(function (d) {
+        var lvl = d.n === 0 ? 0 : d.n < 5 ? 1 : d.n < 15 ? 2 : d.n < 30 ? 3 : 4;
+        return '<i class="c' + lvl + '" title="' + d.key + '：' + d.n + '問"></i>';
+      }).join('') + '</div></div>';
+
+    h += '<div class="card"><h3>段位一覧</h3><table class="data"><thead><tr><th>段位</th><th>必要スコア</th><th>到達水準</th></tr></thead><tbody>'
+      + rk.all.map(function (r) {
+        return '<tr' + (r.id === rk.cur.id ? ' style="background:var(--panel-2);font-weight:700"' : '') + '>'
+          + '<td>' + esc(r.name) + '</td><td>' + r.need + '</td><td class="small">' + esc(r.label) + '</td></tr>';
+      }).join('') + '</tbody></table>'
+      + '<div class="small muted" style="margin-top:8px">スコア = 習得数（Box3以上）× 正答率による係数。'
+      + '<b>数をこなすだけでは上がりません。</b>正答率の裏付けが要ります。</div></div>';
 
     h += '<div class="card"><h3>トピック別 習熟マップ</h3><table class="data"><thead><tr><th>トピック</th>'
       + DOJO.LEVELS.map(function (l) { return '<th>' + l.name + '</th>'; }).join('') + '</tr></thead><tbody>';
@@ -555,6 +605,13 @@
       h += '</tbody></table></div>';
     }
 
+    h += '<div class="card"><h3>1日の目標</h3>'
+      + '<div class="row"><span class="muted small">1日に解く問題数の目標：</span>'
+      + '<select id="goalSel">' + [10, 20, 30, 50, 80].map(function (n) {
+        return '<option value="' + n + '"' + (n === DOJO.Store.goal() ? ' selected' : '') + '>' + n + '問</option>';
+      }).join('') + '</select>'
+      + '<span class="muted small">達成するとホームのリングが埋まります。</span></div></div>';
+
     h += '<div class="card"><h3>データ管理</h3>'
       + '<p class="small muted">進捗はこのブラウザの localStorage に保存されます。端末を移す場合はエクスポートしてください。</p>'
       + '<div class="row"><button class="btn" id="expBtn">エクスポート</button>'
@@ -564,6 +621,9 @@
       + '</div>';
     app.innerHTML = h;
 
+    var gs = el('goalSel');
+    if (gs) gs.addEventListener('click', function () { });
+    if (gs) gs.addEventListener('change', function (e) { DOJO.Store.goal(parseInt(e.target.value, 10)); });
     el('expBtn').addEventListener('click', function () {
       var a = el('ioArea'); a.style.display = 'block'; a.value = DOJO.Store.exportJSON(); a.select();
     });
