@@ -1,0 +1,17 @@
+{
+  "_comment": "PEファンド道場 出題数の目標配分。合計 6,000問（初級2000/中級1500/上級1500/実践1000）。tools/progress.js が実績と突き合わせる。",
+  "levels": { "b": "初級", "i": "中級", "a": "上級", "p": "実践" },
+  "tiers": {
+    "A": { "name": "基幹・重量級", "b": 100, "i": 75, "a": 75, "p": 40 },
+    "B": { "name": "基幹・標準", "b": 60, "i": 45, "a": 45, "p": 25 },
+    "C": { "name": "実務編", "b": 60, "i": 45, "a": 45, "p": 50 },
+    "D": { "name": "職務編", "b": 48, "i": 36, "a": 36, "p": 37 }
+  },
+  "assign": {
+    "pe": "A", "process": "A", "acct": "A", "fa": "A", "val": "A", "lbo": "A",
+    "debt": "A", "struct": "A", "tax": "A", "legal": "A", "spa": "A",
+    "mezz": "B", "synd": "B", "bizdd": "B", "fdd": "B", "vc": "B", "exit": "B", "fund": "B",
+    "people": "C", "ops": "C", "network": "C", "craft": "C",
+    "assoc": "D", "sassoc": "D", "vp": "D", "dir": "D", "ed": "D"
+  }
+}
