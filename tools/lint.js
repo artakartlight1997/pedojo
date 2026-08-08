@@ -10,7 +10,14 @@ for(const f of fs.readdirSync('data/quiz')) load('data/quiz/'+f);
 
 const all=DOJO.allQuestions(); const problems=[];
 const badPatterns=[/上記のすべて/,/すべて正しい/,/A(と|、)B(の)?両方/,/以下のすべて/,/選択肢[ABCD]/,/次のうち二つ/];
+// 日本語のはずの箇所に紛れ込んだキリル文字・ハングルを検出する
+// （生成時に「резерв」「монイタリング」のような混入が実際に起きたため、恒久的に検査する）
+const foreign=/[Ѐ-ӿ가-힯]/;
 all.forEach(q=>{
+  [['q',q.q],['exp',q.exp],...q.choices.map((c,i)=>['choice'+i,c])].forEach(([k,s])=>{
+    const m=s.match(new RegExp('.{0,10}'+foreign.source+'+.{0,10}'));
+    if(m) problems.push(q.id+' 非日本語文字の混入 ('+k+'): '+m[0]);
+  });
   q.choices.forEach(c=>{ badPatterns.forEach(re=>{ if(re.test(c)) problems.push(q.id+' order-dependent choice: '+c); }); });
   if(q.choices.length<3) problems.push(q.id+' too few choices');
   if(!/[。？?]$/.test(q.q.trim())) problems.push(q.id+' q lacks terminal punctuation: '+q.q.slice(-20));
