@@ -74,6 +74,10 @@
     });
 
     window.addEventListener('hashchange', route);
+    window.addEventListener('beforeunload', function () { try { DOJO.Store.save(); } catch (e) {} });
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState === 'hidden') { try { DOJO.Store.save(); } catch (e) {} }
+    });
 
     document.getElementById('boot').hidden = true;
     document.querySelector('.topbar').hidden = false;
@@ -87,7 +91,64 @@
     route();
   }
 
+  /* 保存の状態を画面に出す（黙って消えるのを防ぐ） */
+  /* 復元の知らせは、直後の保存で notify() が走ると消えてしまうため、
+     一度受け取ったらこちらで持ち、一定時間は出し続ける */
+  var recoveredMsg = null, recoveredUntil = 0, recoveredTimer = null;
+
+  function renderSaveBanner() {
+    var P = DOJO.Persist; if (!P) return;
+    var st = P.status();
+    if (st.recovered) {
+      recoveredMsg = st.recovered;
+      recoveredUntil = Date.now() + 12000;
+      st.recovered = null;
+      clearTimeout(recoveredTimer);
+      recoveredTimer = setTimeout(renderSaveBanner, 12200);
+    }
+    var bar = document.getElementById('saveBanner');
+    if (!bar) {
+      bar = document.createElement('div');
+      bar.id = 'saveBanner';
+      bar.className = 'savebar';
+      document.body.insertBefore(bar, document.getElementById('app'));
+    }
+    var msg = '', cls = '';
+    if (st.ls === 'ng' && st.idb !== 'ok') {
+      cls = 'bad';
+      msg = '⚠ このブラウザに進捗を保存できません（プライベートモード等）。'
+          + '<a href="#/progress">進捗ページ</a>でバックアップを保存してください。';
+    } else if (st.ls === 'ng') {
+      cls = 'warn';
+      msg = '⚠ localStorage に保存できないため、IndexedDB のみで保持しています。'
+          + '<a href="#/progress">バックアップ</a>を取ってください。';
+    } else if (st.file === 'need-permission') {
+      cls = 'warn';
+      msg = '進捗ファイルへの自動保存が一時停止しています。'
+          + '<a href="#/progress">進捗ページ</a>で許可し直してください。';
+    } else if (P.needsBackup()) {
+      cls = 'warn';
+      msg = 'バックアップをしばらく取っていません。'
+          + '<a href="#/progress">進捗ページ</a>から保存できます。';
+    } else if (recoveredMsg && Date.now() < recoveredUntil) {
+      cls = 'ok';
+      msg = '✓ ' + recoveredMsg + '（進捗は失われていません）';
+    }
+    if (!msg) { bar.remove(); return; }
+    bar.className = 'savebar ' + cls;
+    bar.innerHTML = msg;
+  }
+  DOJO.renderSaveBanner = renderSaveBanner;
+
   window.addEventListener('DOMContentLoaded', function () {
-    DOJO.loadAll(boot);
+    var P = DOJO.Persist;
+    var ready = P ? P.init() : Promise.resolve(null);
+    ready.catch(function () { return null; }).then(function () {
+      DOJO.loadAll(function () {
+        boot();
+        renderSaveBanner();
+        if (P) P.onChange(renderSaveBanner);
+      });
+    });
   });
 })(window);

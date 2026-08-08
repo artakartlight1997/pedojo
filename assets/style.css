@@ -230,3 +230,25 @@ html[data-theme="dark"] .cal i.c4{background:#43c08c;border-color:#4fd39b}
 .prose .callout.field .ct{color:#0f6b4a}
 html[data-theme="dark"] .prose .callout.field{border-left-color:#4fd39b}
 html[data-theme="dark"] .prose .callout.field .ct{color:#4fd39b}
+
+/* ===== 保存状態バナー ===== */
+.savebar {
+  padding: 10px 18px; font-size: 13px; line-height: 1.6;
+  border-bottom: 1px solid var(--line);
+}
+.savebar.bad  { background: #fdecea; color: #8a1c14; }
+.savebar.warn { background: #fff6e0; color: #7a5300; }
+.savebar.ok   { background: #e9f6ec; color: #1d6b2f; }
+.savebar a { color: inherit; text-decoration: underline; font-weight: 600; }
+:root[data-theme="dark"] .savebar.bad  { background: #3a1714; color: #ffb4a8; }
+:root[data-theme="dark"] .savebar.warn { background: #382d10; color: #ffd88a; }
+:root[data-theme="dark"] .savebar.ok   { background: #12301b; color: #9ee6ae; }
+
+/* データ管理 */
+.savegrid { display: grid; grid-template-columns: repeat(auto-fit,minmax(180px,1fr)); gap: 10px; margin: 10px 0; }
+.savecell { border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; }
+.savecell .k { font-size: 12px; color: var(--muted); }
+.savecell .v { font-weight: 700; margin-top: 2px; }
+.savecell .v.ok { color: #1d6b2f; } .savecell .v.ng { color: #b3261e; } .savecell .v.na { color: var(--muted); }
+.dropzone { border: 2px dashed var(--line); border-radius: 8px; padding: 18px; text-align: center; color: var(--muted); margin-top: 10px; }
+.dropzone.over { border-color: var(--accent); color: var(--fg); }

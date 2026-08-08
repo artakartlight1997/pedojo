@@ -619,7 +619,7 @@
   UI.progress = function () {
     var o = DOJO.Store.overall();
     var st = DOJO.Store.state;
-    var rk = DOJO.Store.rank(), st = DOJO.Store.streakInfo();
+    var rk = DOJO.Store.rank(), stk = DOJO.Store.streakInfo();
     var h = '<div class="card"><h1>進捗</h1>'
       + '<div class="hero-rank" style="margin-bottom:14px">'
       + '<div class="rank-badge">' + esc(rk.cur.name) + '</div>'
@@ -627,7 +627,7 @@
       + (rk.next ? ' <span class="muted small">→ ' + esc(rk.next.name) + ' まであと ' + rk.toNext + '</span>' : '') + '</div>'
       + '<div class="small muted">' + esc(rk.cur.label) + '</div>'
       + '<div class="bar" style="margin-top:8px"><i style="width:' + Math.round(rk.pct * 100) + '%"></i></div>'
-      + '<div class="small muted" style="margin-top:6px">連続学習 ' + st.cur + '日（最長 ' + st.best + '日）</div></div></div>'
+      + '<div class="small muted" style="margin-top:6px">連続学習 ' + stk.cur + '日（最長 ' + stk.best + '日）</div></div></div>'
       + '<div class="grid g4">'
       + '<div class="stat"><div class="v">' + o.seen + ' / ' + o.total + '</div><div class="l">着手</div></div>'
       + '<div class="stat"><div class="v">' + o.mastered + '</div><div class="l">習得（Box3+）</div></div>'
@@ -683,29 +683,105 @@
       }).join('') + '</select>'
       + '<span class="muted small">達成するとホームのリングが埋まります。</span></div></div>';
 
-    h += '<div class="card"><h3>データ管理</h3>'
-      + '<p class="small muted">進捗はこのブラウザの localStorage に保存されます。端末を移す場合はエクスポートしてください。</p>'
-      + '<div class="row"><button class="btn" id="expBtn">エクスポート</button>'
-      + '<button class="btn" id="impBtn">インポート</button>'
-      + '<button class="btn" id="resetBtn">進捗をリセット</button></div>'
-      + '<textarea id="ioArea" style="width:100%;height:120px;margin-top:10px;display:none;font-family:var(--mono);font-size:11px"></textarea>'
+    var P = DOJO.Persist, ps = P ? P.status() : { ls: 'unknown', idb: 'unknown', file: 'off', lastSaved: null };
+    function badge(v) {
+      var map = { ok: ['保存中', 'ok'], ng: ['エラー', 'ng'], na: ['非対応', 'na'], on: ['自動保存中', 'ok'],
+                  off: ['未設定', 'na'], 'need-permission': ['要再許可', 'ng'], unknown: ['—', 'na'] };
+      var m = map[v] || ['—', 'na'];
+      return '<div class="v ' + m[1] + '">' + m[0] + '</div>';
+    }
+
+    h += '<div class="card"><h3>進捗の保存</h3>'
+      + '<p class="small muted">進捗が消えたら道場は成立しません。保存は多層にしてあります。'
+      + '<b>端末を移す・ブラウザを変える・データを消す可能性がある場合は、必ずバックアップを取ってください。</b></p>'
+      + '<div class="savegrid">'
+      + '<div class="savecell"><div class="k">① localStorage（主）</div>' + badge(ps.ls) + '</div>'
+      + '<div class="savecell"><div class="k">② IndexedDB（副・自動復元用）</div>' + badge(ps.idb) + '</div>'
+      + '<div class="savecell"><div class="k">③ 進捗ファイル（自動保存）</div>' + badge(ps.file) + '</div>'
+      + '<div class="savecell"><div class="k">最終保存</div><div class="v">'
+      + (ps.lastSaved ? new Date(ps.lastSaved).toLocaleString('ja-JP') : '—') + '</div></div>'
       + '</div>';
+
+    if (ps.lastError) {
+      h += '<div class="callout warn"><div class="ct">保存エラー</div><p class="small">' + esc(ps.lastError) + '</p></div>';
+    }
+
+    h += '<div class="callout"><div class="ct">おすすめ：進捗ファイルへの自動保存</div>'
+      + '<p class="small">保存先のファイルを一度選ぶと、以後は回答するたびに<b>そのファイルへ自動で書き込まれます</b>。'
+      + 'ブラウザのデータを消しても、そのファイルから復元できます。'
+      + (P && P.canFile ? '' : '<br><b>このブラウザは未対応です</b>（Chrome / Edge のデスクトップ版で利用できます）。'
+        + '代わりに、下の「バックアップを保存」を定期的に使ってください。')
+      + '</p></div>';
+
+    h += '<div class="row" style="margin-top:10px">'
+      + (P && P.canFile ? '<button class="btn" id="fileBtn">進捗ファイルを選んで自動保存を有効にする</button>' : '')
+      + '<button class="btn" id="dlBtn">バックアップを保存（.json）</button>'
+      + '<button class="btn" id="upBtn">バックアップから復元</button>'
+      + '<input type="file" id="upInput" accept="application/json,.json" style="display:none">'
+      + '</div>'
+      + '<div class="dropzone" id="dropZone">ここに進捗ファイル（.json）をドラッグ＆ドロップしても復元できます</div>';
+
+    h += '<details style="margin-top:12px"><summary class="small muted">テキストで入出力する（旧方式）</summary>'
+      + '<div class="row" style="margin-top:8px"><button class="btn" id="expBtn">テキストで出力</button>'
+      + '<button class="btn" id="impBtn">テキストから取込</button></div>'
+      + '<textarea id="ioArea" style="width:100%;height:120px;margin-top:10px;display:none;font-family:var(--mono);font-size:11px"></textarea>'
+      + '</details>';
+
+    h += '<div class="row" style="margin-top:16px;border-top:1px solid var(--line);padding-top:12px">'
+      + '<button class="btn" id="resetBtn">進捗をリセット</button>'
+      + '<span class="small muted">取り消せません。先にバックアップを保存してください。</span></div>'
+      + '</div>';
+
     app.innerHTML = h;
 
     var gs = el('goalSel');
-    if (gs) gs.addEventListener('click', function () { });
     if (gs) gs.addEventListener('change', function (e) { DOJO.Store.goal(parseInt(e.target.value, 10)); });
+
+    function restoreFrom(file) {
+      if (!file) return;
+      DOJO.Persist.restoreFile(file).then(function (obj) {
+        DOJO.Store.adopt(obj);
+        alert('復元しました。');
+        UI.progress();
+        if (DOJO.renderSaveBanner) DOJO.renderSaveBanner();
+      }).catch(function (e) { alert('復元できませんでした：' + e.message); });
+    }
+
+    if (el('fileBtn')) el('fileBtn').addEventListener('click', function () {
+      DOJO.Persist.enableFile(DOJO.Store.state)
+        .then(function () { alert('自動保存を有効にしました。以後、回答のたびにこのファイルへ保存されます。'); UI.progress(); })
+        .catch(function (e) { if (e && e.name !== 'AbortError') alert('設定できませんでした：' + e.message); });
+    });
+    el('dlBtn').addEventListener('click', function () {
+      var name = DOJO.Persist.download(DOJO.Store.state);
+      alert('バックアップを保存しました：' + name);
+      if (DOJO.renderSaveBanner) DOJO.renderSaveBanner();
+    });
+    el('upBtn').addEventListener('click', function () { el('upInput').click(); });
+    el('upInput').addEventListener('change', function (e) { restoreFrom(e.target.files[0]); });
+
+    var dz = el('dropZone');
+    ['dragenter', 'dragover'].forEach(function (ev) {
+      dz.addEventListener(ev, function (e) { e.preventDefault(); dz.classList.add('over'); });
+    });
+    ['dragleave', 'drop'].forEach(function (ev) {
+      dz.addEventListener(ev, function (e) { e.preventDefault(); dz.classList.remove('over'); });
+    });
+    dz.addEventListener('drop', function (e) { restoreFrom(e.dataTransfer.files[0]); });
+
     el('expBtn').addEventListener('click', function () {
       var a = el('ioArea'); a.style.display = 'block'; a.value = DOJO.Store.exportJSON(); a.select();
     });
     el('impBtn').addEventListener('click', function () {
       var a = el('ioArea');
-      if (a.style.display === 'none') { a.style.display = 'block'; a.value = ''; a.placeholder = 'ここにJSONを貼り付けて、もう一度インポートを押す'; return; }
-      try { DOJO.Store.importJSON(a.value); alert('インポートしました'); UI.progress(); }
-      catch (e) { alert('JSONの形式が不正です'); }
+      if (a.style.display === 'none') { a.style.display = 'block'; a.value = ''; a.placeholder = 'ここにJSONを貼り付けて、もう一度このボタンを押す'; return; }
+      try { DOJO.Store.importJSON(a.value); alert('取り込みました'); UI.progress(); }
+      catch (e) { alert('取り込めませんでした：' + e.message); }
     });
     el('resetBtn').addEventListener('click', function () {
-      if (confirm('すべての学習進捗を削除します。よろしいですか？')) { DOJO.Store.reset(); UI.progress(); }
+      if (!confirm('すべての学習進捗を削除します。よろしいですか？')) return;
+      if (!confirm('取り消せません。本当に削除しますか？')) return;
+      DOJO.Store.reset(); UI.progress();
     });
   };
 

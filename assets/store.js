@@ -17,17 +17,28 @@
 
   function load() {
     if (S) return S;
+    var raw = null;
     try {
-      var raw = localStorage.getItem(KEY);
-      S = raw ? Object.assign({}, DEFAULT, JSON.parse(raw)) : JSON.parse(JSON.stringify(DEFAULT));
+      raw = DOJO.Persist ? DOJO.Persist.readSync() : JSON.parse(localStorage.getItem(KEY) || 'null');
+    } catch (e) { raw = null; }
+    try {
+      S = raw ? Object.assign({}, DEFAULT, raw) : JSON.parse(JSON.stringify(DEFAULT));
       S.settings = Object.assign({}, DEFAULT.settings, S.settings || {});
     } catch (e) {
       S = JSON.parse(JSON.stringify(DEFAULT));
     }
     return S;
   }
+  /** 状態を外部から差し替える（バックアップからの復元・起動時の復旧で使う） */
+  function adopt(obj) {
+    S = Object.assign({}, DEFAULT, obj || {});
+    S.settings = Object.assign({}, DEFAULT.settings, S.settings || {});
+    return S;
+  }
   function save() {
-    try { localStorage.setItem(KEY, JSON.stringify(load())); } catch (e) { /* quota */ }
+    var st = load();
+    if (DOJO.Persist) DOJO.Persist.write(st);
+    else { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {} }
   }
 
   // Leitner: box 0..5 / 復習間隔（日）
@@ -58,6 +69,7 @@
   var Store = {
     get state() { return load(); },
     save: save,
+    adopt: function (obj) { adopt(obj); save(); },
 
     reset: function () { S = JSON.parse(JSON.stringify(DEFAULT)); save(); },
 
@@ -297,8 +309,8 @@
     exportJSON: function () { return JSON.stringify(load(), null, 2); },
     importJSON: function (txt) {
       var o = JSON.parse(txt);
-      S = Object.assign(JSON.parse(JSON.stringify(DEFAULT)), o);
-      save(); return true;
+      if (!o || typeof o !== 'object' || !('q' in o)) throw new Error('進捗データの形式ではありません');
+      adopt(o); save(); return true;
     }
   };
 
