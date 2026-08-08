@@ -26,12 +26,22 @@ const hasCalc = all.filter(q => /```/.test(q.exp)).length;          // 計算過
 const hasTable = all.filter(q => /\n\|.*\|/.test(q.exp)).length;
 const hasStruct = all.filter(q => /(\n[-・]|\n[0-9]+\.)/.test(q.exp)).length; // 箇条書き
 const hasWhy = all.filter(q => /(なぜ|理由|ため|背景|論点|実務)/.test(q.exp)).length;
-const hasXref = all.filter(q => /第[0-9]+講/.test(q.exp)).length;    // 他トピックへの相互参照
-const hasDistractorExp = all.filter(q => {
-  // 誤答（正解以外）の語がexpに現れるか＝誤答をつぶす説明があるか
+// 相互参照。strict＝「第N講」という正式な講番号での参照。
+// broad＝「◯◯編を参照」のような、講名での参照も含む（どちらも実際に他講へ送っている）
+const xrefStrict = /第[0-9]+講/;
+const xrefBroad = /(第[0-9]+講|[^。\n]{2,10}編(を参照|を参照してください|で詳述|参照))/;
+const hasXrefStrict = all.filter(q => xrefStrict.test(q.exp)).length;
+const hasXref = all.filter(q => xrefBroad.test(q.exp)).length;
+
+// 誤答つぶし。strict＝誤答の文言そのものがexpに現れる。
+// broad＝「選択肢B は〜」のように選択肢を名指しして否定している場合も含む
+const distractorStrict = q => {
   const wrong = q.choices.filter((_, i) => i !== q.a);
   return wrong.some(w => { const key = w.replace(/[（）()、。]/g, '').slice(0, 8); return key.length > 3 && q.exp.indexOf(key) >= 0; });
-}).length;
+};
+const distractorBroad = q => distractorStrict(q) || /選択肢\s*[A-DＡ-Ｄ]/.test(q.exp);
+const hasDistractorStrict = all.filter(distractorStrict).length;
+const hasDistractorExp = all.filter(distractorBroad).length;
 
 // 「長い方が正解」ゲームの検査
 let longestIsCorrect = 0, exploitable = 0, homog = 0, correctLenRatio = [], nonNum = 0;
@@ -76,8 +86,8 @@ console.log(`  計算過程のブロックを含む    : ${hasCalc} 問 (${pct(h
 console.log(`  比較表を含む                : ${hasTable} 問 (${pct(hasTable)})`);
 console.log(`  箇条書きで構造化されている  : ${hasStruct} 問 (${pct(hasStruct)})`);
 console.log(`  「なぜ／実務上の意味」を書く: ${hasWhy} 問 (${pct(hasWhy)})`);
-console.log(`  他講への相互参照            : ${hasXref} 問 (${pct(hasXref)})`);
-console.log(`  誤答選択肢に言及して潰す    : ${hasDistractorExp} 問 (${pct(hasDistractorExp)})`);
+console.log(`  他講への相互参照            : ${hasXref} 問 (${pct(hasXref)})   うち「第N講」表記 ${hasXrefStrict} 問`);
+console.log(`  誤答選択肢に言及して潰す    : ${hasDistractorExp} 問 (${pct(hasDistractorExp)})   うち誤答の文言を再掲 ${hasDistractorStrict} 問`);
 
 console.log('\n[3] 選択肢の作り（当て推量で解けないか）');
 console.log('  選択肢数の分布: ' + JSON.stringify(cc));
