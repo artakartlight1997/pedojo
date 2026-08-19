@@ -30,10 +30,17 @@
     var terms = [];
     (DOJO.GLOSSARY || []).forEach(function (e) {
       if (!e.term || e.term.length < 2) return;
-      if (!map[e.term]) { map[e.term] = e; terms.push(e.term); }
-      // 「EBITDA（イービットディーエー）」のような表記から英字部分も引けるように
-      var m = e.term.match(/^([A-Za-z][A-Za-z0-9&/\-\s]{1,30})（/);
-      if (m && !map[m[1]]) { map[m[1]] = e; terms.push(m[1]); }
+      function alias(w) {
+        w = w.trim();
+        if (w.length >= 2 && !map[w]) { map[w] = e; terms.push(w); }
+      }
+      alias(e.term);
+      // 「EBITDA（イービットディーエー）」のような表記から括弧前も引けるように
+      var m = e.term.match(/^([^（(]{2,30})（/);
+      if (m) alias(m[1]);
+      // 「CEO/CFO/COO」「DSO/DIO/DPO」のような複合見出しは個別語でも引けるように
+      var head = m ? m[1] : e.term;
+      if (head.indexOf('/') > 0) head.split('/').forEach(alias);
     });
     terms.sort(function (a, b) { return b.length - a.length; });   // 最長一致
     if (!terms.length) { termIndex = { re: null, map: map }; return termIndex; }
