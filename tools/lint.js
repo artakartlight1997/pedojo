@@ -12,7 +12,7 @@ const all=DOJO.allQuestions(); const problems=[];
 const badPatterns=[/上記のすべて/,/すべて正しい/,/A(と|、)B(の)?両方/,/以下のすべて/,/選択肢[ABCD]/,/次のうち二つ/];
 // 日本語のはずの箇所に紛れ込んだキリル文字・ハングルを検出する
 // （生成時に「резерв」「монイタリング」のような混入が実際に起きたため、恒久的に検査する）
-const foreign=/[Ѐ-ӿ가-힯]|[组变说们电买卖场读习证实资评价视频讲两见时对开关问经济书发计划为头]/;
+const foreign=/[Ѐ-ӿ가-힯]|[组变说们电买卖场读习证实资评价视频讲两见时对开关问经济书发计划为头规继续单总]/;
 all.forEach(q=>{
   [['q',q.q],['exp',q.exp],...q.choices.map((c,i)=>['choice'+i,c])].forEach(([k,s])=>{
     const m=s.match(new RegExp('.{0,10}'+foreign.source+'+.{0,10}'));
