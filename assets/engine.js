@@ -14,7 +14,7 @@
 
   /**
    * 出題セッション
-   * opts: {questions:[], mode:'study'|'drill'|'exam'|'review', title, topic, lv,
+   * opts: {questions:[], mode:'study'|'drill'|'exam'|'review'|'set', title, topic, lv, set,
    *        shuffleQ:bool, shuffleC:bool, limit:number, instant:bool}
    */
   function Session(opts) {
@@ -34,6 +34,32 @@
     this.startedAt = Date.now();
     this.finished = false;
   }
+
+  /** スナップショットからセッションを復元する。問題が見つからない場合は null */
+  Session.restore = function (snap) {
+    if (!snap || !snap.items || !snap.items.length) return null;
+    var qs = [];
+    for (var i = 0; i < snap.items.length; i++) {
+      var q = DOJO.questionById(snap.items[i].id);
+      if (!q) return null;                       // データ更新で問題が消えた場合は復元しない
+      qs.push(q);
+    }
+    var s = new Session({
+      questions: qs, mode: snap.mode, title: snap.title,
+      topic: snap.topic, lv: snap.lv, set: snap.set,
+      shuffleQ: false, shuffleC: false
+    });
+    s.items.forEach(function (it, i) {
+      var si = snap.items[i];
+      // 選択肢数が変わっていたら保存済みの並びは使わない
+      if (si.order && si.order.length === it.q.choices.length) it.order = si.order;
+      it.picked = si.picked; it.pickedOrig = si.pickedOrig;
+      it.correct = si.correct; it.revealed = si.revealed;
+    });
+    s.idx = Math.min(snap.idx || 0, s.items.length - 1);
+    s.startedAt = snap.startedAt || Date.now();
+    return s;
+  };
 
   Session.prototype = {
     get cur() { return this.items[this.idx]; },
@@ -84,6 +110,21 @@
     retryWrong: function () {
       var qs = this.wrongItems.map(function (it) { return it.q; });
       return new Session(Object.assign({}, this.opts, { questions: qs, title: this.title + '（誤答再挑戦）' }));
+    },
+
+    /** 途中再開のためのスナップショット（Store.session に保存する形） */
+    snapshot: function () {
+      return {
+        v: 1,
+        mode: this.mode, title: this.title,
+        topic: this.opts.topic || null, lv: this.opts.lv || null,
+        set: (typeof this.opts.set === 'number') ? this.opts.set : null,
+        idx: this.idx, startedAt: this.startedAt,
+        items: this.items.map(function (it) {
+          return { id: it.q.id, order: it.order,
+                   picked: it.picked, pickedOrig: it.pickedOrig, correct: it.correct, revealed: it.revealed };
+        })
+      };
     }
   };
 

@@ -39,6 +39,24 @@
   DOJO.questionsOf = function (topicId, lv) {
     return (DOJO.BANK[topicId + '-' + lv] || []).slice();
   };
+
+  /* ===== 10問セット =====
+     1回の学習単位は「セット」（約10問・10分）。
+     途中でやめても、セット単位で進捗が残り、続きから再開できる。 */
+  DOJO.SET_SIZE = 10;
+  DOJO.setsFor = function (topicId, lv) {
+    var list = DOJO.questionsOf(topicId, lv);
+    var out = [];
+    for (var i = 0; i < list.length; i += DOJO.SET_SIZE) {
+      out.push({ i: out.length, qids: list.slice(i, i + DOJO.SET_SIZE).map(function (q) { return q.id; }) });
+    }
+    // 末尾セットが3問未満なら前のセットに吸収する（半端なセットを作らない）
+    if (out.length >= 2 && out[out.length - 1].qids.length < 3) {
+      var last = out.pop();
+      out[out.length - 1].qids = out[out.length - 1].qids.concat(last.qids);
+    }
+    return out;
+  };
   DOJO.questionById = function (id) {
     var all = DOJO.allQuestions();
     for (var i = 0; i < all.length; i++) if (all[i].id === id) return all[i];

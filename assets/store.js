@@ -8,6 +8,8 @@
     q: {},        // qid -> {n,c,w,box,due,last,flag}
     lec: {},      // "topic-lv" -> {read:ts}
     sessions: [], // 学習履歴
+    sets: {},     // "topic-lv-setIdx" -> {best:正答率0-1, tries, last:ts}
+    session: null,// 解きかけのセッション（Session.snapshot）。終了で消える
     daily: {},    // "YYYY-MM-DD" -> {n:回答数, c:正答数, lec:読了数}
     streak: { cur: 0, best: 0, last: '' },
     settings: { theme: 'light', shuffle: true, goal: 20, showTimer: false }
@@ -52,18 +54,20 @@
     return Math.round((new Date(b + 'T00:00:00') - new Date(a + 'T00:00:00')) / 86400000);
   }
 
-  /* ===== 段位（10段階） ===== */
+  /* ===== 段位＝職位（10段階）
+     この道場の段位はPEファンドの職位に対応させている。
+     修了時の到達目標：「ディレクターに勝てる」＝ ED 以上。 ===== */
   var RANKS = [
-    { id: 0, name: '入門',     need: 0,    label: '道場に入ったばかり。まずはPE概論・初級から。' },
-    { id: 1, name: '白帯',     need: 25,   label: '共通言語を覚え始めた。用語が「聞き取れる」段階。' },
-    { id: 2, name: '黄帯',     need: 60,   label: '基礎が固まってきた。会議の議論についていける。' },
-    { id: 3, name: '橙帯',     need: 110,  label: '初級を横断できる。指示された作業の意味が分かる。' },
-    { id: 4, name: '緑帯',     need: 180,  label: '実務の入口。モデルとDDの構造が見えている。' },
-    { id: 5, name: '青帯',     need: 260,  label: '担当者水準。自分で論点を立てられる。' },
-    { id: 6, name: '茶帯',     need: 350,  label: 'ディールを主担当で回せる水準。' },
-    { id: 7, name: '黒帯',     need: 450,  label: '専門家と対等に議論できる。ICで発言できる。' },
-    { id: 8, name: '師範代',   need: 560,  label: 'ストラクチャーを設計し、判断を主導できる。' },
-    { id: 9, name: '師範',     need: 680,  label: '現場・人・関係まで含めて、投資を完遂できる。' }
+    { id: 0, name: '入門',            need: 0,    label: '道場に入った。まず入門段（PE概論・プロの作法）の座学から。' },
+    { id: 1, name: 'アナリスト',      need: 30,   label: '用語が聞き取れる。会議の議事録が書ける。' },
+    { id: 2, name: 'アソシエイト',    need: 80,   label: '指示された分析を、一人で最後まで回せる。' },
+    { id: 3, name: 'シニアアソシエイト', need: 160, label: 'モデルとDDを主担当で回せる。専門家に指示が出せる。' },
+    { id: 4, name: 'VP',              need: 280,  label: '案件全体を設計し、交渉の前線に立てる。' },
+    { id: 5, name: 'シニアVP',        need: 450,  label: '複数案件を並行して統率し、後進を育てられる。' },
+    { id: 6, name: 'ディレクター',    need: 700,  label: '案件の生殺与奪を判断できる。ICで「詰める側」に回る。' },
+    { id: 7, name: 'ED',              need: 1000, label: 'ソーシングからEXITまで、ファンドの看板を背負える。ここで「ディレクターに勝てる」。' },
+    { id: 8, name: 'パートナー',      need: 1400, label: 'ファンドレイズとLP対応まで含め、ファンド経営を担える。' },
+    { id: 9, name: '道場主',          need: 2000, label: '全問制覇の先。M&Aを一人で最初から最後まで完遂できる。' }
   ];
 
   var Store = {
@@ -82,6 +86,67 @@
     rec: function (qid) {
       var s = load();
       return s.q[qid] || null;
+    },
+
+    /* ===== 解きかけセッション（途中再開） ===== */
+    saveSession: function (snap) { var s = load(); s.session = snap; save(); },
+    clearSession: function () { var s = load(); s.session = null; save(); },
+    getSession: function () { return load().session || null; },
+
+    /* ===== 10問セットの記録 =====
+       セットを最後まで解き切ると記録される。合格＝正答率80%以上 */
+    PASS: 0.8,
+    recordSet: function (topic, lv, i, correct, total) {
+      if (topic == null || i == null) return;
+      var s = load();
+      var k = topic + '-' + lv + '-' + i;
+      var r = s.sets[k] || { best: 0, tries: 0, last: 0 };
+      r.tries++;
+      r.best = Math.max(r.best, total ? correct / total : 0);
+      r.last = Date.now();
+      s.sets[k] = r; save();
+      return r;
+    },
+    setRec: function (topic, lv, i) { return load().sets[topic + '-' + lv + '-' + i] || null; },
+    /** トピック×レベルのセット一覧と状態。
+        state: 'clear'(合格) / 'tried'(解いたが80%未満) / 'part'(解きかけ) / 'todo' */
+    setSummary: function (topic, lv) {
+      var s = load();
+      var sess = s.session;
+      var sets = DOJO.setsFor(topic, lv);
+      var per = sets.map(function (st) {
+        var rec = s.sets[topic + '-' + lv + '-' + st.i];
+        var attempted = st.qids.filter(function (id) { return !!s.q[id]; }).length;
+        var inSession = !!(sess && sess.topic === topic && sess.lv === lv && sess.set === st.i);
+        var state = 'todo';
+        if (rec && rec.best >= Store.PASS) state = 'clear';
+        else if (rec) state = 'tried';
+        else if (inSession || attempted > 0) state = 'part';
+        return { i: st.i, qids: st.qids, n: st.qids.length, rec: rec || null,
+                 attempted: attempted, inSession: inSession, state: state };
+      });
+      var cleared = per.filter(function (x) { return x.state === 'clear'; }).length;
+      return { sets: per, total: per.length, cleared: cleared,
+               next: per.filter(function (x) { return x.state !== 'clear'; })[0] || null };
+    },
+    /** 道場全体のセット制覇状況 */
+    conquest: function () {
+      var totalSets = 0, cleared = 0, totalQ = 0, attemptedQ = 0;
+      var s = load();
+      DOJO.TOPICS.forEach(function (t) {
+        DOJO.LEVELS.forEach(function (l) {
+          var sets = DOJO.setsFor(t.id, l.id);
+          if (!sets.length) return;
+          totalSets += sets.length;
+          sets.forEach(function (st) {
+            var rec = s.sets[t.id + '-' + l.id + '-' + st.i];
+            if (rec && rec.best >= Store.PASS) cleared++;
+          });
+        });
+      });
+      DOJO.allQuestions().forEach(function (q) { totalQ++; if (s.q[q.id]) attemptedQ++; });
+      return { totalSets: totalSets, clearedSets: cleared,
+               totalQ: totalQ, attemptedQ: attemptedQ };
     },
 
     /** 段位（習得数＋正答率で決まる） */
@@ -138,13 +203,14 @@
         var m = self.mastery(it.topic.id, it.lv);
         var read = self.isRead(it.topic.id, it.lv);
         var qn = DOJO.questionsOf(it.topic.id, it.lv).length;
-        // 修了＝座学を読み、その水準の問題の6割以上を1回以上正解している
-        var done = read && qn > 0 && m.mastered >= Math.ceil(qn * 0.6);
+        var ss = self.setSummary(it.topic.id, it.lv);
+        // 修了＝座学を読み、全セットを合格（80%以上）している
+        var done = read && ss.total > 0 && ss.cleared === ss.total;
         var started = read || m.seen > 0;
-        return Object.assign({}, it, { read: read, m: m, qn: qn, done: done, started: started });
+        return Object.assign({}, it, { read: read, m: m, qn: qn, ss: ss, done: done, started: started });
       });
     },
-    /** ルート上で「次にやるべき1件」 */
+    /** ルート上で「次にやるべき1件」（未修了の最初の項目と、その中の次のセット） */
     nextOnPath: function () {
       var st = this.pathStatus();
       for (var i = 0; i < st.length; i++) {
@@ -163,31 +229,47 @@
       });
     },
 
-    /** 次にやるべきこと（モチベーション設計の中核） */
+    /** 次にやるべきこと（モチベーション設計の中核）。
+        最優先は常に「解きかけの続き」→「ルートの次の1セット」 */
     nextActions: function () {
       var acts = [], o = this.overall();
       var due = this.dueQuestions().length;
       var t = this.today(), goal = this.goal();
 
-      if (due > 0) {
-        acts.push({ pri: 1, icon: '⟳', title: '復習箱を空にする', sub: '期限到来 ' + due + '問。ここを潰すのが最短の上達。', go: '#/review' });
+      // 0. 解きかけがあれば、何よりもまず続きから
+      var sess = this.getSession();
+      if (sess && sess.items) {
+        var doneN = sess.items.filter(function (x) { return x.revealed; }).length;
+        if (doneN < sess.items.length) {
+          var go = (sess.mode === 'set' && sess.topic)
+            ? '#/quiz/' + sess.topic + '/' + sess.lv + '/' + sess.set
+            : '#/resume';
+          acts.push({ pri: 0, icon: '▶', title: '続きから再開：' + (sess.title || 'セッション'),
+            sub: doneN + ' / ' + sess.items.length + ' 問まで解答済み。ここから再開。', go: go });
+        }
       }
-      if (t.n < goal) {
-        acts.push({ pri: 2, icon: '◎', title: '今日の目標まであと ' + (goal - t.n) + '問', sub: '実戦ドリルで一気に片付ける。', go: '#/drill' });
-      }
-      // 学習ルート上の「次の1件」（順序が意味を持つので、ここが最優先の学習動線）
+      // 1. 学習ルート上の「次の1セット」（順序が意味を持つので、これが学習の本線）
       var nx = this.nextOnPath();
       if (nx) {
         var lvName = DOJO.levelById(nx.lv).name;
         if (!nx.read) {
-          acts.push({ pri: 0, icon: '路', title: 'ルートの次：' + nx.stage.short + '／' + nx.topic.short + '・' + lvName,
-            sub: nx.stage.q + ' — まず座学を読む。', go: '#/lecture/' + nx.topic.id + '/' + nx.lv });
-        } else {
-          acts.push({ pri: 3, icon: '路', title: 'ルートの次：' + nx.topic.short + '・' + lvName + ' のクイズ',
-            sub: '座学は読了。あと ' + Math.max(0, Math.ceil(nx.qn * 0.6) - nx.m.mastered) + '問の正解で修了。', go: '#/quiz/' + nx.topic.id + '/' + nx.lv });
+          acts.push({ pri: 1, icon: '路', title: 'ルートの次：' + nx.stage.short + '／' + nx.topic.short + '・' + lvName + ' の座学',
+            sub: nx.stage.q, go: '#/lecture/' + nx.topic.id + '/' + nx.lv });
+        } else if (nx.ss.next) {
+          acts.push({ pri: 1, icon: '路', title: 'ルートの次：' + nx.topic.short + '・' + lvName + '　セット' + (nx.ss.next.i + 1),
+            sub: nx.ss.next.n + '問・約10分。合格 ' + nx.ss.cleared + ' / ' + nx.ss.total + ' セット。',
+            go: '#/quiz/' + nx.topic.id + '/' + nx.lv + '/' + nx.ss.next.i });
         }
       }
-      // 最も弱いトピック
+      // 2. 復習箱
+      if (due > 0) {
+        acts.push({ pri: 2, icon: '⟳', title: '復習箱を空にする', sub: '期限到来 ' + due + '問。ここを潰すのが最短の上達。', go: '#/review' });
+      }
+      // 3. 今日の目標
+      if (t.n < goal) {
+        acts.push({ pri: 3, icon: '◎', title: '今日の目標まであと ' + (goal - t.n) + '問', sub: 'ルートの次のセットを解けばそのまま進む。', go: nx ? '#/quiz/' + nx.topic.id + '/' + nx.lv : '#/drill' });
+      }
+      // 4. 弱点
       var weak = DOJO.weakTopics()[0];
       if (weak) {
         acts.push({ pri: 4, icon: '△', title: '弱点：' + weak.topic.short + '・' + weak.level.name,

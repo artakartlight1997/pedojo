@@ -20,6 +20,101 @@
   }
   function countOf(t, l) { return DOJO.questionsOf(t, l).length; }
 
+  /* ===== 用語のその場解説 =====
+     解説文・座学の中に出てくる用語集の語を検出してリンク化し、
+     タップでその場に意味を出す。「別のページで調べ直す」を無くすための仕組み。 */
+  var termIndex = null;   // {re, map}
+  function buildTermIndex() {
+    if (termIndex) return termIndex;
+    var map = {};
+    var terms = [];
+    (DOJO.GLOSSARY || []).forEach(function (e) {
+      if (!e.term || e.term.length < 2) return;
+      if (!map[e.term]) { map[e.term] = e; terms.push(e.term); }
+      // 「EBITDA（イービットディーエー）」のような表記から英字部分も引けるように
+      var m = e.term.match(/^([A-Za-z][A-Za-z0-9&/\-\s]{1,30})（/);
+      if (m && !map[m[1]]) { map[m[1]] = e; terms.push(m[1]); }
+    });
+    terms.sort(function (a, b) { return b.length - a.length; });   // 最長一致
+    if (!terms.length) { termIndex = { re: null, map: map }; return termIndex; }
+    var re = new RegExp(terms.map(function (t) {
+      return t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }).join('|'), 'g');
+    termIndex = { re: re, map: map };
+    return termIndex;
+  }
+  /** root 内のテキストノードを走査して用語をリンク化する */
+  function linkTerms(root) {
+    if (!root || !(DOJO.GLOSSARY || []).length) return;
+    var ix = buildTermIndex();
+    if (!ix.re) return;
+    var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+      acceptNode: function (n) {
+        var p = n.parentNode;
+        if (!p) return NodeFilter.FILTER_REJECT;
+        var tag = p.nodeName;
+        if (tag === 'CODE' || tag === 'PRE' || tag === 'A' || tag === 'BUTTON' || tag === 'KBD') return NodeFilter.FILTER_REJECT;
+        if (p.classList && (p.classList.contains('term') || p.classList.contains('kw'))) return NodeFilter.FILTER_REJECT;
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    });
+    var nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    var seen = {};                                   // 同じ用語は1画面に1リンクで十分
+    nodes.forEach(function (node) {
+      var text = node.nodeValue;
+      ix.re.lastIndex = 0;
+      var m, out = [], last = 0, hit = false;
+      while ((m = ix.re.exec(text))) {
+        var w = m[0];
+        if (seen[w]) continue;
+        seen[w] = true; hit = true;
+        out.push(document.createTextNode(text.slice(last, m.index)));
+        var sp = document.createElement('span');
+        sp.className = 'term'; sp.textContent = w; sp.setAttribute('data-term', w);
+        out.push(sp);
+        last = m.index + w.length;
+      }
+      if (!hit) return;
+      out.push(document.createTextNode(text.slice(last)));
+      var frag = document.createDocumentFragment();
+      out.forEach(function (x) { frag.appendChild(x); });
+      node.parentNode.replaceChild(frag, node);
+    });
+  }
+  UI.linkTerms = linkTerms;
+
+  var popEl = null;
+  function showTermPop(target, term) {
+    var ix = buildTermIndex();
+    var e = ix.map[term];
+    if (!e) return;
+    hideTermPop();
+    popEl = document.createElement('div');
+    popEl.className = 'termpop';
+    popEl.innerHTML = '<div class="tp-head"><b>' + esc(e.term) + '</b>'
+      + (e.read ? '<span class="muted small">　' + esc(e.read) + '</span>' : '')
+      + '<button class="tp-x" aria-label="閉じる">×</button></div>'
+      + '<div class="tp-body">' + MD.inline(e.def || '') + '</div>'
+      + '<div class="tp-foot"><a href="#/glossary">用語集で見る →</a></div>';
+    document.body.appendChild(popEl);
+    var r = target.getBoundingClientRect();
+    var w = Math.min(360, window.innerWidth - 24);
+    popEl.style.width = w + 'px';
+    var left = Math.max(12, Math.min(r.left, window.innerWidth - w - 12));
+    var top = r.bottom + 8;
+    if (top + popEl.offsetHeight > window.innerHeight - 10) top = Math.max(10, r.top - popEl.offsetHeight - 8);
+    popEl.style.left = left + 'px';
+    popEl.style.top = (top + window.scrollY) + 'px';
+    popEl.querySelector('.tp-x').addEventListener('click', hideTermPop);
+  }
+  function hideTermPop() { if (popEl) { popEl.remove(); popEl = null; } }
+  document.addEventListener('click', function (ev) {
+    var t = ev.target.closest ? ev.target.closest('.term') : null;
+    if (t) { showTermPop(t, t.getAttribute('data-term')); ev.stopPropagation(); return; }
+    if (popEl && !popEl.contains(ev.target)) hideTermPop();
+  });
+
   /* ===================== ホーム（ダッシュボード） ===================== */
   function ring(pctVal, label, sub) {
     var r = 34, c = 2 * Math.PI * r, off = c * (1 - Math.min(1, pctVal));
@@ -35,25 +130,66 @@
     var due = S.dueQuestions().length;
     var acts = S.nextActions();
     var lecTotal = S.lectureTotal(), lecRead = S.readCount();
+    var cq = S.conquest();
+    var nx = S.nextOnPath();
+    var sess = S.getSession();
+    var sessLive = sess && sess.items && sess.items.some(function (x) { return !x.revealed; });
 
     var h = '';
-    // ヒーロー：段位・ストリーク・今日
+
+    // ① 最重要：今日やることが1つだけ大きく出る（迷いを無くす）
+    var primary;
+    if (sessLive) {
+      var doneN = sess.items.filter(function (x) { return x.revealed; }).length;
+      primary = {
+        go: (sess.mode === 'set' && sess.topic) ? '#/quiz/' + sess.topic + '/' + sess.lv + '/' + sess.set : '#/resume',
+        label: '▶ 続きから再開する',
+        title: esc(sess.title || 'セッション'),
+        sub: doneN + ' / ' + sess.items.length + ' 問まで解答済み。途中でやめても、ここからいつでも続きができます。'
+      };
+    } else if (due >= 10) {
+      primary = { go: '#/review', label: '⟳ まず復習から（' + due + '問）',
+        title: '復習箱に期限が来ています',
+        sub: '忘れかけの知識を思い出す瞬間が、記憶に最も強く残ります。復習を空にしてから新しいセットへ。' };
+    } else if (nx) {
+      if (!nx.read) {
+        primary = { go: '#/lecture/' + nx.topic.id + '/' + nx.lv, label: '📖 座学を読む',
+          title: esc(nx.stage.name) + '　' + esc(nx.topic.name) + '・' + esc(DOJO.levelById(nx.lv).name),
+          sub: esc(nx.stage.q) };
+      } else if (nx.ss.next) {
+        primary = { go: '#/quiz/' + nx.topic.id + '/' + nx.lv + '/' + nx.ss.next.i,
+          label: '▶ 次のセットを解く（' + nx.ss.next.n + '問・約10分）',
+          title: esc(nx.topic.name) + '・' + esc(DOJO.levelById(nx.lv).name) + '　セット' + (nx.ss.next.i + 1) + ' / ' + nx.ss.total,
+          sub: '合格ライン80%。合格したセットが積み上がって、ルートが前に進みます。' };
+      }
+    }
+    if (!primary) primary = { go: '#/exam', label: '試 模擬IC試験', title: 'ルートは全て修了しています', sub: '横断出題で仕上げの確認を。' };
+
+    h += '<div class="card hero-cta">'
+      + '<div class="hc-kicker">いま、ここ</div>'
+      + '<div class="hc-title">' + primary.title + '</div>'
+      + '<div class="hc-sub">' + primary.sub + '</div>'
+      + '<button class="btn primary xl" data-go="' + primary.go + '">' + primary.label + '</button>'
+      + '<div class="hc-alt"><a href="#/path">ルート全体を見る →</a></div>'
+      + '</div>';
+
+    // ② 制覇カウンタ＋段位（ゴールへの距離が常に見える）
     h += '<div class="card hero">'
       + '<div class="hero-rank">'
       + '<div class="rank-badge">' + esc(rk.cur.name) + '</div>'
-      + '<div class="rank-body"><div class="rank-title">現在の段位：<b>' + esc(rk.cur.name) + '</b>'
+      + '<div class="rank-body"><div class="rank-title">現在の職位：<b>' + esc(rk.cur.name) + '</b>'
       + (rk.next ? ' <span class="muted small">→ 次は ' + esc(rk.next.name) + '（あと ' + rk.toNext + '）</span>' : ' <span class="muted small">最高位</span>') + '</div>'
       + '<div class="small muted">' + esc(rk.cur.label) + '</div>'
       + '<div class="bar" style="margin-top:8px"><i style="width:' + Math.round(rk.pct * 100) + '%"></i></div></div>'
       + '</div>'
       + '<div class="hero-stats">'
       + ring(goal ? t.n / goal : 0, t.n + '/' + goal, '今日')
+      + '<div class="hs"><div class="v">' + cq.clearedSets + '<small>/' + cq.totalSets + '</small></div><div class="l">セット合格</div></div>'
+      + '<div class="hs"><div class="v">' + cq.attemptedQ + '<small>/' + cq.totalQ + '</small></div><div class="l">制覇（解いた問題）</div></div>'
       + '<div class="hs"><div class="v">' + st.cur + '<small>日</small></div><div class="l">連続学習' + (st.best > st.cur ? '（最長 ' + st.best + '）' : '') + '</div></div>'
-      + '<div class="hs"><div class="v">' + due + '</div><div class="l">復習待ち</div></div>'
-      + '<div class="hs"><div class="v">' + (o.acc === null ? '—' : pct(o.acc)) + '</div><div class="l">通算正答率</div></div>'
       + '</div></div>';
 
-    // 次の一手
+    // ③ 次の一手（2番手以降の選択肢）
     h += '<div class="card"><div class="spread"><h3 style="margin:0">次の一手</h3>'
       + '<span class="muted small">迷ったら上から順に</span></div><div class="acts">';
     if (!acts.length) {
@@ -65,7 +201,7 @@
     });
     h += '</div></div>';
 
-    // 学習カレンダー
+    // ④ 学習カレンダー
     var cal = S.calendar(70);
     h += '<div class="card"><div class="spread"><h3 style="margin:0">学習カレンダー</h3>'
       + '<span class="muted small">直近10週間・1マス＝1日</span></div><div class="cal">'
@@ -74,32 +210,31 @@
         return '<i class="c' + lvl + '" title="' + d.key + '：' + d.n + '問"></i>';
       }).join('') + '</div>'
       + '<div class="small muted" style="margin-top:8px">'
-      + '毎日20問でも、1年で7,300問。<b>間を空けないことだけ</b>が効きます。</div></div>';
+      + '1日2セット（約20問）でも1年で7,000問超。<b>間を空けないことだけ</b>が効きます。</div></div>';
 
-    // 全体進捗
+    // ⑤ 全体進捗
     h += '<div class="grid g4">'
       + '<div class="stat"><div class="v">' + o.mastered + ' <small>/' + o.total + '</small></div><div class="l">習得（Box3+）</div></div>'
-      + '<div class="stat"><div class="v">' + o.seen + '</div><div class="l">着手済み</div></div>'
+      + '<div class="stat"><div class="v">' + due + '</div><div class="l">復習待ち</div></div>'
       + '<div class="stat"><div class="v">' + lecRead + ' <small>/' + lecTotal + '</small></div><div class="l">座学 読了</div></div>'
-      + '<div class="stat"><div class="v">' + o.attempts + '</div><div class="l">延べ解答数</div></div>'
+      + '<div class="stat"><div class="v">' + (o.acc === null ? '—' : pct(o.acc)) + '</div><div class="l">通算正答率</div></div>'
       + '</div>';
 
     // はじめての人向け
     if (o.seen === 0) {
       h += '<div class="card"><h1>PEファンド道場</h1>'
-        + '<p class="lead">白紙の状態から、投資委員会で自分の言葉で発言できる投資プロフェッショナルまで。'
-        + DOJO.TOPICS.length + 'トピック × 4レベル（初級・中級・上級・<b>実践</b>）で徹底的に回す道場です。</p>'
+        + '<p class="lead">白紙の状態から、M&Aを一人で最初から最後まで遂行できる投資プロフェッショナルまで。'
+        + '<b>10問セット</b>を積み上げて、' + DOJO.TOPICS.length + 'トピック × 4レベルを全て制覇する道場です。</p>'
         + '<div class="row"><button class="btn primary" data-go="#/lecture/pe/b">第一講（PE概論・初級）から始める</button>'
-        + '<button class="btn" data-go="#/curriculum">カリキュラムを見る</button></div></div>';
+        + '<button class="btn" data-go="#/path">学習ルートを見る</button></div></div>';
     }
 
-    h += '<div class="card"><h3>この道場の使い方</h3>'
+    h += '<div class="card"><h3>この道場の回し方</h3>'
       + '<ol>'
-      + '<li><b>座学 → クイズ → 誤答の解説</b>を1セットとして回す。正答率85%を超えるまで同じ講を繰り返す。</li>'
-      + '<li><b>「実践」レベルを飛ばさない。</b>教科書の知識だけでは現場で通用しません。'
-      + '設備投資サイクルの読み方、人柄の見抜き方、銀行との距離の取り方——ここに現場の差が出ます。</li>'
-      + '<li><b>毎日、復習箱をゼロにする。</b>間隔反復（1→3→7→21→60日）で長期記憶に落とす。</li>'
-      + '<li><b>上級・実践は横断で解く。</b>模擬IC試験でトピック混在の出題を受け、「何の論点か」を自分で判別する訓練を。</li>'
+      + '<li><b>1セット＝約10問・約10分。</b>途中でやめても続きから再開できます。まとまった時間は要りません。</li>'
+      + '<li><b>座学 → セットを順に合格（80%）→ 誤答の解説を読む</b>。解説の<span class="term-demo">点線の用語</span>はタップでその場に意味が出ます。</li>'
+      + '<li><b>毎日、復習箱をゼロにする。</b>間隔反復（1→3→7→21→60日）で長期記憶に落とします。</li>'
+      + '<li><b>「実践」レベルを飛ばさない。</b>設備投資サイクルの読み方、人柄の見抜き方、銀行との距離——現場の差はここに出ます。</li>'
       + '</ol></div>';
 
     app.innerHTML = h;
@@ -112,14 +247,20 @@
     var st = S.pathStatus();
     var laps = S.lapProgress();
     var nx = S.nextOnPath();
+    var sess = S.getSession();
+    var sessLive = sess && sess.items && sess.items.some(function (x) { return !x.revealed; });
 
     var h = '<div class="card"><h1>学習ルート</h1>'
-      + '<p class="lead">投資プロセスを<b>遂行する順序</b>で並べた道順です。'
+      + '<p class="lead">投資プロセスを<b>遂行する順序</b>で並べた一本道です。'
       + '「案件がどこから来て → いくらなら買えて → どう調べて → どう買って → どう契約して → どう育てて → どう出るか」。'
       + 'この順に学ぶと、ばらばらの知識が一本の線になります。</p>'
-      + '<div class="callout"><div class="ct">周回で深める</div>'
-      + '<p>縦（1トピックを初級→上級まで）ではなく、<b>横（全段の初級を一周）</b>から入ります。'
-      + '1周目で仕事の全体像がつながり、2周目以降で各段を深く掘ります。</p></div>';
+      + '<div class="callout"><div class="ct">この道場の学ばせ方（3つの原則）</div>'
+      + '<p><b>① 思い出す練習が主役。</b>読むだけでは記憶に残りません。10問セットで「思い出す」たびに記憶が強化されます（テスト効果）。'
+      + '間違えた問題は復習箱に入り、忘れかけた頃（1→3→7→21→60日後）にもう一度出ます（間隔反復）。<br>'
+      + '<b>② 全体を先に、深さは後で。</b>縦に掘る前に、横（全段の初級）を一周します。'
+      + '仕事の全体像という「地図」を先に持つと、あとから学ぶ細部が地図の上に載っていきます。<br>'
+      + '<b>③ 合格を積む。</b>各セットは80%で合格。曖昧なまま先に進むと必ず詰まるので、'
+      + '合格したセットの数だけがルートを前に進めます（習得学習）。</p></div>';
 
     // 周回の進捗
     h += '<div class="grid g2" style="margin-top:14px">';
@@ -132,20 +273,32 @@
     });
     h += '</div></div>';
 
-    if (nx) {
+    // いま、ここ（解きかけがあれば最優先で再開を出す）
+    if (sessLive) {
+      var dn = sess.items.filter(function (x) { return x.revealed; }).length;
+      h += '<div class="card"><h2>いま、ここ</h2>'
+        + '<div class="act"><div class="act-ic">▶</div><div class="act-b">'
+        + '<b>解きかけ：' + esc(sess.title || '') + '</b>'
+        + '<div class="small muted">' + dn + ' / ' + sess.items.length + ' 問まで解答済み。続きから再開できます。</div></div>'
+        + '<a class="act-go" href="' + ((sess.mode === 'set' && sess.topic) ? '#/quiz/' + sess.topic + '/' + sess.lv + '/' + sess.set : '#/resume') + '">再開 →</a></div></div>';
+    } else if (nx) {
+      var cta = !nx.read ? { href: '#/lecture/' + nx.topic.id + '/' + nx.lv, label: '座学を読む' }
+        : nx.ss.next ? { href: '#/quiz/' + nx.topic.id + '/' + nx.lv + '/' + nx.ss.next.i, label: 'セット' + (nx.ss.next.i + 1) + ' を解く' }
+          : { href: '#/quiz/' + nx.topic.id + '/' + nx.lv, label: 'セット一覧へ' };
       h += '<div class="card"><h2>いま、ここ</h2>'
         + '<div class="act"><div class="act-ic">路</div><div class="act-b">'
         + '<b>' + esc(nx.stage.name) + '　' + esc(nx.topic.name) + '・' + esc(DOJO.levelById(nx.lv).name) + '</b>'
-        + '<div class="small muted">' + esc(nx.stage.q) + '</div></div>'
-        + '<a class="act-go" href="#/' + (nx.read ? 'quiz' : 'lecture') + '/' + nx.topic.id + '/' + nx.lv + '">'
-        + (nx.read ? 'クイズへ' : '座学を読む') + '</a></div></div>';
+        + '<div class="small muted">' + esc(nx.stage.q)
+        + (nx.read ? '　｜　セット合格 ' + nx.ss.cleared + ' / ' + nx.ss.total : '') + '</div></div>'
+        + '<a class="act-go" href="' + cta.href + '">' + cta.label + ' →</a></div></div>';
     }
 
-    // 段ごとの一覧（1周目の順序で表示。各行に4レベルの状態）
+    // 段ごとの一覧
     h += '<div class="card"><h2>段（ステージ）と到達目標</h2>'
-      + '<p class="small muted">各行の4つの印は 初級／中級／上級／実践。'
-      + '● 修了　◐ 着手中　○ 未着手　－ 準備中（コンテンツ未作成）</p></div>';
+      + '<p class="small muted">各セルは「合格セット数 / 総セット数」。全セット80%以上で修了（●）。'
+      + '● 修了　◐ 着手中　○ 未着手　－ 準備中</p></div>';
 
+    var nxKey = nx ? nx.topic.id + '-' + nx.lv : null;
     DOJO.STAGES.forEach(function (sg) {
       var items = st.filter(function (x) { return x.stage.id === sg.id; });
       var ready = items.filter(function (x) { return x.ready; });
@@ -157,7 +310,7 @@
         + '<div class="small muted">' + MD.inline(sg.why) + '</div>'
         + (sg.goFirst ? '<div class="callout field"><div class="ct">読む順の例外</div><p>' + esc(sg.goFirst) + '</p></div>' : '')
         + '<div class="bar" style="margin:10px 0 6px"><i style="width:' + (ready.length ? Math.round(done / ready.length * 100) : 0) + '%"></i></div>'
-        + '<table><thead><tr><th>トピック</th><th>初級</th><th>中級</th><th>上級</th><th>実践</th><th>問題数</th></tr></thead><tbody>';
+        + '<table><thead><tr><th>トピック</th><th>初級</th><th>中級</th><th>上級</th><th>実践</th></tr></thead><tbody>';
       sg.topics.forEach(function (tid) {
         var t = DOJO.topicById(tid);
         if (!t) return;
@@ -165,10 +318,11 @@
           var x = items.filter(function (y) { return y.topic.id === tid && y.lv === l.id; })[0];
           if (!x || !x.ready) return '<td class="muted">－</td>';
           var mark = x.done ? '●' : (x.started ? '◐' : '○');
-          return '<td><a href="#/' + (x.read ? 'quiz' : 'lecture') + '/' + tid + '/' + l.id + '">' + mark + '</a></td>';
+          var here = nxKey === tid + '-' + l.id;
+          return '<td' + (here ? ' class="here" title="いま、ここ"' : '') + '>'
+            + '<a href="#/quiz/' + tid + '/' + l.id + '">' + mark + ' <span class="small">' + x.ss.cleared + '/' + x.ss.total + '</span></a></td>';
         }).join('');
-        var qn = DOJO.LEVELS.reduce(function (s, l) { return s + countOf(tid, l.id); }, 0);
-        h += '<tr><td><a href="#/topic/' + tid + '">' + esc(t.name) + '</a></td>' + cells + '<td>' + qn + '</td></tr>';
+        h += '<tr><td><a href="#/topic/' + tid + '">' + esc(t.name) + '</a></td>' + cells + '</tr>';
       });
       h += '</tbody></table></div>';
     });
@@ -273,10 +427,11 @@
       + (nextT ? '<button class="btn sm" data-go="#/lecture/' + nextT.id + '/' + lv + '">' + esc(nextT.short) + ' →</button>' : '')
       + '</div>'
       + '<div class="row"><button class="btn" id="markRead">読了にする</button>'
-      + '<button class="btn primary" data-go="#/quiz/' + tid + '/' + lv + '">理解度クイズ（' + countOf(tid, lv) + '問）</button></div>'
+      + '<button class="btn primary" id="lecToQuiz">読了して、セット1へ →</button></div>'
       + '</div></div>';
 
     app.innerHTML = h;
+    linkTerms(el('lecBody'));
     on('[data-anchor]', 'click', function (e) {
       e.preventDefault();
       var n = document.getElementById(e.currentTarget.dataset.anchor);
@@ -285,6 +440,12 @@
     var mr = el('markRead');
     if (mr) mr.addEventListener('click', function () {
       DOJO.Store.markRead(tid, lv); mr.textContent = '読了 ✓'; mr.disabled = true;
+    });
+    var lq = el('lecToQuiz');
+    if (lq) lq.addEventListener('click', function () {
+      DOJO.Store.markRead(tid, lv);
+      var ss = DOJO.Store.setSummary(tid, lv);
+      go(ss.next ? '#/quiz/' + tid + '/' + lv + '/' + ss.next.i : '#/quiz/' + tid + '/' + lv);
     });
     window.scrollTo(0, 0);
   };
@@ -307,7 +468,7 @@
       + '</div>'
       + '<div class="qmeta"><span class="muted small">' + (s.idx + 1) + ' / ' + s.total + '　正答 ' + s.correctCount + '</span>'
       + '<button class="btn sm" id="flagBtn">' + (rec && rec.flag ? '★ 付箋' : '☆ 付箋') + '</button>'
-      + '<button class="btn sm" id="quitBtn">終了</button></div></div>';
+      + '<button class="btn sm" id="quitBtn" title="進捗は保存されます。いつでも続きから再開できます">中断（保存）</button></div></div>';
     h += '<div class="progressline"><i style="width:' + ((s.idx) / s.total * 100) + '%"></i></div>';
 
     h += '<div class="qtext">' + (q.stem ? '<span class="stem">' + MD.inline(q.stem) + '</span>' : '') + MD.inline(q.q) + '</div>';
@@ -355,44 +516,113 @@
 
     app.innerHTML = h;
 
+    // 解説内の用語をその場で引けるようにする
+    if (it.revealed) {
+      var expEl = app.querySelector('.exp .body');
+      if (expEl) linkTerms(expEl);
+    }
+
+    function persist() { DOJO.Store.saveSession(s.snapshot()); }
+    persist();   // 画面を出した時点で常に保存（途中でタブを閉じても失われない）
+
     on('[data-pick]', 'click', function (e) {
       s.pick(parseInt(e.currentTarget.dataset.pick, 10));
+      persist();
       renderQuiz();
     });
-    on('[data-jump]', 'click', function (e) { s.goto(parseInt(e.currentTarget.dataset.jump, 10)); renderQuiz(); });
+    on('[data-jump]', 'click', function (e) { s.goto(parseInt(e.currentTarget.dataset.jump, 10)); persist(); renderQuiz(); });
     var nb = el('nextBtn'); if (nb) nb.addEventListener('click', function () {
       if (!s.next()) { s.finish(); }
+      else persist();
       renderQuiz();
     });
-    var pb = el('prevBtn'); if (pb) pb.addEventListener('click', function () { s.prev(); renderQuiz(); });
+    var pb = el('prevBtn'); if (pb) pb.addEventListener('click', function () { s.prev(); persist(); renderQuiz(); });
     var fb = el('flagBtn'); if (fb) fb.addEventListener('click', function () { DOJO.Store.toggleFlag(q.id); renderQuiz(); });
-    var qb = el('quitBtn'); if (qb) qb.addEventListener('click', function () { s.finish(); renderQuiz(); });
+    var qb = el('quitBtn'); if (qb) qb.addEventListener('click', function () {
+      // 中断：スナップショットを残したまま抜ける（＝続きから再開できる）
+      persist();
+      DOJO.current = null;
+      if (s.opts.topic && s.mode === 'set') go('#/quiz/' + s.opts.topic + '/' + s.opts.lv);
+      else go('#/');
+    });
     window.scrollTo(0, 0);
   }
 
   function renderResult() {
     var s = DOJO.current;
+    var S = DOJO.Store;
     var acc = s.total ? s.correctCount / s.total : 0;
     var wrong = s.wrongItems;
-    var msg = acc >= 0.9 ? '合格ライン突破。次のレベルへ進んで構いません。'
-      : acc >= 0.75 ? 'あと一歩。誤答を潰してから次へ。'
-        : acc >= 0.5 ? '座学に戻ってください。用語の理解が曖昧なまま先に進むと必ず詰まります。'
-          : 'このレベルはまだ早い。座学を最初から読み直しましょう。';
+    var answered = s.items.filter(function (x) { return x.revealed; }).length;
+    var isSet = (s.mode === 'set' && s.opts.topic != null && typeof s.opts.set === 'number');
 
-    var h = '<div class="card"><h1>結果</h1>'
-      + '<div class="grid g4">'
+    // セッション終了：解きかけの保存を消し、セットなら成績を記録する
+    S.clearSession();
+    var setRec = null, passed = false, ss = null, nextSet = null;
+    if (isSet && answered === s.total) {
+      setRec = S.recordSet(s.opts.topic, s.opts.lv, s.opts.set, s.correctCount, s.total);
+      passed = acc >= S.PASS;
+      ss = S.setSummary(s.opts.topic, s.opts.lv);
+      nextSet = ss.next;
+    } else if (isSet) {
+      ss = S.setSummary(s.opts.topic, s.opts.lv);
+      nextSet = ss.next;
+    }
+
+    var msg;
+    if (isSet) {
+      msg = passed
+        ? (wrong.length ? '合格。誤答' + wrong.length + '問の解説だけ読み切ってから次のセットへ。'
+                        : '全問正解。文句なし。次のセットへ。')
+        : '合格ライン（80%）まであと' + Math.max(1, Math.ceil(s.total * S.PASS) - s.correctCount) + '問。誤答の解説を読んでから、同じセットをもう一度。';
+    } else {
+      msg = acc >= 0.9 ? '合格ライン突破。次へ進んで構いません。'
+        : acc >= 0.75 ? 'あと一歩。誤答を潰してから次へ。'
+          : acc >= 0.5 ? '座学に戻ってください。用語の理解が曖昧なまま先に進むと必ず詰まります。'
+            : 'このレベルはまだ早い。座学を最初から読み直しましょう。';
+    }
+
+    var h = '<div class="card"><h1>' + (isSet ? esc(s.title) + '　結果' : '結果') + '</h1>';
+    if (isSet && answered === s.total) {
+      h += '<div class="verdict ' + (passed ? 'ok' : 'ng') + '" style="font-size:1.05em">'
+        + (passed ? '★ セット' + (s.opts.set + 1) + ' 合格（' + pct(acc) + '）' : 'セット' + (s.opts.set + 1) + ' 不合格（' + pct(acc) + ' / 合格80%）') + '</div>';
+    }
+    h += '<div class="grid g4">'
       + '<div class="stat"><div class="v">' + s.correctCount + ' / ' + s.total + '</div><div class="l">正答</div></div>'
       + '<div class="stat"><div class="v">' + pct(acc) + '</div><div class="l">正答率</div></div>'
       + '<div class="stat"><div class="v">' + wrong.length + '</div><div class="l">誤答</div></div>'
       + '<div class="stat"><div class="v">' + Math.round((Date.now() - s.startedAt) / 60000) + '分</div><div class="l">所要</div></div>'
       + '</div>'
       + '<p class="lead" style="margin-top:14px">' + esc(msg) + '</p>'
-      + '<div class="row">'
-      + (wrong.length ? '<button class="btn primary" id="retryWrong">誤答' + wrong.length + '問を解き直す</button>' : '')
-      + '<button class="btn" id="againBtn">同じ設定でもう一度</button>'
-      + (s.opts.topic ? '<button class="btn" data-go="#/lecture/' + s.opts.topic + '/' + s.opts.lv + '">座学に戻る</button>' : '')
-      + '<button class="btn" data-go="#/curriculum">カリキュラムへ</button>'
-      + '</div></div>';
+      + '<div class="row">';
+    if (isSet) {
+      if (passed && nextSet) {
+        h += '<button class="btn primary" data-go="#/quiz/' + s.opts.topic + '/' + s.opts.lv + '/' + nextSet.i + '">次へ：セット' + (nextSet.i + 1) + ' →</button>';
+      } else if (passed && !nextSet) {
+        h += '<button class="btn primary" data-go="#/path">この講は全セット合格。ルートの次へ →</button>';
+      } else {
+        h += (wrong.length ? '<button class="btn primary" id="retryWrong">誤答' + wrong.length + '問を解き直す</button>' : '')
+          + '<button class="btn" id="againBtn">同じセットをもう一度</button>';
+      }
+      h += (passed && wrong.length ? '<button class="btn" id="retryWrong">誤答' + wrong.length + '問を解き直す</button>' : '')
+        + '<button class="btn" data-go="#/quiz/' + s.opts.topic + '/' + s.opts.lv + '">セット一覧</button>'
+        + '<button class="btn" data-go="#/lecture/' + s.opts.topic + '/' + s.opts.lv + '">座学に戻る</button>';
+    } else {
+      h += (wrong.length ? '<button class="btn primary" id="retryWrong">誤答' + wrong.length + '問を解き直す</button>' : '')
+        + '<button class="btn" id="againBtn">同じ設定でもう一度</button>'
+        + (s.opts.topic ? '<button class="btn" data-go="#/lecture/' + s.opts.topic + '/' + s.opts.lv + '">座学に戻る</button>' : '')
+        + '<button class="btn" data-go="#/path">学習ルートへ</button>';
+    }
+    h += '</div></div>';
+
+    if (isSet && ss) {
+      h += '<div class="card"><div class="small muted" style="margin-bottom:6px">この講のセット</div><div class="row" style="gap:6px">'
+        + ss.sets.map(function (x) {
+          var cls = x.state === 'clear' ? 'clear' : x.state === 'tried' ? 'tried' : x.state === 'part' ? 'part' : '';
+          return '<a class="setchip ' + cls + '" href="#/quiz/' + s.opts.topic + '/' + s.opts.lv + '/' + x.i + '">'
+            + (x.state === 'clear' ? '★' : '') + (x.i + 1) + '</a>';
+        }).join('') + '</div></div>';
+    }
 
     if (wrong.length) {
       h += '<div class="card"><h3>誤答の復習</h3>';
@@ -409,6 +639,7 @@
       h += '</div>';
     }
     app.innerHTML = h;
+    app.querySelectorAll('.exp .body').forEach(function (n) { linkTerms(n); });
     var rw = el('retryWrong'); if (rw) rw.addEventListener('click', function () {
       DOJO.current = DOJO.current.retryWrong(); renderQuiz();
     });
@@ -419,7 +650,8 @@
   }
   UI.renderQuiz = renderQuiz;
 
-  UI.quiz = function (tid, lv) {
+  /** セット一覧（トピック×レベルの入口）。set を指定するとそのセットを開始/再開 */
+  UI.quiz = function (tid, lv, setIdx) {
     var list = DOJO.questionsOf(tid, lv);
     var t = DOJO.topicById(tid);
     if (!list.length) {
@@ -427,11 +659,100 @@
         + '<button class="btn" data-go="#/topic/' + tid + '">← 戻る</button></div>';
       return;
     }
-    DOJO.current = new DOJO.Session({
-      questions: list, mode: 'study', topic: tid, lv: lv,
-      title: (t ? t.short : tid) + '・' + DOJO.levelById(lv).name,
-      shuffleQ: false, shuffleC: true
+    if (typeof setIdx === 'number' && !isNaN(setIdx)) return UI.quizSet(tid, lv, setIdx);
+
+    var S = DOJO.Store;
+    var ss = S.setSummary(tid, lv);
+    var read = S.isRead(tid, lv);
+    var sess = S.getSession();
+    var here = sess && sess.mode === 'set' && sess.topic === tid && sess.lv === lv
+      && sess.items && sess.items.some(function (x) { return !x.revealed; });
+
+    var h = '<div class="card"><div class="qmeta" style="margin-bottom:6px">' + lvBadge(lv)
+      + '<span class="badge">' + esc(t ? t.short : tid) + '</span></div>'
+      + '<h1>' + esc(t ? t.name : tid) + '・' + esc(DOJO.levelById(lv).name) + '　セット一覧</h1>'
+      + '<p class="lead">1セット＝約10問・約10分。<b>80%で合格</b>。全セット合格でこの講は修了です。'
+      + '途中でやめても保存され、続きから再開できます。</p>';
+
+    if (!read) {
+      h += '<div class="callout warn"><div class="ct">先に座学</div>'
+        + '<p>この講の座学がまだ読了になっていません。先に読むことを強く勧めます。'
+        + '<a href="#/lecture/' + tid + '/' + lv + '">座学を読む →</a></p></div>';
+    }
+    if (here) {
+      var dn = sess.items.filter(function (x) { return x.revealed; }).length;
+      h += '<div class="act" style="margin:10px 0"><div class="act-ic">▶</div><div class="act-b">'
+        + '<b>解きかけ：セット' + (sess.set + 1) + '</b>'
+        + '<div class="small muted">' + dn + ' / ' + sess.items.length + ' 問まで解答済み</div></div>'
+        + '<a class="act-go" href="#/quiz/' + tid + '/' + lv + '/' + sess.set + '">続きから →</a></div>';
+    }
+    h += '<div class="row" style="margin:6px 0 2px">'
+      + '<div class="stat" style="min-width:130px"><div class="v">' + ss.cleared + ' <small>/ ' + ss.total + '</small></div><div class="l">合格セット</div></div>'
+      + (ss.next && !here ? '<button class="btn primary" data-go="#/quiz/' + tid + '/' + lv + '/' + ss.next.i + '">'
+          + (ss.next.state === 'todo' ? 'セット' + (ss.next.i + 1) + ' を始める' : 'セット' + (ss.next.i + 1) + ' に再挑戦') + '</button>' : '')
+      + '<button class="btn" data-go="#/lecture/' + tid + '/' + lv + '">座学へ</button>'
+      + '</div></div>';
+
+    h += '<div class="card"><div class="setgrid">';
+    ss.sets.forEach(function (x) {
+      var label = x.state === 'clear' ? '合格 ' + pct(x.rec.best)
+        : x.state === 'tried' ? '最高 ' + pct(x.rec.best)
+          : x.state === 'part' ? '解きかけ' : '未着手';
+      h += '<a class="setcard ' + x.state + '" href="#/quiz/' + tid + '/' + lv + '/' + x.i + '">'
+        + '<div class="sc-no">' + (x.state === 'clear' ? '★ ' : '') + 'セット' + (x.i + 1) + '</div>'
+        + '<div class="sc-n">' + x.n + '問</div>'
+        + '<div class="sc-st">' + label + '</div></a>';
     });
+    h += '</div></div>';
+    app.innerHTML = h;
+  };
+
+  /** セットを開始（解きかけがあれば復元して続きから） */
+  UI.quizSet = function (tid, lv, setIdx) {
+    var t = DOJO.topicById(tid);
+    var sets = DOJO.setsFor(tid, lv);
+    var st = sets[setIdx];
+    if (!st) { go('#/quiz/' + tid + '/' + lv); return; }
+    var S = DOJO.Store;
+    var title = (t ? t.short : tid) + '・' + DOJO.levelById(lv).name + '　セット' + (setIdx + 1);
+
+    // 解きかけがこのセットのものなら復元
+    var snap = S.getSession();
+    if (snap && snap.mode === 'set' && snap.topic === tid && snap.lv === lv && snap.set === setIdx) {
+      var restored = DOJO.Session.restore(snap);
+      if (restored && !restored.items.every(function (x) { return x.revealed; })) {
+        // 現在位置が解答済みなら、最初の未解答へ
+        if (restored.cur.revealed) {
+          for (var i = 0; i < restored.items.length; i++) {
+            if (!restored.items[i].revealed) { restored.idx = i; break; }
+          }
+        }
+        DOJO.current = restored;
+        renderQuiz();
+        return;
+      }
+    }
+    var qs = st.qids.map(function (id) { return DOJO.questionById(id); }).filter(Boolean);
+    DOJO.current = new DOJO.Session({
+      questions: qs, mode: 'set', topic: tid, lv: lv, set: setIdx,
+      title: title, shuffleQ: false, shuffleC: true
+    });
+    renderQuiz();
+  };
+
+  /** 解きかけセッションの汎用再開（ドリル・復習・試験もここから戻れる） */
+  UI.resume = function () {
+    var snap = DOJO.Store.getSession();
+    var s = snap ? DOJO.Session.restore(snap) : null;
+    if (!s) {
+      app.innerHTML = '<div class="card"><p class="empty">再開できるセッションはありません。</p>'
+        + '<button class="btn" data-go="#/">ホームへ</button></div>';
+      return;
+    }
+    if (s.cur.revealed) {
+      for (var i = 0; i < s.items.length; i++) if (!s.items[i].revealed) { s.idx = i; break; }
+    }
+    DOJO.current = s;
     renderQuiz();
   };
 

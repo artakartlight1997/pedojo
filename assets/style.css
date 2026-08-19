@@ -252,3 +252,42 @@ html[data-theme="dark"] .prose .callout.field .ct{color:#4fd39b}
 .savecell .v.ok { color: #1d6b2f; } .savecell .v.ng { color: #b3261e; } .savecell .v.na { color: var(--muted); }
 .dropzone { border: 2px dashed var(--line); border-radius: 8px; padding: 18px; text-align: center; color: var(--muted); margin-top: 10px; }
 .dropzone.over { border-color: var(--accent); color: var(--fg); }
+
+/* ===== ヒーローCTA（今日やることを1つだけ、大きく） ===== */
+.hero-cta { text-align: left; border: 2px solid var(--accent); }
+.hero-cta .hc-kicker { font-size: .78rem; font-weight: 700; letter-spacing: .12em; color: var(--accent); margin-bottom: 4px; }
+.hero-cta .hc-title { font-size: 1.25rem; font-weight: 800; line-height: 1.35; }
+.hero-cta .hc-sub { color: var(--ink-2); margin: 6px 0 14px; line-height: 1.7; }
+.hero-cta .btn.xl { font-size: 1.05rem; padding: 13px 22px; width: 100%; }
+.hero-cta .hc-alt { margin-top: 10px; font-size: .85rem; }
+
+/* ===== 10問セット ===== */
+.setgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(128px, 1fr)); gap: 10px; }
+.setcard { display: block; border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px;
+  text-decoration: none; color: var(--ink); background: var(--panel); transition: transform .06s; }
+.setcard:hover { transform: translateY(-1px); border-color: var(--accent); }
+.setcard .sc-no { font-weight: 800; }
+.setcard .sc-n { font-size: .8rem; color: var(--ink-2); margin-top: 2px; }
+.setcard .sc-st { font-size: .8rem; margin-top: 6px; font-weight: 600; }
+.setcard.clear { border-color: var(--ok); background: color-mix(in srgb, var(--ok) 8%, var(--panel)); }
+.setcard.clear .sc-st { color: var(--ok); }
+.setcard.tried .sc-st { color: var(--ng); }
+.setcard.part { border-color: var(--accent); }
+.setcard.part .sc-st { color: var(--accent); }
+.setchip { display: inline-block; min-width: 34px; text-align: center; padding: 5px 8px; border-radius: 8px;
+  border: 1px solid var(--line); text-decoration: none; color: var(--ink); font-weight: 700; }
+.setchip.clear { border-color: var(--ok); color: var(--ok); }
+.setchip.tried { border-color: var(--ng); color: var(--ng); }
+.setchip.part { border-color: var(--accent); color: var(--accent); }
+td.here { outline: 2px solid var(--accent); border-radius: 6px; }
+
+/* ===== 用語のその場解説 ===== */
+.term, .term-demo { border-bottom: 1px dotted var(--accent); cursor: pointer; }
+.term:hover { background: color-mix(in srgb, var(--accent) 12%, transparent); }
+.termpop { position: absolute; z-index: 90; background: var(--panel); border: 1px solid var(--line);
+  border-radius: 10px; box-shadow: 0 8px 28px rgba(0,0,0,.18); padding: 12px 14px; line-height: 1.7; }
+.termpop .tp-head { display: flex; align-items: baseline; gap: 4px; margin-bottom: 6px; }
+.termpop .tp-x { margin-left: auto; border: 0; background: none; font-size: 1.05rem; cursor: pointer; color: var(--ink-2); }
+.termpop .tp-body { font-size: .92rem; }
+.termpop .tp-foot { margin-top: 8px; font-size: .82rem; }
+[data-theme="dark"] .termpop { box-shadow: 0 8px 28px rgba(0,0,0,.5); }
