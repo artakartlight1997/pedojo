@@ -49,7 +49,13 @@
   - `i-`:中級座学(intermediate)
   - `a-`:上級座学(advanced)
   - `g-`:用語集(glossary)
-  - `m1-`〜:専門モジュール集(study-modules.html)の各モジュール。新しいモジュールを追加するときは次の空き番号(`m8-`, `m9-`…)を使う。
+  - `m1-`:会計・資産の超基礎(module-accounting-basics)
+  - `m2-`:上場指標(PER/PBR/ROICなど、module-valuation-ratios)
+  - `m3-`:デューデリジェンス実践編(module-dd-deep-dive)
+  - `m4-`:投資テーマ策定・投資委員会実践(module-thesis-ic)
+  - `m5-`:ファンドレイズ実務(module-fundraising)
+  - `m6-`:成功・失敗ケーススタディ(module-case-studies)
+  - `m7-`〜:今後の追加モジュール用。新しいモジュールを追加するときは次の空き番号(`m7-`, `m8-`…)を使う。
 - 新しいプレフィックスを使ったら、追記するだけでよい。`js/quiz-engine.js` は配列全体を毎回読み込み、`level`/`category` を自動収集してフィルタUIを作るため、コード変更は不要。
 
 ## 3. 計算問題ジェネレーター
