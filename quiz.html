@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>クイズ | 投資プロ5000本ノック</title>
+<meta name="description" content="用語・シナリオ問題とLBO/財務計算問題を組み合わせた5000本ノック形式のクイズ。初級・中級・上級、ジャンル別に反復学習できます。">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📈</text></svg>">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+
+  <header class="site-header">
+    <div class="site-header-inner">
+      <a class="brand" href="index.html"><span class="brand-icon" aria-hidden="true">📈</span><span class="brand-text">投資プロ<strong>5000本ノック</strong></span></a>
+      <nav class="site-nav">
+        <a href="index.html">ホーム</a>
+        <a href="study-beginner.html">座学：初級</a>
+        <a href="study-intermediate.html">座学：中級</a>
+        <a href="study-advanced.html">座学：上級</a>
+        <a href="glossary.html">用語集</a>
+        <a href="quiz.html" class="active nav-cta">クイズに挑戦</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <div class="stats" aria-label="成績">
+      <div class="stat">
+        <span class="stat-label">通算ノック数</span>
+        <span class="stat-value"><span id="statCount">0</span> <small>/ 5000</small></span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">正解数</span>
+        <span class="stat-value" id="statCorrect">0</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">正答率</span>
+        <span class="stat-value" id="statAccuracy">–</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">連続正解</span>
+        <span class="stat-value" id="statStreak">0</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">最高連続正解</span>
+        <span class="stat-value" id="statMaxStreak">0</span>
+      </div>
+    </div>
+
+    <div class="progress-wrap" aria-label="5000本ノックの進捗">
+      <div class="progress-bar"><div id="progressFill" class="progress-fill"></div></div>
+      <p id="progressText" class="progress-text">0 / 5000 本 (0%)</p>
+    </div>
+
+    <div class="filter-block">
+      <span class="filter-label">レベル：</span>
+      <div id="levelButtons" class="category-buttons"></div>
+    </div>
+    <div class="filter-block">
+      <span class="filter-label">ジャンル：</span>
+      <div id="categoryButtons" class="category-buttons"></div>
+    </div>
+
+    <button id="resetBtn" class="btn btn-ghost" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);margin-bottom:16px;" type="button">記録をリセット</button>
+
+    <section class="quiz-card" aria-live="polite">
+      <div class="quiz-meta">
+        <div class="quiz-meta-left">
+          <span id="questionLevel" class="badge">—</span>
+          <span id="questionCategory" class="badge">—</span>
+        </div>
+        <span id="questionSerial" class="serial">第 1 問</span>
+      </div>
+      <p id="questionText" class="question-text">読み込み中…</p>
+
+      <div id="choices" class="choices"></div>
+
+      <div id="feedback" class="feedback" hidden>
+        <p id="feedbackHeadline" class="feedback-headline"></p>
+        <p id="feedbackExplain" class="feedback-explain"></p>
+        <button id="nextBtn" class="btn btn-primary" type="button">次の問題へ →</button>
+      </div>
+    </section>
+
+    <section id="milestone" class="milestone" hidden>
+      <h2>🎉 5000本ノック達成！</h2>
+      <p>お疲れさまでした。ディレクター級の知識の土台が身についています。継続してさらに記録を伸ばすこともできます。</p>
+    </section>
+
+    <p class="variation-note">このアプリはパラメータを毎回ランダム生成する計算問題と、手書きの用語・シナリオ問題を組み合わせて出題します。理論上 <span id="variationCount">計算中…</span> 通り以上のバリエーションがあり、丸暗記ではなく「型」が身につくまで反復できます。キーボードの 1〜4 で回答、Enter で次の問題に進めます。</p>
+
+  </main>
+
+  <footer class="app-footer">
+    <p>記録はこの端末のブラウザ内（localStorage）にのみ保存され、外部には送信されません。本アプリは学習用の簡易問題であり、実際の税制・契約・商品性とは異なる場合があります。</p>
+  </footer>
+
+</div>
+<script src="js/terms-data.js"></script>
+<script src="js/calc-generators.js"></script>
+<script src="js/quiz-engine.js"></script>
+</body>
+</html>
