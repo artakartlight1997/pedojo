@@ -49,6 +49,13 @@
 
   let termQueue = [];
 
+  // 計算問題のジェネレーターも山札方式で引く。
+  // 毎回ランダムに選ぶと、種類が少ないフィルタ(初級は5種、上級は2種)では
+  // 同じ計算問題が数問おきに戻ってきてしまうため。
+  let calcQueue = [];
+  let calcQueueKey = "";   // 山札を作ったときのフィルタ条件
+  let lastCalcKey = null;  // 直前に出したジェネレーター(山札の境目での連続を避ける)
+
   function shuffle(arr) {
     const a = arr.slice();
     for (let i = a.length - 1; i > 0; i--) {
@@ -87,7 +94,18 @@
   function nextCalcQuestion() {
     const pool = matchingCalcGenerators();
     if (pool.length === 0) return null;
-    const gen = pool[Math.floor(Math.random() * pool.length)];
+
+    const key = levelFilter + "\u0000" + categoryFilter;
+    if (calcQueueKey !== key) { calcQueue = []; calcQueueKey = key; }
+    if (calcQueue.length === 0) {
+      calcQueue = shuffle(pool);
+      // 山札をまたいで同じ計算問題が連続しないよう、先頭が直前と同じなら後ろへ回す
+      if (calcQueue.length > 1 && calcQueue[calcQueue.length - 1].key === lastCalcKey) {
+        calcQueue.unshift(calcQueue.pop());
+      }
+    }
+    const gen = calcQueue.pop();
+    lastCalcKey = gen.key;
     const built = gen.build();
     return Object.assign(
       {
@@ -105,8 +123,12 @@
     const hasCalc = matchingCalcGenerators().length > 0;
 
     if (hasTerms && hasCalc) {
-      // 用語問題と計算問題をおよそ半々で出題
-      if (Math.random() < 0.5) {
+      // 計算問題の割合は、そのフィルタで使えるジェネレーターの種類数に合わせる。
+      // 固定で半々にすると、初級(5種)では同じ計算問題が10問に1回、
+      // 上級(2種)では4問に1回戻ってきてしまう。
+      // 「同じ計算問題は20問に1回まで」を目安に割合を決める。
+      const share = Math.min(0.25, matchingCalcGenerators().length / 20);
+      if (Math.random() >= share) {
         const t = nextTermQuestion();
         if (t) return Object.assign({ type: "term" }, t);
         return nextCalcQuestion();
