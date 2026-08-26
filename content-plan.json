@@ -1,0 +1,2911 @@
+{
+  "version": 1,
+  "goal": {
+    "quizzes": 5000,
+    "note": "座学の各記事に紐づけた出題で5000問に到達させる"
+  },
+  "quizRules": {
+    "choices": 4,
+    "lengthSpreadMax": 0.3,
+    "longestStrategy": [
+      20,
+      32
+    ],
+    "shortestStrategyMin": 15,
+    "answerIndexBalance": "各25%±3%",
+    "explainMustCoverAllDistractors": true,
+    "explainLength": [
+      150,
+      320
+    ]
+  },
+  "pages": [
+    {
+      "file": "study-accounting.html",
+      "marker": "ACCOUNTING",
+      "title": "会計とファイナンスの土台",
+      "banner": "lv-beginner",
+      "lead": "減価償却も現在価値も知らないところから、決算書を読み、投資の採算を自分で計算できるところまで。PE実務のすべての前提になる会計とファイナンスを、一段ずつ積み上げます。"
+    },
+    {
+      "file": "study-legal.html",
+      "marker": "LEGAL",
+      "title": "会社法とガバナンスの土台",
+      "banner": "lv-beginner",
+      "lead": "株式会社とは何か、誰が何を決めるのか、株式にはどんな種類があるのか。案件のストラクチャーも契約も、この土台の上に立っています。"
+    },
+    {
+      "file": "study-industry.html",
+      "marker": "INDUSTRY",
+      "title": "PE業界の地図",
+      "banner": "lv-beginner",
+      "lead": "PEファンドにはどんな種類があり、誰のお金を、どんな約束で預かって、どう稼いでいるのか。自分が立っている場所を把握します。"
+    },
+    {
+      "file": "study-workstyle.html",
+      "marker": "WORKSTYLE",
+      "title": "仕事の型――アソシエイトの作法",
+      "banner": "lv-beginner",
+      "lead": "エクセルの組み方、資料の作り方、議事録、報連相、情報管理。知識以前に、これができないと実務が回りません。"
+    },
+    {
+      "file": "study-dd.html",
+      "marker": "DDDEEP",
+      "title": "デューデリジェンス各論",
+      "banner": "lv-intermediate",
+      "lead": "財務・税務・法務・ビジネス・人事・IT・環境・保険・知財。DDの各分野で、誰が何をどこまで見るのかを分野ごとに深掘りします。"
+    },
+    {
+      "file": "study-modeling.html",
+      "marker": "MODELING",
+      "title": "財務モデリング各論",
+      "banner": "lv-intermediate",
+      "lead": "3表連動、LBO、DCF、ウォーターフォール、アドオン、リファイナンス。実際に組めるようになるための手順を、モデルの種類ごとに扱います。"
+    },
+    {
+      "file": "study-structure.html",
+      "marker": "STRUCTURE",
+      "title": "ストラクチャーと資金調達の各論",
+      "banner": "lv-intermediate",
+      "lead": "SPCの設計、税務ストラクチャー、経営陣インセンティブ、シニア・メザニン・ユニトランシェ、担保と優先劣後、ヘッジ。案件の器と資金の組み立てを扱います。"
+    },
+    {
+      "file": "study-contract.html",
+      "marker": "CONTRACT",
+      "title": "契約と交渉の各論",
+      "banner": "lv-intermediate",
+      "lead": "NDAからLOI、SPA、SHA、TSA、雇用契約、ファイナンス契約まで。条項の意味と、交渉の場面ごとの動き方を扱います。"
+    },
+    {
+      "file": "study-valueup.html",
+      "marker": "VALUEUP",
+      "title": "バリューアップ各論",
+      "banner": "lv-advanced",
+      "lead": "価格戦略、営業改革、購買、生産性、SCM、DX、組織人事、アドオン、海外展開。買った後に企業価値をどう上げるかを施策ごとに扱います。"
+    },
+    {
+      "file": "study-exit.html",
+      "marker": "EXIT",
+      "title": "Exit各論",
+      "banner": "lv-advanced",
+      "lead": "IPO、トレードセール、セカンダリー、継続ファンド、部分売却、配当リキャップ。出口の手法ごとに、準備・実行・判断を扱います。"
+    },
+    {
+      "file": "study-sector.html",
+      "marker": "SECTOR",
+      "title": "セクター別の投資実務",
+      "banner": "lv-intermediate",
+      "lead": "業種ごとに儲けの構造もKPIもリスクも違います。主要セクターについて、投資家として何を見るかを1業種ずつ深掘りします。"
+    },
+    {
+      "file": "study-crosscut.html",
+      "marker": "CROSSCUT",
+      "title": "横断テーマ",
+      "banner": "lv-advanced",
+      "lead": "クロスボーダー、ESG、不正対応、経営者の探し方、マクロ環境、キャリア。特定の工程に収まらない重要テーマを扱います。"
+    }
+  ],
+  "modules": [
+    {
+      "key": "n001",
+      "prefix": "n001",
+      "page": "study-accounting.html",
+      "id": "module-n001",
+      "title": "収益認識――いつ売上を計上するのか",
+      "level": "初級",
+      "category": "会計の土台",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "出荷基準と検収基準",
+        "工事進行基準",
+        "継続的サービスの按分",
+        "前受金と売上の違い",
+        "期ズレによる利益操作",
+        "PEが対象会社の認識基準を確かめる手順"
+      ]
+    },
+    {
+      "key": "n002",
+      "prefix": "n002",
+      "page": "study-accounting.html",
+      "id": "module-n002",
+      "title": "費用の分類と原価計算の基礎",
+      "level": "初級",
+      "category": "会計の土台",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "売上原価と販管費の線引き",
+        "直接費と間接費",
+        "製造原価報告書の読み方",
+        "標準原価と実際原価",
+        "配賦の恣意性",
+        "製品別採算が見えない会社の見分け方"
+      ]
+    },
+    {
+      "key": "n003",
+      "prefix": "n003",
+      "page": "study-accounting.html",
+      "id": "module-n003",
+      "title": "引当金と偶発債務",
+      "level": "初級",
+      "category": "会計の土台",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "引当金の4要件",
+        "貸倒引当金",
+        "賞与引当金",
+        "退職給付引当金",
+        "訴訟の偶発債務",
+        "DDで引当不足を見つける手順"
+      ]
+    },
+    {
+      "key": "n004",
+      "prefix": "n004",
+      "page": "study-accounting.html",
+      "id": "module-n004",
+      "title": "税効果会計の基礎",
+      "level": "初級",
+      "category": "会計の土台",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "会計と税務のズレ",
+        "一時差異と永久差異",
+        "繰延税金資産の回収可能性",
+        "評価性引当額",
+        "税効果がPLに与える影響",
+        "買収後に評価が変わる場合"
+      ]
+    },
+    {
+      "key": "n005",
+      "prefix": "n005",
+      "page": "study-accounting.html",
+      "id": "module-n005",
+      "title": "連結会計の基礎",
+      "level": "初級",
+      "category": "会計の土台",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "連結の範囲",
+        "支配力基準",
+        "持分法",
+        "非支配株主持分",
+        "内部取引の消去",
+        "単体だけ見て誤る典型例"
+      ]
+    },
+    {
+      "key": "n006",
+      "prefix": "n006",
+      "page": "study-accounting.html",
+      "id": "module-n006",
+      "title": "のれんと無形資産",
+      "level": "初級",
+      "category": "会計の土台",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "のれんの発生",
+        "PPA(取得原価配分)",
+        "識別可能無形資産",
+        "償却と減損の考え方",
+        "日本基準とIFRSの違い",
+        "買収価格がのれんに与える影響"
+      ]
+    },
+    {
+      "key": "n007",
+      "prefix": "n007",
+      "page": "study-accounting.html",
+      "id": "module-n007",
+      "title": "リース会計",
+      "level": "初級",
+      "category": "会計の土台",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "オペレーティングとファイナンス",
+        "オンバランス化",
+        "リース債務とEBITDAの関係",
+        "店舗ビジネスへの影響",
+        "レバレッジ倍率への影響",
+        "契約書から情報を拾う手順"
+      ]
+    },
+    {
+      "key": "n008",
+      "prefix": "n008",
+      "page": "study-accounting.html",
+      "id": "module-n008",
+      "title": "外貨換算と為替の影響",
+      "level": "初級",
+      "category": "会計の土台",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "取引と決算時の換算",
+        "在外子会社の換算",
+        "為替換算調整勘定",
+        "為替差損益の見え方",
+        "事業の為替エクスポージャー",
+        "為替がEBITDAを歪める例"
+      ]
+    },
+    {
+      "key": "n009",
+      "prefix": "n009",
+      "page": "study-accounting.html",
+      "id": "module-n009",
+      "title": "キャッシュフロー計算書を自分で作る",
+      "level": "初級",
+      "category": "会計の土台",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "間接法の考え方",
+        "当期純利益からの調整項目",
+        "運転資本の増減",
+        "投資CFと財務CF",
+        "フリーキャッシュフローの定義",
+        "3表がつながらないときの原因"
+      ]
+    },
+    {
+      "key": "n010",
+      "prefix": "n010",
+      "page": "study-accounting.html",
+      "id": "module-n010",
+      "title": "月次決算と管理会計",
+      "level": "初級",
+      "category": "会計の土台",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "月次と年次の違い",
+        "締めのスケジュール",
+        "部門別損益",
+        "予実管理の型",
+        "管理会計と制度会計のズレ",
+        "投資先で最初に整えるもの"
+      ]
+    },
+    {
+      "key": "n011",
+      "prefix": "n011",
+      "page": "study-accounting.html",
+      "id": "module-n011",
+      "title": "現在価値と割引の考え方",
+      "level": "初級",
+      "category": "ファイナンスの土台",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "お金の時間価値",
+        "割引率の意味",
+        "単利と複利",
+        "現在価値の計算手順",
+        "割引率の変化が価値に与える影響",
+        "直感と計算がズレる例"
+      ]
+    },
+    {
+      "key": "n012",
+      "prefix": "n012",
+      "page": "study-accounting.html",
+      "id": "module-n012",
+      "title": "複利・年金現価・永久成長",
+      "level": "初級",
+      "category": "ファイナンスの土台",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "複利計算",
+        "年金現価係数",
+        "永久年金の式",
+        "永久成長モデル",
+        "ターミナルバリューへの応用",
+        "成長率と割引率が近いときの危険"
+      ]
+    },
+    {
+      "key": "n013",
+      "prefix": "n013",
+      "page": "study-accounting.html",
+      "id": "module-n013",
+      "title": "債券の基礎",
+      "level": "初級",
+      "category": "ファイナンスの土台",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "額面とクーポン",
+        "利回りと価格の関係",
+        "デュレーション",
+        "信用リスクとスプレッド",
+        "格付けの意味",
+        "PE案件の借入との関係"
+      ]
+    },
+    {
+      "key": "n014",
+      "prefix": "n014",
+      "page": "study-accounting.html",
+      "id": "module-n014",
+      "title": "株式の基礎とリスク・リターン",
+      "level": "初級",
+      "category": "ファイナンスの土台",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "株式とは何か",
+        "期待リターンとリスク",
+        "分散投資",
+        "ベータの意味",
+        "リスクプレミアム",
+        "未上場株が上場株と違う点"
+      ]
+    },
+    {
+      "key": "n015",
+      "prefix": "n015",
+      "page": "study-accounting.html",
+      "id": "module-n015",
+      "title": "資本コストの考え方",
+      "level": "初級",
+      "category": "ファイナンスの土台",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "負債コストと株主資本コスト",
+        "なぜ株主資本の方が高いか",
+        "CAPMの考え方",
+        "WACCの意味",
+        "資本構成と資本コスト",
+        "ハードルレートとの関係"
+      ]
+    },
+    {
+      "key": "n016",
+      "prefix": "n016",
+      "page": "study-accounting.html",
+      "id": "module-n016",
+      "title": "財務指標の体系",
+      "level": "初級",
+      "category": "ファイナンスの土台",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "収益性指標",
+        "効率性指標",
+        "安全性指標",
+        "成長性指標",
+        "指標のつながり(デュポン分解)",
+        "1つの指標だけ見る危険"
+      ]
+    },
+    {
+      "key": "n017",
+      "prefix": "n017",
+      "page": "study-accounting.html",
+      "id": "module-n017",
+      "title": "損益分岐点と固定費・変動費",
+      "level": "初級",
+      "category": "ファイナンスの土台",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "変動費と固定費の分解",
+        "限界利益",
+        "損益分岐点売上高",
+        "オペレーティングレバレッジ",
+        "景気感応度との関係",
+        "費用構造がLBOの可否を左右する理由"
+      ]
+    },
+    {
+      "key": "n018",
+      "prefix": "n018",
+      "page": "study-accounting.html",
+      "id": "module-n018",
+      "title": "運転資本とキャッシュコンバージョンサイクル",
+      "level": "初級",
+      "category": "ファイナンスの土台",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "売上債権・棚卸・仕入債務",
+        "回転日数の計算",
+        "CCCの意味",
+        "季節性の影響",
+        "運転資本からの資金捻出",
+        "成長が資金を食う仕組み"
+      ]
+    },
+    {
+      "key": "n019",
+      "prefix": "n019",
+      "page": "study-accounting.html",
+      "id": "module-n019",
+      "title": "設備投資の意思決定",
+      "level": "初級",
+      "category": "ファイナンスの土台",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "NPV法",
+        "IRR法",
+        "回収期間法",
+        "各手法の長所短所",
+        "維持投資と成長投資の区別",
+        "投資先の設備投資を審査する手順"
+      ]
+    },
+    {
+      "key": "n020",
+      "prefix": "n020",
+      "page": "study-accounting.html",
+      "id": "module-n020",
+      "title": "決算書を読む演習――架空企業3社",
+      "level": "初級",
+      "category": "ファイナンスの土台",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "成長企業の決算書",
+        "衰退企業の決算書",
+        "粉飾が疑われる決算書",
+        "3表から何が読めるか",
+        "異常値の見つけ方",
+        "読みを検証する追加質問"
+      ]
+    },
+    {
+      "key": "n021",
+      "prefix": "n021",
+      "page": "study-legal.html",
+      "id": "module-n021",
+      "title": "株式会社の仕組みと機関設計",
+      "level": "初級",
+      "category": "会社法の土台",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "所有と経営の分離",
+        "機関設計の種類",
+        "取締役会設置会社",
+        "監査役と監査等委員会",
+        "非公開会社の特徴",
+        "PE投資先での設計変更"
+      ]
+    },
+    {
+      "key": "n022",
+      "prefix": "n022",
+      "page": "study-legal.html",
+      "id": "module-n022",
+      "title": "株主総会と取締役会の実務",
+      "level": "初級",
+      "category": "会社法の土台",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "株主総会の決議事項",
+        "普通決議と特別決議",
+        "招集手続",
+        "取締役会の決議事項",
+        "書面決議",
+        "PE派遣取締役の関わり方"
+      ]
+    },
+    {
+      "key": "n023",
+      "prefix": "n023",
+      "page": "study-legal.html",
+      "id": "module-n023",
+      "title": "種類株式の基礎",
+      "level": "初級",
+      "category": "会社法の土台",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "議決権制限株式",
+        "優先配当株式",
+        "取得請求権と取得条項",
+        "拒否権付株式(黄金株)",
+        "全部取得条項",
+        "PE投資での使いどころ"
+      ]
+    },
+    {
+      "key": "n024",
+      "prefix": "n024",
+      "page": "study-legal.html",
+      "id": "module-n024",
+      "title": "新株予約権とストックオプション",
+      "level": "初級",
+      "category": "会社法の土台",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "新株予約権の仕組み",
+        "行使価格と行使条件",
+        "税制適格と非適格の考え方",
+        "希薄化の計算",
+        "経営陣インセンティブへの応用",
+        "退職時の扱い"
+      ]
+    },
+    {
+      "key": "n025",
+      "prefix": "n025",
+      "page": "study-legal.html",
+      "id": "module-n025",
+      "title": "増資・減資・自己株式",
+      "level": "初級",
+      "category": "会社法の土台",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "第三者割当増資",
+        "株主割当と公募",
+        "有償減資と無償減資",
+        "自己株式の取得と処分",
+        "分配可能額の考え方",
+        "少数株主の買い取りへの応用"
+      ]
+    },
+    {
+      "key": "n026",
+      "prefix": "n026",
+      "page": "study-legal.html",
+      "id": "module-n026",
+      "title": "組織再編の基礎",
+      "level": "初級",
+      "category": "会社法の土台",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "合併(吸収・新設)",
+        "会社分割(吸収・新設)",
+        "株式交換と株式移転",
+        "株式交付",
+        "債権者保護手続",
+        "反対株主の買取請求"
+      ]
+    },
+    {
+      "key": "n027",
+      "prefix": "n027",
+      "page": "study-legal.html",
+      "id": "module-n027",
+      "title": "事業譲渡と会社分割の違い",
+      "level": "初級",
+      "category": "会社法の土台",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "個別承継と包括承継",
+        "契約の移転手続",
+        "従業員の移籍",
+        "許認可の扱い",
+        "手続の重さ",
+        "カーブアウトでの選択"
+      ]
+    },
+    {
+      "key": "n028",
+      "prefix": "n028",
+      "page": "study-legal.html",
+      "id": "module-n028",
+      "title": "少数株主の権利",
+      "level": "初級",
+      "category": "会社法の土台",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "議決権割合ごとの権利",
+        "帳簿閲覧請求",
+        "株主代表訴訟",
+        "スクイーズアウトの手法",
+        "公正な価格",
+        "少数株主を残すリスク"
+      ]
+    },
+    {
+      "key": "n029",
+      "prefix": "n029",
+      "page": "study-legal.html",
+      "id": "module-n029",
+      "title": "取締役の義務と責任",
+      "level": "初級",
+      "category": "会社法の土台",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "善管注意義務と忠実義務",
+        "経営判断の原則",
+        "利益相反取引",
+        "競業避止義務",
+        "任務懈怠責任",
+        "PE派遣取締役が負うもの"
+      ]
+    },
+    {
+      "key": "n030",
+      "prefix": "n030",
+      "page": "study-legal.html",
+      "id": "module-n030",
+      "title": "コーポレートガバナンスの考え方",
+      "level": "初級",
+      "category": "会社法の土台",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "ガバナンスとは何を防ぐ仕組みか",
+        "社外取締役の役割",
+        "内部統制",
+        "非上場企業のガバナンス",
+        "PE投資先で整えるもの",
+        "形式と実質"
+      ]
+    },
+    {
+      "key": "n031",
+      "prefix": "n031",
+      "page": "study-industry.html",
+      "id": "module-n031",
+      "title": "PEファンドの種類と戦略",
+      "level": "初級",
+      "category": "PE業界の地図",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "バイアウト",
+        "グロース",
+        "ベンチャー",
+        "再生",
+        "インフラ",
+        "クレジット/不動産との違い"
+      ]
+    },
+    {
+      "key": "n032",
+      "prefix": "n032",
+      "page": "study-industry.html",
+      "id": "module-n032",
+      "title": "バイアウト・グロース・VCの違い",
+      "level": "初級",
+      "category": "PE業界の地図",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "支配権の有無",
+        "資金の行き先",
+        "リターンの源泉",
+        "リスクプロファイル",
+        "必要な支援内容",
+        "キャリアパスの違い"
+      ]
+    },
+    {
+      "key": "n033",
+      "prefix": "n033",
+      "page": "study-industry.html",
+      "id": "module-n033",
+      "title": "日本のPE市場の構造",
+      "level": "初級",
+      "category": "PE業界の地図",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "市場規模と案件数",
+        "独立系と金融系と外資系",
+        "ファンドサイズ別の棲み分け",
+        "案件供給源の変化",
+        "競争環境",
+        "海外との違い"
+      ]
+    },
+    {
+      "key": "n034",
+      "prefix": "n034",
+      "page": "study-industry.html",
+      "id": "module-n034",
+      "title": "LPの種類と投資動機",
+      "level": "初級",
+      "category": "PE業界の地図",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "年金基金",
+        "金融機関",
+        "事業会社",
+        "ファンド・オブ・ファンズ",
+        "政府系",
+        "ファミリーオフィス"
+      ]
+    },
+    {
+      "key": "n035",
+      "prefix": "n035",
+      "page": "study-industry.html",
+      "id": "module-n035",
+      "title": "ファンドの法的な器と仕組み",
+      "level": "初級",
+      "category": "PE業界の地図",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "投資事業有限責任組合",
+        "GPとLPの責任",
+        "LPAの主要条項",
+        "コミットメントとドローダウン",
+        "ファンド期間",
+        "パラレルファンドとフィーダー"
+      ]
+    },
+    {
+      "key": "n036",
+      "prefix": "n036",
+      "page": "study-industry.html",
+      "id": "module-n036",
+      "title": "PEファームの収益構造",
+      "level": "初級",
+      "category": "PE業界の地図",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "管理報酬",
+        "キャリー",
+        "取引関連フィー",
+        "個人への配分",
+        "ファンドサイズと収益",
+        "GPコミット"
+      ]
+    },
+    {
+      "key": "n037",
+      "prefix": "n037",
+      "page": "study-industry.html",
+      "id": "module-n037",
+      "title": "案件に関わる専門家の全体像",
+      "level": "初級",
+      "category": "PE業界の地図",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "FA/投資銀行",
+        "弁護士",
+        "会計士/税理士",
+        "戦略コンサル",
+        "業界エキスパート",
+        "使い分けとコスト"
+      ]
+    },
+    {
+      "key": "n038",
+      "prefix": "n038",
+      "page": "study-industry.html",
+      "id": "module-n038",
+      "title": "案件情報の流通経路",
+      "level": "初級",
+      "category": "PE業界の地図",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "オークション",
+        "相対案件",
+        "紹介",
+        "ダイレクトソーシング",
+        "業界団体・金融機関",
+        "情報の質の違い"
+      ]
+    },
+    {
+      "key": "n039",
+      "prefix": "n039",
+      "page": "study-industry.html",
+      "id": "module-n039",
+      "title": "PEと事業会社の違い",
+      "level": "初級",
+      "category": "PE業界の地図",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "買収目的の違い",
+        "評価の視点の違い",
+        "保有期間",
+        "ガバナンスの入れ方",
+        "シナジーの扱い",
+        "売り手から見た差"
+      ]
+    },
+    {
+      "key": "n040",
+      "prefix": "n040",
+      "page": "study-industry.html",
+      "id": "module-n040",
+      "title": "PEの社会的役割とレピュテーション",
+      "level": "初級",
+      "category": "PE業界の地図",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "批判の類型",
+        "雇用への影響",
+        "事業承継の受け皿",
+        "再生の担い手",
+        "ESGの要請",
+        "説明責任"
+      ]
+    },
+    {
+      "key": "n041",
+      "prefix": "n041",
+      "page": "study-workstyle.html",
+      "id": "module-n041",
+      "title": "エクセルの型――PE実務の作法",
+      "level": "初級",
+      "category": "仕事の型",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "シート構成",
+        "セル書式と色分け",
+        "使う関数と避ける関数",
+        "ショートカット",
+        "検算の入れ方",
+        "壊れたファイルの直し方"
+      ]
+    },
+    {
+      "key": "n042",
+      "prefix": "n042",
+      "page": "study-workstyle.html",
+      "id": "module-n042",
+      "title": "資料作成の型――スライドの組み立て",
+      "level": "初級",
+      "category": "仕事の型",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "メッセージファースト",
+        "1スライド1メッセージ",
+        "図表の選び方",
+        "数字の見せ方",
+        "出典の書き方",
+        "レビューの受け方"
+      ]
+    },
+    {
+      "key": "n043",
+      "prefix": "n043",
+      "page": "study-workstyle.html",
+      "id": "module-n043",
+      "title": "議事録の書き方",
+      "level": "初級",
+      "category": "仕事の型",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "何を書き何を書かないか",
+        "決定事項と宿題の分離",
+        "当日中に出す理由",
+        "守秘の配慮",
+        "配布範囲",
+        "後で効いてくる記録"
+      ]
+    },
+    {
+      "key": "n044",
+      "prefix": "n044",
+      "page": "study-workstyle.html",
+      "id": "module-n044",
+      "title": "メール・電話・面談の作法",
+      "level": "初級",
+      "category": "仕事の型",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "件名と要件の書き方",
+        "宛先とCCの判断",
+        "電話をかける前の準備",
+        "面談のアジェンダ",
+        "お礼と次アクション",
+        "相手の時間を奪わない工夫"
+      ]
+    },
+    {
+      "key": "n045",
+      "prefix": "n045",
+      "page": "study-workstyle.html",
+      "id": "module-n045",
+      "title": "情報管理と守秘義務の実務",
+      "level": "初級",
+      "category": "仕事の型",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "インサイダー情報",
+        "ウォールの意味",
+        "資料の持ち出し",
+        "データルームの扱い",
+        "案件名のコードネーム",
+        "漏洩が起きたときの初動"
+      ]
+    },
+    {
+      "key": "n046",
+      "prefix": "n046",
+      "page": "study-workstyle.html",
+      "id": "module-n046",
+      "title": "スケジュール管理と優先順位",
+      "level": "初級",
+      "category": "仕事の型",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "案件のマイルストーン",
+        "逆算のスケジューリング",
+        "複数案件の並行",
+        "締切が重なったときの判断",
+        "バッファの取り方",
+        "遅れそうなときの報告"
+      ]
+    },
+    {
+      "key": "n047",
+      "prefix": "n047",
+      "page": "study-workstyle.html",
+      "id": "module-n047",
+      "title": "資料のバージョン管理とレビュー",
+      "level": "初級",
+      "category": "仕事の型",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "ファイル名規則",
+        "版の管理",
+        "変更履歴",
+        "レビュー依頼の出し方",
+        "指摘の反映",
+        "最終版の確定"
+      ]
+    },
+    {
+      "key": "n048",
+      "prefix": "n048",
+      "page": "study-workstyle.html",
+      "id": "module-n048",
+      "title": "数字の検算と自己チェック",
+      "level": "初級",
+      "category": "仕事の型",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "桁と単位",
+        "出典との突合",
+        "合計の一致",
+        "前期比の妥当性",
+        "第三者チェック",
+        "ミスが起きやすい箇所"
+      ]
+    },
+    {
+      "key": "n049",
+      "prefix": "n049",
+      "page": "study-workstyle.html",
+      "id": "module-n049",
+      "title": "報連相と質問の仕方",
+      "level": "初級",
+      "category": "仕事の型",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "報告と連絡と相談の違い",
+        "悪い知らせを早く出す",
+        "質問の前に整理すること",
+        "仮説を持って聞く",
+        "上司の時間の使い方",
+        "詰まったときの動き"
+      ]
+    },
+    {
+      "key": "n050",
+      "prefix": "n050",
+      "page": "study-workstyle.html",
+      "id": "module-n050",
+      "title": "クロスボーダー案件の英語実務",
+      "level": "初級",
+      "category": "仕事の型",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "メールの型",
+        "電話会議の進め方",
+        "用語の対応",
+        "資料の英訳",
+        "時差の扱い",
+        "誤解が起きやすい表現"
+      ]
+    },
+    {
+      "key": "n051",
+      "prefix": "n051",
+      "page": "study-dd.html",
+      "id": "module-n051",
+      "title": "財務DDの実務",
+      "level": "中級",
+      "category": "DD各論",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "正常収益力",
+        "運転資本",
+        "純有利子負債",
+        "品質分析",
+        "レポートの構成",
+        "ベンダーとの協働"
+      ]
+    },
+    {
+      "key": "n052",
+      "prefix": "n052",
+      "page": "study-dd.html",
+      "id": "module-n052",
+      "title": "税務DDの実務",
+      "level": "中級",
+      "category": "DD各論",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "税務ポジション",
+        "繰越欠損金",
+        "移転価格",
+        "消費税",
+        "源泉",
+        "リスクの定量化"
+      ]
+    },
+    {
+      "key": "n053",
+      "prefix": "n053",
+      "page": "study-dd.html",
+      "id": "module-n053",
+      "title": "法務DDの実務",
+      "level": "中級",
+      "category": "DD各論",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "株式の権原",
+        "契約の棚卸し",
+        "COC条項",
+        "許認可",
+        "訴訟",
+        "労務コンプライアンス"
+      ]
+    },
+    {
+      "key": "n054",
+      "prefix": "n054",
+      "page": "study-dd.html",
+      "id": "module-n054",
+      "title": "ビジネスDDの実務",
+      "level": "中級",
+      "category": "DD各論",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "市場規模",
+        "競合",
+        "顧客インタビュー",
+        "価格と数量の分解",
+        "事業計画の検証",
+        "コンサルの使い方"
+      ]
+    },
+    {
+      "key": "n055",
+      "prefix": "n055",
+      "page": "study-dd.html",
+      "id": "module-n055",
+      "title": "人事・組織DDの実務",
+      "level": "中級",
+      "category": "DD各論",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "要員構成",
+        "人件費",
+        "評価制度",
+        "労使関係",
+        "キーマン",
+        "退職リスク"
+      ]
+    },
+    {
+      "key": "n056",
+      "prefix": "n056",
+      "page": "study-dd.html",
+      "id": "module-n056",
+      "title": "IT・システムDDの実務",
+      "level": "中級",
+      "category": "DD各論",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "基幹システム",
+        "技術的負債",
+        "セキュリティ",
+        "ライセンス",
+        "分離可能性",
+        "投資見積り"
+      ]
+    },
+    {
+      "key": "n057",
+      "prefix": "n057",
+      "page": "study-dd.html",
+      "id": "module-n057",
+      "title": "環境DDの実務",
+      "level": "中級",
+      "category": "DD各論",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "土壌汚染",
+        "排水と排出",
+        "廃棄物",
+        "法規制",
+        "フェーズ1とフェーズ2",
+        "是正費用の見積り"
+      ]
+    },
+    {
+      "key": "n058",
+      "prefix": "n058",
+      "page": "study-dd.html",
+      "id": "module-n058",
+      "title": "保険DDの実務",
+      "level": "中級",
+      "category": "DD各論",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "付保状況",
+        "免責と限度額",
+        "過去の事故",
+        "保険料の適正性",
+        "W&amp;I保険との関係",
+        "クロージング後の切替"
+      ]
+    },
+    {
+      "key": "n059",
+      "prefix": "n059",
+      "page": "study-dd.html",
+      "id": "module-n059",
+      "title": "知的財産DDの実務",
+      "level": "中級",
+      "category": "DD各論",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "特許と商標",
+        "職務発明",
+        "ライセンス契約",
+        "侵害リスク",
+        "オープンソース",
+        "権利の帰属"
+      ]
+    },
+    {
+      "key": "n060",
+      "prefix": "n060",
+      "page": "study-dd.html",
+      "id": "module-n060",
+      "title": "不正・コンプライアンス調査",
+      "level": "中級",
+      "category": "DD各論",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "兆候の見つけ方",
+        "フォレンジックの手法",
+        "内部通報",
+        "贈収賄と競争法",
+        "調査の進め方",
+        "発見時の対応"
+      ]
+    },
+    {
+      "key": "n061",
+      "prefix": "n061",
+      "page": "study-dd.html",
+      "id": "module-n061",
+      "title": "DDベンダーの選定と管理",
+      "level": "中級",
+      "category": "DD各論",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "見積りの取り方",
+        "スコープの切り方",
+        "費用の管理",
+        "キックオフ",
+        "中間報告",
+        "成果物の受領"
+      ]
+    },
+    {
+      "key": "n062",
+      "prefix": "n062",
+      "page": "study-dd.html",
+      "id": "module-n062",
+      "title": "DDレポートの読み方と使い方",
+      "level": "中級",
+      "category": "DD各論",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "エグゼクティブサマリー",
+        "発見事項の重み付け",
+        "価格への反映",
+        "契約への反映",
+        "PMIへの引き継ぎ",
+        "読み落としの防ぎ方"
+      ]
+    },
+    {
+      "key": "n063",
+      "prefix": "n063",
+      "page": "study-modeling.html",
+      "id": "module-n063",
+      "title": "3表連動モデルの構築",
+      "level": "中級",
+      "category": "モデリング各論",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "シート設計",
+        "PLの作り方",
+        "BSの作り方",
+        "CFの作り方",
+        "連動の検算",
+        "よくある不一致"
+      ]
+    },
+    {
+      "key": "n064",
+      "prefix": "n064",
+      "page": "study-modeling.html",
+      "id": "module-n064",
+      "title": "LBOモデルの構築",
+      "level": "中級",
+      "category": "モデリング各論",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "Sources and Uses",
+        "デットスケジュール",
+        "キャッシュスイープ",
+        "リターン計算",
+        "循環参照",
+        "感応度"
+      ]
+    },
+    {
+      "key": "n065",
+      "prefix": "n065",
+      "page": "study-modeling.html",
+      "id": "module-n065",
+      "title": "DCFモデルの構築",
+      "level": "中級",
+      "category": "モデリング各論",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "FCFの算出",
+        "予測期間",
+        "WACC",
+        "継続価値",
+        "期央主義",
+        "結果の読み方"
+      ]
+    },
+    {
+      "key": "n066",
+      "prefix": "n066",
+      "page": "study-modeling.html",
+      "id": "module-n066",
+      "title": "シナリオとケース管理",
+      "level": "中級",
+      "category": "モデリング各論",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "ベース",
+        "アップ",
+        "ダウンの設計",
+        "スイッチの実装",
+        "前提の切り替え",
+        "ケース間の整合",
+        "ICへの見せ方"
+      ]
+    },
+    {
+      "key": "n067",
+      "prefix": "n067",
+      "page": "study-modeling.html",
+      "id": "module-n067",
+      "title": "アドオン買収を織り込むモデル",
+      "level": "中級",
+      "category": "モデリング各論",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "取得の前提",
+        "資金調達",
+        "連結の処理",
+        "シナジーの織り込み",
+        "マルチプルアービトラージ",
+        "実現確度の反映"
+      ]
+    },
+    {
+      "key": "n068",
+      "prefix": "n068",
+      "page": "study-modeling.html",
+      "id": "module-n068",
+      "title": "リファイナンスとリキャップのモデル",
+      "level": "中級",
+      "category": "モデリング各論",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "借換えの前提",
+        "手数料",
+        "配当リキャップ",
+        "リターンへの影響",
+        "レンダーの目線",
+        "実行可能性の検証"
+      ]
+    },
+    {
+      "key": "n069",
+      "prefix": "n069",
+      "page": "study-modeling.html",
+      "id": "module-n069",
+      "title": "月次モデルと資金繰り表",
+      "level": "中級",
+      "category": "モデリング各論",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "月次化の理由",
+        "季節性",
+        "13週資金繰り",
+        "コベナンツテスト日",
+        "資金ショートの検知",
+        "更新の運用"
+      ]
+    },
+    {
+      "key": "n070",
+      "prefix": "n070",
+      "page": "study-modeling.html",
+      "id": "module-n070",
+      "title": "モデルレビューの受け方",
+      "level": "中級",
+      "category": "モデリング各論",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "レビューの観点",
+        "指摘の分類",
+        "修正の優先順位",
+        "再検算",
+        "バージョンの扱い",
+        "第三者モデル監査"
+      ]
+    },
+    {
+      "key": "n071",
+      "prefix": "n071",
+      "page": "study-modeling.html",
+      "id": "module-n071",
+      "title": "ウォーターフォールモデルの構築",
+      "level": "中級",
+      "category": "モデリング各論",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "優先分配",
+        "ハードル",
+        "キャッチアップ",
+        "キャリー",
+        "クローバック",
+        "LP別の計算"
+      ]
+    },
+    {
+      "key": "n072",
+      "prefix": "n072",
+      "page": "study-modeling.html",
+      "id": "module-n072",
+      "title": "感応度分析とストレステストの設計",
+      "level": "中級",
+      "category": "モデリング各論",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "変数の選び方",
+        "データテーブル",
+        "相関の扱い",
+        "ブレークイーブン分析",
+        "ストレスシナリオ",
+        "結果の提示"
+      ]
+    },
+    {
+      "key": "n073",
+      "prefix": "n073",
+      "page": "study-structure.html",
+      "id": "module-n073",
+      "title": "SPC・ホールドコ設計の実務",
+      "level": "中級",
+      "category": "ストラクチャー・資金調達",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "器の作り方",
+        "資本金と資本準備金",
+        "取締役の選任",
+        "口座開設",
+        "合併の設計",
+        "実務スケジュール"
+      ]
+    },
+    {
+      "key": "n074",
+      "prefix": "n074",
+      "page": "study-structure.html",
+      "id": "module-n074",
+      "title": "税務ストラクチャーの選択",
+      "level": "中級",
+      "category": "ストラクチャー・資金調達",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "株式譲渡と事業譲渡",
+        "適格と非適格",
+        "グループ通算",
+        "損益通算",
+        "繰越欠損金の承継",
+        "専門家との詰め方"
+      ]
+    },
+    {
+      "key": "n075",
+      "prefix": "n075",
+      "page": "study-structure.html",
+      "id": "module-n075",
+      "title": "クロスボーダー案件のストラクチャー",
+      "level": "中級",
+      "category": "ストラクチャー・資金調達",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "持株会社の所在地",
+        "源泉税",
+        "租税条約",
+        "CFC税制",
+        "為替",
+        "現地の規制"
+      ]
+    },
+    {
+      "key": "n076",
+      "prefix": "n076",
+      "page": "study-structure.html",
+      "id": "module-n076",
+      "title": "経営陣インセンティブ(MIP)の設計",
+      "level": "中級",
+      "category": "ストラクチャー・資金調達",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "対象者の選定",
+        "原資",
+        "ベスティング",
+        "グッドリーバーとバッドリーバー",
+        "税務の考え方",
+        "Exit時の精算"
+      ]
+    },
+    {
+      "key": "n077",
+      "prefix": "n077",
+      "page": "study-structure.html",
+      "id": "module-n077",
+      "title": "ロールオーバー出資の設計",
+      "level": "中級",
+      "category": "ストラクチャー・資金調達",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "再投資の意味",
+        "評価の考え方",
+        "持分比率",
+        "優先劣後",
+        "流動性",
+        "オーナーへの説明"
+      ]
+    },
+    {
+      "key": "n078",
+      "prefix": "n078",
+      "page": "study-structure.html",
+      "id": "module-n078",
+      "title": "シニアローンの実務",
+      "level": "中級",
+      "category": "ストラクチャー・資金調達",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "タームローンの種類",
+        "コミットメントレター",
+        "シンジケーション",
+        "財務制限条項",
+        "報告義務",
+        "期限の利益喪失"
+      ]
+    },
+    {
+      "key": "n079",
+      "prefix": "n079",
+      "page": "study-structure.html",
+      "id": "module-n079",
+      "title": "メザニン・ユニトランシェの実務",
+      "level": "中級",
+      "category": "ストラクチャー・資金調達",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "位置づけ",
+        "金利構成(現金とPIK)",
+        "ワラント",
+        "インタークレジター",
+        "使う場面",
+        "コストの評価"
+      ]
+    },
+    {
+      "key": "n080",
+      "prefix": "n080",
+      "page": "study-structure.html",
+      "id": "module-n080",
+      "title": "ハイイールド債と社債",
+      "level": "中級",
+      "category": "ストラクチャー・資金調達",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "公募と私募",
+        "コベナンツの型",
+        "コールプロテクション",
+        "格付け",
+        "流動性",
+        "PE案件での使われ方"
+      ]
+    },
+    {
+      "key": "n081",
+      "prefix": "n081",
+      "page": "study-structure.html",
+      "id": "module-n081",
+      "title": "ABL・不動産担保・リースバック",
+      "level": "中級",
+      "category": "ストラクチャー・資金調達",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "資産担保の考え方",
+        "掛け目",
+        "モニタリング",
+        "セールアンドリースバック",
+        "資金化の効果",
+        "副作用"
+      ]
+    },
+    {
+      "key": "n082",
+      "prefix": "n082",
+      "page": "study-structure.html",
+      "id": "module-n082",
+      "title": "担保・保証・優先劣後の設計",
+      "level": "中級",
+      "category": "ストラクチャー・資金調達",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "担保の種類",
+        "対抗要件",
+        "親会社保証",
+        "劣後合意",
+        "インタークレジター契約",
+        "実行時の順位"
+      ]
+    },
+    {
+      "key": "n083",
+      "prefix": "n083",
+      "page": "study-structure.html",
+      "id": "module-n083",
+      "title": "金利・為替のヘッジ",
+      "level": "中級",
+      "category": "ストラクチャー・資金調達",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "変動金利のリスク",
+        "スワップとキャップ",
+        "ヘッジ比率",
+        "為替予約",
+        "会計上の扱い",
+        "レンダーの要求"
+      ]
+    },
+    {
+      "key": "n084",
+      "prefix": "n084",
+      "page": "study-structure.html",
+      "id": "module-n084",
+      "title": "資金調達プロセスの回し方",
+      "level": "中級",
+      "category": "ストラクチャー・資金調達",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "タイミング",
+        "レンダーリスト",
+        "インフォメーションパッケージ",
+        "条件の比較",
+        "交渉",
+        "クロージングまでの段取り"
+      ]
+    },
+    {
+      "key": "n085",
+      "prefix": "n085",
+      "page": "study-contract.html",
+      "id": "module-n085",
+      "title": "NDAとプロセスレター",
+      "level": "中級",
+      "category": "契約・交渉各論",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "NDAの主要条項",
+        "期間と目的外使用",
+        "従業員の引き抜き禁止",
+        "プロセスレターの読み方",
+        "拘束力の有無",
+        "違反時の実務"
+      ]
+    },
+    {
+      "key": "n086",
+      "prefix": "n086",
+      "page": "study-contract.html",
+      "id": "module-n086",
+      "title": "意向表明・LOI・MOUの書き方",
+      "level": "中級",
+      "category": "契約・交渉各論",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "記載すべき項目",
+        "価格の示し方",
+        "前提条件",
+        "独占交渉権",
+        "拘束力のある条項",
+        "差別化の書き込み方"
+      ]
+    },
+    {
+      "key": "n087",
+      "prefix": "n087",
+      "page": "study-contract.html",
+      "id": "module-n087",
+      "title": "SPAの詳細条項(前半)",
+      "level": "中級",
+      "category": "契約・交渉各論",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "定義",
+        "売買の合意",
+        "価格と支払",
+        "クロージング",
+        "前提条件",
+        "売主の義務"
+      ]
+    },
+    {
+      "key": "n088",
+      "prefix": "n088",
+      "page": "study-contract.html",
+      "id": "module-n088",
+      "title": "SPAの詳細条項(後半)",
+      "level": "中級",
+      "category": "契約・交渉各論",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "表明保証",
+        "補償",
+        "誓約事項",
+        "解除",
+        "一般条項",
+        "準拠法と紛争解決"
+      ]
+    },
+    {
+      "key": "n089",
+      "prefix": "n089",
+      "page": "study-contract.html",
+      "id": "module-n089",
+      "title": "SHAの詳細条項",
+      "level": "中級",
+      "category": "契約・交渉各論",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "取締役の指名",
+        "重要事項の決議",
+        "情報提供",
+        "譲渡制限",
+        "タグとドラッグ",
+        "デッドロック"
+      ]
+    },
+    {
+      "key": "n090",
+      "prefix": "n090",
+      "page": "study-contract.html",
+      "id": "module-n090",
+      "title": "TSA(移行サービス契約)の実務",
+      "level": "中級",
+      "category": "契約・交渉各論",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "対象サービスの洗い出し",
+        "期間と料金",
+        "SLA",
+        "終了と延長",
+        "移行計画",
+        "紛争の予防"
+      ]
+    },
+    {
+      "key": "n091",
+      "prefix": "n091",
+      "page": "study-contract.html",
+      "id": "module-n091",
+      "title": "経営陣の雇用契約と競業避止",
+      "level": "中級",
+      "category": "契約・交渉各論",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "報酬設計",
+        "任期",
+        "解任事由",
+        "競業避止の範囲",
+        "秘密保持",
+        "退職時の扱い"
+      ]
+    },
+    {
+      "key": "n092",
+      "prefix": "n092",
+      "page": "study-contract.html",
+      "id": "module-n092",
+      "title": "ファイナンス契約(LA)の読み方",
+      "level": "中級",
+      "category": "契約・交渉各論",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "貸付の条件",
+        "実行前提条件",
+        "表明保証",
+        "誓約",
+        "財務制限条項",
+        "期限の利益喪失"
+      ]
+    },
+    {
+      "key": "n093",
+      "prefix": "n093",
+      "page": "study-contract.html",
+      "id": "module-n093",
+      "title": "交渉の準備と設計",
+      "level": "中級",
+      "category": "契約・交渉各論",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "BATNAの整理",
+        "論点の優先順位",
+        "譲れる線と譲れない線",
+        "相手の制約の推定",
+        "シナリオの用意",
+        "チーム内の役割分担"
+      ]
+    },
+    {
+      "key": "n094",
+      "prefix": "n094",
+      "page": "study-contract.html",
+      "id": "module-n094",
+      "title": "交渉の場面別対応",
+      "level": "中級",
+      "category": "契約・交渉各論",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "価格の膠着",
+        "追加条件の要求",
+        "期限を切られたとき",
+        "相手の交代",
+        "感情的な対立",
+        "合意直前の蒸し返し"
+      ]
+    },
+    {
+      "key": "n095",
+      "prefix": "n095",
+      "page": "study-valueup.html",
+      "id": "module-n095",
+      "title": "価格戦略による価値創造",
+      "level": "上級",
+      "category": "バリューアップ各論",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "値上げの余地の見つけ方",
+        "顧客別価格の分析",
+        "値引きの管理",
+        "価格弾力性",
+        "実行の段取り",
+        "失敗パターン"
+      ]
+    },
+    {
+      "key": "n096",
+      "prefix": "n096",
+      "page": "study-valueup.html",
+      "id": "module-n096",
+      "title": "営業改革(セールスエクセレンス)",
+      "level": "上級",
+      "category": "バリューアップ各論",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "営業プロセスの可視化",
+        "パイプライン管理",
+        "歩留まりの改善",
+        "顧客セグメント",
+        "インセンティブ設計",
+        "定着させる仕組み"
+      ]
+    },
+    {
+      "key": "n097",
+      "prefix": "n097",
+      "page": "study-valueup.html",
+      "id": "module-n097",
+      "title": "購買・調達改革",
+      "level": "上級",
+      "category": "バリューアップ各論",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "支出の可視化",
+        "サプライヤー統合",
+        "相見積り",
+        "仕様の見直し",
+        "内製と外注",
+        "実現までの時間"
+      ]
+    },
+    {
+      "key": "n098",
+      "prefix": "n098",
+      "page": "study-valueup.html",
+      "id": "module-n098",
+      "title": "生産性改善とオペレーション",
+      "level": "上級",
+      "category": "バリューアップ各論",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "ボトルネックの特定",
+        "稼働率と歩留まり",
+        "レイアウト",
+        "標準作業",
+        "現場の巻き込み",
+        "定量化の方法"
+      ]
+    },
+    {
+      "key": "n099",
+      "prefix": "n099",
+      "page": "study-valueup.html",
+      "id": "module-n099",
+      "title": "サプライチェーン改革",
+      "level": "上級",
+      "category": "バリューアップ各論",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "在庫の適正化",
+        "リードタイム",
+        "物流費",
+        "需要予測",
+        "調達リスク",
+        "運転資本への効果"
+      ]
+    },
+    {
+      "key": "n100",
+      "prefix": "n100",
+      "page": "study-valueup.html",
+      "id": "module-n100",
+      "title": "DX・システム投資の判断",
+      "level": "上級",
+      "category": "バリューアップ各論",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "投資対効果の見方",
+        "基幹システムの刷新",
+        "データ基盤",
+        "現場の負担",
+        "失敗の典型",
+        "段階的な進め方"
+      ]
+    },
+    {
+      "key": "n101",
+      "prefix": "n101",
+      "page": "study-valueup.html",
+      "id": "module-n101",
+      "title": "組織・人事改革",
+      "level": "上級",
+      "category": "バリューアップ各論",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "組織構造の見直し",
+        "評価と報酬",
+        "採用と定着",
+        "幹部人材の補強",
+        "文化の扱い",
+        "抵抗への対処"
+      ]
+    },
+    {
+      "key": "n102",
+      "prefix": "n102",
+      "page": "study-valueup.html",
+      "id": "module-n102",
+      "title": "経営管理体制の構築",
+      "level": "上級",
+      "category": "バリューアップ各論",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "KPIの設計",
+        "月次の型",
+        "予実管理",
+        "会議体",
+        "権限規程",
+        "経営の見える化"
+      ]
+    },
+    {
+      "key": "n103",
+      "prefix": "n103",
+      "page": "study-valueup.html",
+      "id": "module-n103",
+      "title": "アドオン買収の実行",
+      "level": "上級",
+      "category": "バリューアップ各論",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "ターゲットの探し方",
+        "小規模案件の進め方",
+        "バリュエーションの考え方",
+        "統合の負荷",
+        "連続買収の管理",
+        "マルチプル効果の限界"
+      ]
+    },
+    {
+      "key": "n104",
+      "prefix": "n104",
+      "page": "study-valueup.html",
+      "id": "module-n104",
+      "title": "海外展開の判断と実行",
+      "level": "上級",
+      "category": "バリューアップ各論",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "進出の目的",
+        "市場の選定",
+        "参入形態",
+        "現地人材",
+        "リスク管理",
+        "撤退基準"
+      ]
+    },
+    {
+      "key": "n105",
+      "prefix": "n105",
+      "page": "study-valueup.html",
+      "id": "module-n105",
+      "title": "新規事業・新商品の判断",
+      "level": "上級",
+      "category": "バリューアップ各論",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "投資判断の枠組み",
+        "既存事業との関係",
+        "リソース配分",
+        "撤退ライン",
+        "小さく試す",
+        "成功確率の見積り"
+      ]
+    },
+    {
+      "key": "n106",
+      "prefix": "n106",
+      "page": "study-valueup.html",
+      "id": "module-n106",
+      "title": "コスト構造改革",
+      "level": "上級",
+      "category": "バリューアップ各論",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "固定費と変動費の見直し",
+        "間接費",
+        "拠点統廃合",
+        "人件費",
+        "一過性費用",
+        "持続性の担保"
+      ]
+    },
+    {
+      "key": "n107",
+      "prefix": "n107",
+      "page": "study-valueup.html",
+      "id": "module-n107",
+      "title": "資本効率の改善",
+      "level": "上級",
+      "category": "バリューアップ各論",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "運転資本の圧縮",
+        "遊休資産の売却",
+        "設備投資の選別",
+        "ROICの改善",
+        "財務レバレッジ",
+        "効果の測り方"
+      ]
+    },
+    {
+      "key": "n108",
+      "prefix": "n108",
+      "page": "study-valueup.html",
+      "id": "module-n108",
+      "title": "バリューアップ計画の進捗管理",
+      "level": "上級",
+      "category": "バリューアップ各論",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "施策の一覧化",
+        "責任者と期限",
+        "効果の測定",
+        "計画からの乖離",
+        "優先順位の入替",
+        "ICへの報告"
+      ]
+    },
+    {
+      "key": "n109",
+      "prefix": "n109",
+      "page": "study-exit.html",
+      "id": "module-n109",
+      "title": "IPOによるExitの実務",
+      "level": "上級",
+      "category": "Exit各論",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "上場準備の全体像",
+        "主幹事の選定",
+        "N-2期からの準備",
+        "内部管理体制",
+        "ロックアップ",
+        "売出しの設計"
+      ]
+    },
+    {
+      "key": "n110",
+      "prefix": "n110",
+      "page": "study-exit.html",
+      "id": "module-n110",
+      "title": "トレードセールの実務",
+      "level": "上級",
+      "category": "Exit各論",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "買い手候補の洗い出し",
+        "シナジーの提示",
+        "情報開示の順序",
+        "独禁法対応",
+        "競争環境の作り方",
+        "交渉の勘所"
+      ]
+    },
+    {
+      "key": "n111",
+      "prefix": "n111",
+      "page": "study-exit.html",
+      "id": "module-n111",
+      "title": "セカンダリーバイアウトの実務",
+      "level": "上級",
+      "category": "Exit各論",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "買い手PEの目線",
+        "残された伸びしろの示し方",
+        "DD対応",
+        "価格形成",
+        "バリューアップの引き継ぎ",
+        "批判への備え"
+      ]
+    },
+    {
+      "key": "n112",
+      "prefix": "n112",
+      "page": "study-exit.html",
+      "id": "module-n112",
+      "title": "継続ファンドへの移管",
+      "level": "上級",
+      "category": "Exit各論",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "使う場面",
+        "バリュエーションの公正性",
+        "LPの選択肢",
+        "LPACへの諮り方",
+        "利益相反の管理",
+        "実務の流れ"
+      ]
+    },
+    {
+      "key": "n113",
+      "prefix": "n113",
+      "page": "study-exit.html",
+      "id": "module-n113",
+      "title": "部分売却とマイノリティExit",
+      "level": "上級",
+      "category": "Exit各論",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "一部売却の意味",
+        "評価と持分",
+        "残す側の権利",
+        "流動性の確保",
+        "リターンへの影響",
+        "使いどころ"
+      ]
+    },
+    {
+      "key": "n114",
+      "prefix": "n114",
+      "page": "study-exit.html",
+      "id": "module-n114",
+      "title": "配当リキャップ",
+      "level": "上級",
+      "category": "Exit各論",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "仕組み",
+        "レンダーの目線",
+        "実行条件",
+        "リターンへの効果",
+        "リスク",
+        "批判と説明"
+      ]
+    },
+    {
+      "key": "n115",
+      "prefix": "n115",
+      "page": "study-exit.html",
+      "id": "module-n115",
+      "title": "Exitタイミングの判断",
+      "level": "上級",
+      "category": "Exit各論",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "市況",
+        "事業のモメンタム",
+        "ファンド期間",
+        "買い手の存在",
+        "待つコスト",
+        "判断の型"
+      ]
+    },
+    {
+      "key": "n116",
+      "prefix": "n116",
+      "page": "study-exit.html",
+      "id": "module-n116",
+      "title": "Exitプロセスの設計と売り手側の準備",
+      "level": "上級",
+      "category": "Exit各論",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "スケジュール",
+        "ベンダーDD",
+        "情報パッケージ",
+        "経営陣の準備",
+        "入札の設計",
+        "クロージングまで"
+      ]
+    },
+    {
+      "key": "n117",
+      "prefix": "n117",
+      "page": "study-sector.html",
+      "id": "module-n117",
+      "title": "製造業への投資",
+      "level": "中級",
+      "category": "セクター別投資実務",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "儲けの構造",
+        "設備と稼働",
+        "受注残",
+        "内製化リスク",
+        "価値創造の打ち手",
+        "買い手候補"
+      ]
+    },
+    {
+      "key": "n118",
+      "prefix": "n118",
+      "page": "study-sector.html",
+      "id": "module-n118",
+      "title": "BtoBソフトウェア・SaaSへの投資",
+      "level": "中級",
+      "category": "セクター別投資実務",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "ARRとチャーン",
+        "NRR",
+        "CAC回収",
+        "売上認識",
+        "価値創造の打ち手",
+        "買い手候補"
+      ]
+    },
+    {
+      "key": "n119",
+      "prefix": "n119",
+      "page": "study-sector.html",
+      "id": "module-n119",
+      "title": "ヘルスケアへの投資",
+      "level": "中級",
+      "category": "セクター別投資実務",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "公定価格の構造",
+        "規制変更",
+        "人員基準",
+        "稼働率",
+        "価値創造の打ち手",
+        "買い手候補"
+      ]
+    },
+    {
+      "key": "n120",
+      "prefix": "n120",
+      "page": "study-sector.html",
+      "id": "module-n120",
+      "title": "消費財・小売への投資",
+      "level": "中級",
+      "category": "セクター別投資実務",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "既存店成長",
+        "坪効率",
+        "在庫",
+        "EC比率",
+        "価値創造の打ち手",
+        "買い手候補"
+      ]
+    },
+    {
+      "key": "n121",
+      "prefix": "n121",
+      "page": "study-sector.html",
+      "id": "module-n121",
+      "title": "物流・運輸への投資",
+      "level": "中級",
+      "category": "セクター別投資実務",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "積載率と実車率",
+        "ドライバー確保",
+        "燃料費転嫁",
+        "荷主集中",
+        "価値創造の打ち手",
+        "買い手候補"
+      ]
+    },
+    {
+      "key": "n122",
+      "prefix": "n122",
+      "page": "study-sector.html",
+      "id": "module-n122",
+      "title": "人材サービスへの投資",
+      "level": "中級",
+      "category": "セクター別投資実務",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "稼働人数と単価",
+        "離職率",
+        "粗利単価",
+        "規制",
+        "価値創造の打ち手",
+        "買い手候補"
+      ]
+    },
+    {
+      "key": "n123",
+      "prefix": "n123",
+      "page": "study-sector.html",
+      "id": "module-n123",
+      "title": "外食・店舗ビジネスへの投資",
+      "level": "中級",
+      "category": "セクター別投資実務",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "出店の経済性",
+        "FLコスト",
+        "既存店と新店",
+        "立地",
+        "価値創造の打ち手",
+        "買い手候補"
+      ]
+    },
+    {
+      "key": "n124",
+      "prefix": "n124",
+      "page": "study-sector.html",
+      "id": "module-n124",
+      "title": "建設・インフラへの投資",
+      "level": "中級",
+      "category": "セクター別投資実務",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "工事進行基準",
+        "受注採算",
+        "下請け構造",
+        "技術者確保",
+        "価値創造の打ち手",
+        "買い手候補"
+      ]
+    },
+    {
+      "key": "n125",
+      "prefix": "n125",
+      "page": "study-sector.html",
+      "id": "module-n125",
+      "title": "金融周辺サービスへの投資",
+      "level": "中級",
+      "category": "セクター別投資実務",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "規制の枠組み",
+        "与信リスク",
+        "資金調達",
+        "手数料構造",
+        "価値創造の打ち手",
+        "買い手候補"
+      ]
+    },
+    {
+      "key": "n126",
+      "prefix": "n126",
+      "page": "study-sector.html",
+      "id": "module-n126",
+      "title": "教育サービスへの投資",
+      "level": "中級",
+      "category": "セクター別投資実務",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "生徒獲得と継続",
+        "講師の確保",
+        "季節性",
+        "規制",
+        "価値創造の打ち手",
+        "買い手候補"
+      ]
+    },
+    {
+      "key": "n127",
+      "prefix": "n127",
+      "page": "study-sector.html",
+      "id": "module-n127",
+      "title": "BtoB専門サービスへの投資",
+      "level": "中級",
+      "category": "セクター別投資実務",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "属人性",
+        "案件単価",
+        "リピート",
+        "人材の獲得",
+        "価値創造の打ち手",
+        "買い手候補"
+      ]
+    },
+    {
+      "key": "n128",
+      "prefix": "n128",
+      "page": "study-sector.html",
+      "id": "module-n128",
+      "title": "IT受託・SIerへの投資",
+      "level": "中級",
+      "category": "セクター別投資実務",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "人月構造",
+        "稼働率",
+        "不採算案件",
+        "技術者の育成",
+        "価値創造の打ち手",
+        "買い手候補"
+      ]
+    },
+    {
+      "key": "n129",
+      "prefix": "n129",
+      "page": "study-crosscut.html",
+      "id": "module-n129",
+      "title": "クロスボーダー案件の実務",
+      "level": "上級",
+      "category": "横断テーマ",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "対象国の選定",
+        "現地アドバイザー",
+        "文化と商慣習",
+        "規制と外資規制",
+        "時差と言語",
+        "PMIの難所"
+      ]
+    },
+    {
+      "key": "n130",
+      "prefix": "n130",
+      "page": "study-crosscut.html",
+      "id": "module-n130",
+      "title": "ESGとインパクト投資",
+      "level": "上級",
+      "category": "横断テーマ",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "LPからの要請",
+        "デューデリジェンスへの組み込み",
+        "KPIの設定",
+        "報告",
+        "グリーンウォッシュ",
+        "Exitへの影響"
+      ]
+    },
+    {
+      "key": "n131",
+      "prefix": "n131",
+      "page": "study-crosscut.html",
+      "id": "module-n131",
+      "title": "不正・コンプライアンス危機への対応",
+      "level": "上級",
+      "category": "横断テーマ",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "発覚時の初動",
+        "事実調査",
+        "開示と報告",
+        "責任の所在",
+        "再発防止",
+        "レンダーとLPへの説明"
+      ]
+    },
+    {
+      "key": "n132",
+      "prefix": "n132",
+      "page": "study-crosscut.html",
+      "id": "module-n132",
+      "title": "訴訟・紛争への対応",
+      "level": "上級",
+      "category": "横断テーマ",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "紛争の類型",
+        "初期評価",
+        "和解と徹底抗戦",
+        "弁護士の起用",
+        "引当と開示",
+        "投資判断への影響"
+      ]
+    },
+    {
+      "key": "n133",
+      "prefix": "n133",
+      "page": "study-crosscut.html",
+      "id": "module-n133",
+      "title": "事業承継の税務と法務(応用)",
+      "level": "上級",
+      "category": "横断テーマ",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "相続と生前贈与",
+        "株価評価",
+        "分散株式の集約",
+        "種類株の活用",
+        "専門家との連携",
+        "オーナーへの伝え方"
+      ]
+    },
+    {
+      "key": "n134",
+      "prefix": "n134",
+      "page": "study-crosscut.html",
+      "id": "module-n134",
+      "title": "カーブアウトの実行",
+      "level": "上級",
+      "category": "横断テーマ",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "分離範囲の確定",
+        "スタンドアロンコスト",
+        "TSA",
+        "システム分離",
+        "人事の移管",
+        "Day1の運営"
+      ]
+    },
+    {
+      "key": "n135",
+      "prefix": "n135",
+      "page": "study-crosscut.html",
+      "id": "module-n135",
+      "title": "経営者の探し方と口説き方",
+      "level": "上級",
+      "category": "横断テーマ",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "人材要件の定義",
+        "サーチファームの使い方",
+        "面談の設計",
+        "リファレンスチェック",
+        "条件提示",
+        "入社後の立ち上げ"
+      ]
+    },
+    {
+      "key": "n136",
+      "prefix": "n136",
+      "page": "study-crosscut.html",
+      "id": "module-n136",
+      "title": "取締役会の設計と運営(応用)",
+      "level": "上級",
+      "category": "横断テーマ",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "構成の設計",
+        "議題の設計",
+        "資料の水準",
+        "社外の起用",
+        "実効性評価",
+        "機能不全への対処"
+      ]
+    },
+    {
+      "key": "n137",
+      "prefix": "n137",
+      "page": "study-crosscut.html",
+      "id": "module-n137",
+      "title": "投資先CFOの採用と育成",
+      "level": "上級",
+      "category": "横断テーマ",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "求める要件",
+        "採用の進め方",
+        "立ち上げ支援",
+        "経理体制の再構築",
+        "後継の育成",
+        "交代の判断"
+      ]
+    },
+    {
+      "key": "n138",
+      "prefix": "n138",
+      "page": "study-crosscut.html",
+      "id": "module-n138",
+      "title": "AI・テクノロジーが投資判断に与える影響",
+      "level": "上級",
+      "category": "横断テーマ",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "業界構造の変化",
+        "参入障壁の変化",
+        "投資テーマへの反映",
+        "投資先での活用",
+        "リスク",
+        "過大評価の見分け方"
+      ]
+    },
+    {
+      "key": "n139",
+      "prefix": "n139",
+      "page": "study-crosscut.html",
+      "id": "module-n139",
+      "title": "マクロ経済と金利環境の読み方",
+      "level": "上級",
+      "category": "横断テーマ",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "金利と資産価格",
+        "インフレ",
+        "為替",
+        "景気循環",
+        "投資判断への反映",
+        "予測に頼らない設計"
+      ]
+    },
+    {
+      "key": "n140",
+      "prefix": "n140",
+      "page": "study-crosscut.html",
+      "id": "module-n140",
+      "title": "PEのキャリア設計と評価",
+      "level": "上級",
+      "category": "横断テーマ",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "各階層で求められるもの",
+        "評価のされ方",
+        "専門性の作り方",
+        "転職市場",
+        "独立の選択肢",
+        "長く続けるために"
+      ]
+    }
+  ]
+}
