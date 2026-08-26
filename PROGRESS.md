@@ -35,7 +35,7 @@ grep -h '<article' study-*.html | wc -l
 2. 各モジュールにつきエージェントを1つ起動する。指示は
    `scratchpad/w/BRIEF.md` を読ませたうえで、モジュール仕様と出力先を渡すだけでよい
 3. 出力は `scratchpad/w/<key>.html` と `scratchpad/w/<key>.json`
-4. 全部揃ったら `node scratchpad/build-wave.js` で検証・挿入・マージ
+4. 全部揃ったら `node tools/build-wave.js` で検証・挿入・マージ
    （1つでも基準を外れたら書き込まずに中断する）
 5. 検証が通ったらコミットして push、`main` へ fast-forward マージ
 6. `content-plan.json` の該当モジュールを `status: "done"` に更新してコミット
