@@ -116,7 +116,7 @@
       "category": "会計の土台",
       "articles": 10,
       "quizzes": 20,
-      "status": "pending",
+      "status": "done",
       "topics": [
         "出荷基準と検収基準",
         "工事進行基準",
@@ -136,7 +136,7 @@
       "category": "会計の土台",
       "articles": 10,
       "quizzes": 20,
-      "status": "pending",
+      "status": "done",
       "topics": [
         "売上原価と販管費の線引き",
         "直接費と間接費",
@@ -156,7 +156,7 @@
       "category": "会計の土台",
       "articles": 10,
       "quizzes": 20,
-      "status": "pending",
+      "status": "done",
       "topics": [
         "引当金の4要件",
         "貸倒引当金",
@@ -176,7 +176,7 @@
       "category": "会計の土台",
       "articles": 10,
       "quizzes": 20,
-      "status": "pending",
+      "status": "done",
       "topics": [
         "会計と税務のズレ",
         "一時差異と永久差異",
@@ -196,7 +196,7 @@
       "category": "会計の土台",
       "articles": 10,
       "quizzes": 20,
-      "status": "pending",
+      "status": "done",
       "topics": [
         "連結の範囲",
         "支配力基準",
@@ -216,7 +216,7 @@
       "category": "会計の土台",
       "articles": 10,
       "quizzes": 20,
-      "status": "pending",
+      "status": "done",
       "topics": [
         "のれんの発生",
         "PPA(取得原価配分)",
@@ -236,7 +236,7 @@
       "category": "会計の土台",
       "articles": 10,
       "quizzes": 20,
-      "status": "pending",
+      "status": "done",
       "topics": [
         "オペレーティングとファイナンス",
         "オンバランス化",
@@ -256,7 +256,7 @@
       "category": "会計の土台",
       "articles": 10,
       "quizzes": 20,
-      "status": "pending",
+      "status": "done",
       "topics": [
         "取引と決算時の換算",
         "在外子会社の換算",
@@ -276,7 +276,7 @@
       "category": "会計の土台",
       "articles": 10,
       "quizzes": 20,
-      "status": "pending",
+      "status": "done",
       "topics": [
         "間接法の考え方",
         "当期純利益からの調整項目",
@@ -296,7 +296,7 @@
       "category": "会計の土台",
       "articles": 10,
       "quizzes": 20,
-      "status": "pending",
+      "status": "done",
       "topics": [
         "月次と年次の違い",
         "締めのスケジュール",
@@ -316,7 +316,7 @@
       "category": "ファイナンスの土台",
       "articles": 10,
       "quizzes": 20,
-      "status": "pending",
+      "status": "done",
       "topics": [
         "お金の時間価値",
         "割引率の意味",
@@ -336,7 +336,7 @@
       "category": "ファイナンスの土台",
       "articles": 10,
       "quizzes": 20,
-      "status": "pending",
+      "status": "done",
       "topics": [
         "複利計算",
         "年金現価係数",
@@ -356,7 +356,7 @@
       "category": "ファイナンスの土台",
       "articles": 10,
       "quizzes": 20,
-      "status": "pending",
+      "status": "done",
       "topics": [
         "額面とクーポン",
         "利回りと価格の関係",
@@ -376,7 +376,7 @@
       "category": "ファイナンスの土台",
       "articles": 10,
       "quizzes": 20,
-      "status": "pending",
+      "status": "done",
       "topics": [
         "株式とは何か",
         "期待リターンとリスク",
@@ -396,7 +396,7 @@
       "category": "ファイナンスの土台",
       "articles": 10,
       "quizzes": 20,
-      "status": "pending",
+      "status": "done",
       "topics": [
         "負債コストと株主資本コスト",
         "なぜ株主資本の方が高いか",
@@ -416,7 +416,7 @@
       "category": "ファイナンスの土台",
       "articles": 10,
       "quizzes": 20,
-      "status": "pending",
+      "status": "done",
       "topics": [
         "収益性指標",
         "効率性指標",
@@ -436,7 +436,7 @@
       "category": "ファイナンスの土台",
       "articles": 10,
       "quizzes": 20,
-      "status": "pending",
+      "status": "done",
       "topics": [
         "変動費と固定費の分解",
         "限界利益",
@@ -456,7 +456,7 @@
       "category": "ファイナンスの土台",
       "articles": 10,
       "quizzes": 20,
-      "status": "pending",
+      "status": "done",
       "topics": [
         "売上債権・棚卸・仕入債務",
         "回転日数の計算",
