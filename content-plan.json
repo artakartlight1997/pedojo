@@ -1363,7 +1363,7 @@
       "category": "モデリング各論",
       "articles": 10,
       "quizzes": 20,
-      "status": "pending",
+      "status": "done",
       "topics": [
         "シート設計",
         "PLの作り方",
@@ -1423,7 +1423,7 @@
       "category": "モデリング各論",
       "articles": 10,
       "quizzes": 20,
-      "status": "pending",
+      "status": "done",
       "topics": [
         "ベース",
         "アップ",
@@ -1484,7 +1484,7 @@
       "category": "モデリング各論",
       "articles": 10,
       "quizzes": 20,
-      "status": "pending",
+      "status": "done",
       "topics": [
         "月次化の理由",
         "季節性",
@@ -1564,7 +1564,7 @@
       "category": "ストラクチャー・資金調達",
       "articles": 10,
       "quizzes": 20,
-      "status": "pending",
+      "status": "done",
       "topics": [
         "器の作り方",
         "資本金と資本準備金",
@@ -1604,7 +1604,7 @@
       "category": "ストラクチャー・資金調達",
       "articles": 10,
       "quizzes": 20,
-      "status": "pending",
+      "status": "done",
       "topics": [
         "持株会社の所在地",
         "源泉税",
