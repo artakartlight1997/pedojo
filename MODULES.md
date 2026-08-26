@@ -57,7 +57,15 @@
   - `m6-`:成功・失敗ケーススタディ(module-case-studies)
   - `m7-`:営業ノック(相対ソーシング実践、module-sales-intro/negotiation/psychology/process)
   - `m8-`:座学初級モジュール6の投資プロセス深掘り(ソーシング〜Exitの全フェーズ、study-beginner.html内)
-  - `m9-`〜:今後の追加モジュール用。新しいモジュールを追加するときは次の空き番号(`m9-`, `m10-`…)を使う。
+  - `m9-`:座学初級の実務ノック3本立て(study-beginner.html内)
+    - `m9-001`〜`m9-040`:税務実務(モジュール7 `module-tax-practice`)
+    - `m9-041`〜`m9-080`:レンダー実務(モジュール8 `module-lender-comms`)
+    - `m9-081`〜`m9-120`:ICメモ作成実務(モジュール9 `module-ic-memo`)
+  - `m10-`:座学中級の実務ノック2本立て(study-intermediate.html内)
+    - `m10-001`〜`m10-040`:案件execution実務(モジュール8 `module-deal-execution`)
+    - `m10-041`〜`m10-080`:交渉・ステークホルダー実務(モジュール9 `module-negotiation`)
+  - `m11-`:応用的な投資判断と思考法――ディレクターの視座(study-advanced.html内 `module-applied-judgment`、モジュール8)
+  - `m12-`〜:今後の追加モジュール用。新しいモジュールを追加するときは空き番号を使う。
 - 新しいプレフィックスを使ったら、追記するだけでよい。`js/quiz-engine.js` は配列全体を毎回読み込み、`level`/`category` を自動収集してフィルタUIを作るため、コード変更は不要。
 
 ## 3. 計算問題ジェネレーター
