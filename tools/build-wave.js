@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // 座学モジュールの1波分を検証してサイトに取り込む。
-//   node tools/build-wave.js [--dir <出力ディレクトリ>] [--dry]
+//   node tools/build-wave.js [--dir <出力ディレクトリ>] [--dry] [--skip n043,n045]
 // content-plan.json の status:"pending" のうち、HTML/JSONが揃っているものだけを対象にする。
 // 1つでも品質基準を外れたら、何も書き込まずに中断する。
 const fs = require('fs');
@@ -47,8 +47,13 @@ if (!em) throw new Error('TERM_QUESTIONS が見つかりません');
 const existing = JSON.parse(em[1]);
 const ids = new Set(existing.map(q => q.id));
 
+const si = args.indexOf('--skip');
+const SKIP = new Set(si >= 0 ? (args[si + 1] || '').split(',').map(s => s.trim()).filter(Boolean) : []);
+
 const ready = plan.modules.filter(m =>
-  m.status === 'pending' && fs.existsSync(W + m.key + '.html') && fs.existsSync(W + m.key + '.json'));
+  m.status === 'pending' && !SKIP.has(m.key) &&
+  fs.existsSync(W + m.key + '.html') && fs.existsSync(W + m.key + '.json'));
+if (SKIP.size) console.log('今回は除外: ' + [...SKIP].join(', ') + '\n');
 
 if (!ready.length) { console.log('取り込める完成モジュールがありません。'); process.exit(0); }
 
