@@ -65,7 +65,18 @@
     - `m10-001`〜`m10-040`:案件execution実務(モジュール8 `module-deal-execution`)
     - `m10-041`〜`m10-080`:交渉・ステークホルダー実務(モジュール9 `module-negotiation`)
   - `m11-`:応用的な投資判断と思考法――ディレクターの視座(study-advanced.html内 `module-applied-judgment`、モジュール8)
-  - `m12-`〜:今後の追加モジュール用。新しいモジュールを追加するときは空き番号を使う。
+  - `m12-`:PMI(買収後統合)と最初の100日プラン(study-modules.html内 `module-pmi-100day`)
+  - `m13-`:ポートフォリオ・モニタリングと取締役会運営(study-modules.html内 `module-portfolio-monitoring`)
+  - `m14-`:財務モデルを自分で組む(study-intermediate.html内 `module-modeling-practice`、モジュール10)
+  - `m15-`:契約実務の深掘り(study-intermediate.html内 `module-legal-contract`、モジュール11)
+  - `m16-`:事業承継・オーナー系企業の案件実務(study-beginner.html内 `module-succession-sme`、モジュール10)
+  - `m17-`:セクター別の見方(study-modules.html内 `module-sector-lens`)
+  - `m18-`:バリュエーション実務(study-beginner.html内 `module-valuation-practice`、モジュール11)
+  - `m19-`:ファンド運営とLP対応の実務(study-advanced.html内 `module-lp-fund-ops`、モジュール9)
+  - `m20-`:事業再生・ターンアラウンド案件の実務(study-modules.html内 `module-turnaround`)
+  - `m21-`:投資形態のバリエーション(study-advanced.html内 `module-deal-types`、モジュール10)
+  - `e01-`〜:座学の各記事に紐づけて出題数を拡張するためのバッチ用プレフィックス。1バッチ=1つの出典モジュール群。
+  - `m22-`〜:今後の追加モジュール用。新しいモジュールを追加するときは空き番号を使う。
 - 新しいプレフィックスを使ったら、追記するだけでよい。`js/quiz-engine.js` は配列全体を毎回読み込み、`level`/`category` を自動収集してフィルタUIを作るため、コード変更は不要。
 
 ## 3. 計算問題ジェネレーター
