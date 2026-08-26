@@ -57,6 +57,20 @@ if (SKIP.size) console.log('今回は除外: ' + [...SKIP].join(', ') + '\n');
 
 if (!ready.length) { console.log('取り込める完成モジュールがありません。'); process.exit(0); }
 
+// answerIndex取り違えの兆候を警告する(中断はしない)。
+// 解説は正解を言い換えることが多く、機械的な判定では誤検知が出るため、目視確認の手がかりとして出す。
+function wordScore(choice, explain) {
+  const ks = keys(choice);
+  return ks.length ? ks.filter(k => explain.includes(k)).length / ks.length : 1;
+}
+function answerSuspects(list) {
+  return list.filter(q => {
+    const a = wordScore(q.choices[q.answerIndex], q.explain);
+    return [0, 1, 2, 3].filter(i => i !== q.answerIndex)
+      .every(i => wordScore(q.choices[i], q.explain) > a + 0.55);
+  }).map(q => q.id);
+}
+
 const errors = [];
 const parsed = {};
 const added = [];
@@ -118,6 +132,7 @@ for (const m of ready) {
     ids.add(q.id);
   });
   const lo = strat(qs, 'long'), sh = strat(qs, 'short');
+  const susp = answerSuspects(qs);
   if (lo < 20 || lo > 32) E('最長戦略 ' + lo.toFixed(1) + '% (合格20〜32)');
   if (sh < 15) E('最短戦略 ' + sh.toFixed(1) + '% (合格15以上)');
   if (wide) E('長さ差30%超 ' + wide + '件');
@@ -131,6 +146,7 @@ for (const m of ready) {
   console.log((errors.some(e => e.startsWith(m.key + ':')) ? 'NG  ' : 'OK  ') +
     m.key + '  ' + String(arts).padStart(3) + '記事 ' + String(qs.length).padStart(3) + '問  最長 ' +
     lo.toFixed(1) + '%  最短 ' + sh.toFixed(1) + '%  ' + m.title);
+  if (susp.length) console.log('    ※ 正解の取り違えの疑い(要目視): ' + susp.join(','));
 }
 
 // --- 実質重複 ---

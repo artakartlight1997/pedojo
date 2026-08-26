@@ -1083,7 +1083,7 @@
       "category": "仕事の型",
       "articles": 10,
       "quizzes": 20,
-      "status": "pending",
+      "status": "done",
       "topics": [
         "報告と連絡と相談の違い",
         "悪い知らせを早く出す",
@@ -1183,7 +1183,7 @@
       "category": "DD各論",
       "articles": 10,
       "quizzes": 20,
-      "status": "pending",
+      "status": "done",
       "topics": [
         "市場規模",
         "競合",
@@ -1203,7 +1203,7 @@
       "category": "DD各論",
       "articles": 10,
       "quizzes": 20,
-      "status": "pending",
+      "status": "done",
       "topics": [
         "要員構成",
         "人件費",
@@ -1223,7 +1223,7 @@
       "category": "DD各論",
       "articles": 10,
       "quizzes": 20,
-      "status": "pending",
+      "status": "done",
       "topics": [
         "基幹システム",
         "技術的負債",
@@ -1283,7 +1283,7 @@
       "category": "DD各論",
       "articles": 10,
       "quizzes": 20,
-      "status": "pending",
+      "status": "done",
       "topics": [
         "特許と商標",
         "職務発明",
