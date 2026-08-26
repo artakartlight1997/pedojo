@@ -103,6 +103,13 @@
       "title": "横断テーマ",
       "banner": "lv-advanced",
       "lead": "クロスボーダー、ESG、不正対応、経営者の探し方、マクロ環境、キャリア。特定の工程に収まらない重要テーマを扱います。"
+    },
+    {
+      "file": "study-sales.html",
+      "marker": "SALES",
+      "title": "営業（ソーシング）実践",
+      "banner": "lv-intermediate",
+      "lead": "案件は待っていても来ません。誰にどう会い、何を話し、どう信頼を積み上げて「あなたに任せたい」と言ってもらうか。相対案件を自分で取ってくるための営業を、場面ごとに分解します。"
     }
   ],
   "modules": [
@@ -476,7 +483,7 @@
       "category": "ファイナンスの土台",
       "articles": 10,
       "quizzes": 20,
-      "status": "pending",
+      "status": "done",
       "topics": [
         "NPV法",
         "IRR法",
@@ -496,7 +503,7 @@
       "category": "ファイナンスの土台",
       "articles": 10,
       "quizzes": 20,
-      "status": "pending",
+      "status": "done",
       "topics": [
         "成長企業の決算書",
         "衰退企業の決算書",
@@ -516,7 +523,7 @@
       "category": "会社法の土台",
       "articles": 10,
       "quizzes": 20,
-      "status": "pending",
+      "status": "done",
       "topics": [
         "所有と経営の分離",
         "機関設計の種類",
@@ -536,7 +543,7 @@
       "category": "会社法の土台",
       "articles": 10,
       "quizzes": 20,
-      "status": "pending",
+      "status": "done",
       "topics": [
         "株主総会の決議事項",
         "普通決議と特別決議",
@@ -556,7 +563,7 @@
       "category": "会社法の土台",
       "articles": 10,
       "quizzes": 20,
-      "status": "pending",
+      "status": "done",
       "topics": [
         "議決権制限株式",
         "優先配当株式",
@@ -576,7 +583,7 @@
       "category": "会社法の土台",
       "articles": 10,
       "quizzes": 20,
-      "status": "pending",
+      "status": "done",
       "topics": [
         "新株予約権の仕組み",
         "行使価格と行使条件",
@@ -596,7 +603,7 @@
       "category": "会社法の土台",
       "articles": 10,
       "quizzes": 20,
-      "status": "pending",
+      "status": "done",
       "topics": [
         "第三者割当増資",
         "株主割当と公募",
@@ -616,7 +623,7 @@
       "category": "会社法の土台",
       "articles": 10,
       "quizzes": 20,
-      "status": "pending",
+      "status": "done",
       "topics": [
         "合併(吸収・新設)",
         "会社分割(吸収・新設)",
@@ -716,7 +723,7 @@
       "category": "PE業界の地図",
       "articles": 10,
       "quizzes": 20,
-      "status": "pending",
+      "status": "done",
       "topics": [
         "バイアウト",
         "グロース",
@@ -2905,6 +2912,246 @@
         "転職市場",
         "独立の選択肢",
         "長く続けるために"
+      ]
+    },
+    {
+      "key": "n141",
+      "prefix": "n141",
+      "page": "study-sales.html",
+      "id": "module-n141",
+      "title": "営業の全体像――案件はどこから来るのか",
+      "level": "中級",
+      "category": "営業（ソーシング）実践",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "ソーシングの3経路(オークション/紹介/ダイレクト)",
+        "相対案件がなぜ価値を持つのか",
+        "年間の活動量と歩留まりの設計",
+        "パイプライン管理の型",
+        "自分の担当領域の決め方",
+        "活動の記録と共有"
+      ]
+    },
+    {
+      "key": "n142",
+      "prefix": "n142",
+      "page": "study-sales.html",
+      "id": "module-n142",
+      "title": "ターゲットリストの作り方",
+      "level": "中級",
+      "category": "営業（ソーシング）実践",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "スクリーニング条件の設計",
+        "使えるデータソース",
+        "ロングリストからショートリストへの絞り込み",
+        "優先順位のつけ方",
+        "リストの陳腐化と更新",
+        "チームでの分担"
+      ]
+    },
+    {
+      "key": "n143",
+      "prefix": "n143",
+      "page": "study-sales.html",
+      "id": "module-n143",
+      "title": "紹介元(リファラル)の開拓――金融機関",
+      "level": "中級",
+      "category": "営業（ソーシング）実践",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "メインバンクと信金の違い",
+        "法人担当と本部の役割",
+        "銀行が案件を持ち込む動機",
+        "情報の出し方の作法",
+        "継続的な関係の作り方",
+        "紹介案件の質を見極める"
+      ]
+    },
+    {
+      "key": "n144",
+      "prefix": "n144",
+      "page": "study-sales.html",
+      "id": "module-n144",
+      "title": "紹介元の開拓――会計士・税理士・M&amp;Aブティック",
+      "level": "中級",
+      "category": "営業（ソーシング）実践",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "顧問税理士が持つ情報の価値",
+        "会計事務所との関係構築",
+        "M&amp;Aブティックとの付き合い方",
+        "手数料の考え方",
+        "情報の独占度合いの確認",
+        "紹介者への報告義務"
+      ]
+    },
+    {
+      "key": "n145",
+      "prefix": "n145",
+      "page": "study-sales.html",
+      "id": "module-n145",
+      "title": "業種別のアプローチの違い",
+      "level": "中級",
+      "category": "営業（ソーシング）実践",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "製造業のオーナーに響く話",
+        "ITサービスの創業者に響く話",
+        "医療・介護の理事長の関心事",
+        "小売・外食のオーナーの懸念",
+        "建設業の事業承継の特殊性",
+        "業種の勉強をどこまでやるか"
+      ]
+    },
+    {
+      "key": "n146",
+      "prefix": "n146",
+      "page": "study-sales.html",
+      "id": "module-n146",
+      "title": "初回接触の設計――手紙・電話・訪問",
+      "level": "中級",
+      "category": "営業（ソーシング）実践",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "手紙の書き方と送るタイミング",
+        "電話でのアポイント取得",
+        "受付・秘書の突破",
+        "初回訪問の準備",
+        "持参する資料",
+        "その日のうちにやること"
+      ]
+    },
+    {
+      "key": "n147",
+      "prefix": "n147",
+      "page": "study-sales.html",
+      "id": "module-n147",
+      "title": "初回面談で何を聞き、何を話すか",
+      "level": "中級",
+      "category": "営業（ソーシング）実践",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "聞く順番の設計",
+        "売る気がない相手との対話",
+        "会社の話を引き出す質問",
+        "こちらから話すべきこと",
+        "話してはいけないこと",
+        "次回につなげる終わり方"
+      ]
+    },
+    {
+      "key": "n148",
+      "prefix": "n148",
+      "page": "study-sales.html",
+      "id": "module-n148",
+      "title": "提案書(初期提案)の作り方",
+      "level": "中級",
+      "category": "営業（ソーシング）実践",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "何ページで何を書くか",
+        "価格の示し方",
+        "自分たちの実績の見せ方",
+        "オーナーの関心事への回答",
+        "送るタイミングと届け方",
+        "提案後のフォロー"
+      ]
+    },
+    {
+      "key": "n149",
+      "prefix": "n149",
+      "page": "study-sales.html",
+      "id": "module-n149",
+      "title": "競合ファンドがいる中での差別化",
+      "level": "中級",
+      "category": "営業（ソーシング）実践",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "価格以外で勝つ要素",
+        "スピードと確実性の示し方",
+        "過去案件の使い方",
+        "経営陣の処遇の提案",
+        "オーナーの不安に応える",
+        "値段だけの勝負を避ける"
+      ]
+    },
+    {
+      "key": "n150",
+      "prefix": "n150",
+      "page": "study-sales.html",
+      "id": "module-n150",
+      "title": "断られた後の関係の作り方",
+      "level": "中級",
+      "category": "営業（ソーシング）実践",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "断りの理由を正しく聞く",
+        "引き際の作法",
+        "継続接触の頻度と方法",
+        "状況が変わるタイミング",
+        "数年越しで決まる案件",
+        "諦める基準"
+      ]
+    },
+    {
+      "key": "n151",
+      "prefix": "n151",
+      "page": "study-sales.html",
+      "id": "module-n151",
+      "title": "セミナー・情報発信による案件創出",
+      "level": "中級",
+      "category": "営業（ソーシング）実践",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "セミナーの企画と集客",
+        "話す内容の設計",
+        "参加者からの案件化",
+        "士業との共催",
+        "継続的な情報発信",
+        "費用対効果の測り方"
+      ]
+    },
+    {
+      "key": "n152",
+      "prefix": "n152",
+      "page": "study-sales.html",
+      "id": "module-n152",
+      "title": "営業の数字管理とチーム運営",
+      "level": "中級",
+      "category": "営業（ソーシング）実践",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "pending",
+      "topics": [
+        "活動量のKPI設計",
+        "歩留まりの分析",
+        "案件化までのリードタイム",
+        "個人とチームの目標設定",
+        "情報共有の仕組み",
+        "評価のされ方"
       ]
     }
   ]
