@@ -498,3 +498,133 @@ a { color: inherit; }
   text-align: center;
 }
 .app-footer p { max-width: 720px; margin: 0 auto; font-size: 0.75rem; color: var(--text-muted); line-height: 1.7; }
+
+/* ---------- ラーニングジャーニー(ステップ学習) ---------- */
+
+.journey-bar {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  margin-bottom: 18px;
+  position: sticky;
+  top: 8px;
+  z-index: 20;
+  box-shadow: var(--shadow);
+}
+.journey-bar-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+.journey-bar-text { font-size: 0.85rem; font-weight: 700; }
+.journey-toggle { display: flex; gap: 4px; background: var(--surface-alt); border-radius: 999px; padding: 3px; }
+.journey-toggle-btn {
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  border-radius: 999px;
+  padding: 5px 12px;
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+.journey-toggle-btn.active { background: var(--accent); color: #05201d; font-weight: 700; }
+
+.jminibar { height: 6px; border-radius: 999px; background: var(--surface-alt); overflow: hidden; }
+.jminibar-fill { height: 100%; border-radius: 999px; background: var(--accent); transition: width 0.25s ease; }
+.journey-bar-track .jminibar-fill { background: linear-gradient(90deg, var(--accent), var(--accent-strong)); }
+
+.jmap-lead { color: var(--text-muted); font-size: 0.88rem; line-height: 1.7; margin: 0 0 16px; }
+.jmap-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  margin-bottom: 10px;
+}
+.jmap-num {
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.9rem;
+  background: var(--surface-alt);
+  color: var(--text-muted);
+}
+.jmap-done .jmap-num { background: var(--correct-bg); color: var(--correct); }
+.jmap-active .jmap-num { background: var(--accent-soft); color: var(--accent-strong); }
+.jmap-active { border-color: var(--accent); }
+.jmap-body { flex: 1; min-width: 0; }
+.jmap-title { font-weight: 700; font-size: 0.98rem; line-height: 1.5; }
+.jmap-meta { color: var(--text-muted); font-size: 0.78rem; margin-top: 3px; }
+.jmap-actions { display: flex; flex-direction: column; gap: 6px; flex: 0 0 auto; }
+.jmap-btn { font-size: 0.82rem; padding: 8px 14px; white-space: nowrap; }
+.jmap-btn-sub {
+  background: var(--surface-alt);
+  color: var(--text);
+  border: 1px solid var(--border);
+  font-size: 0.78rem;
+  padding: 6px 12px;
+}
+@media (max-width: 560px) {
+  .jmap-item { flex-wrap: wrap; }
+  .jmap-actions { flex-direction: row; width: 100%; }
+}
+
+.junit-crumb { margin-bottom: 12px; }
+.junit-back { font-size: 0.85rem; color: var(--accent-strong); text-decoration: none; font-weight: 600; }
+.junit-back:hover { text-decoration: underline; }
+
+.junit-nav {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 22px 0 8px;
+  padding: 12px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.junit-nav-btn { font-size: 0.88rem; white-space: nowrap; }
+.junit-nav-btn:not(.btn-primary) { background: var(--surface-alt); color: var(--text); border: 1px solid var(--border); }
+.junit-nav-btn:disabled { opacity: 0.4; cursor: default; }
+.junit-nav-mid { flex: 1; min-width: 0; }
+.junit-nav-label { display: block; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 5px; text-align: center; }
+
+.jquiz-title { font-size: 1.2rem; margin: 0 0 14px; }
+.jquiz-body { font-size: 0.92rem; }
+.jquiz-card .jminibar { margin-bottom: 14px; }
+.jquiz-done {
+  background: var(--accent-soft);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 22px;
+  text-align: center;
+}
+.jquiz-done-head { font-size: 1.2rem; font-weight: 800; margin: 0 0 6px; color: var(--accent-strong); }
+.jquiz-done-score { margin: 0 0 14px; color: var(--text-muted); }
+.jquiz-done-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+body.journey-active .study-toc { display: none; }
+body.journey-active .study-section h2 { margin-top: 0; }
+
+.path-progress { margin-top: 4px; }
+.path-progress .jminibar { margin-bottom: 5px; }
+.path-progress-text { font-size: 0.75rem; color: var(--accent-strong); font-weight: 700; }
+
+/* クイズページのコンパクト化 */
+.quiz-filters { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; margin-bottom: 14px; }
+.quiz-filters .filter-block { margin-bottom: 0; }
+.quiz-filters .filter-label { display: inline-block; margin: 0 6px 0 0; }
+.cat-select {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  max-width: 100%;
+}

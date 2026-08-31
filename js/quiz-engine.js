@@ -45,6 +45,16 @@
   let levelFilter = "all"; // "all" | "初級" | "中級" | "上級"
   let categoryFilter = "all";
 
+  // URLパラメータ(?level=初級&category=…)で初期フィルタを指定できる。
+  // 座学ページやジャーニーマップからのディープリンク用。
+  try {
+    const params = new URLSearchParams(location.search);
+    const lv = params.get("level");
+    if (["初級", "中級", "上級"].includes(lv)) levelFilter = lv;
+    const cat = params.get("category");
+    if (cat) categoryFilter = cat;
+  } catch (e) { /* URLSearchParams非対応でも動作継続 */ }
+
   // ---------- 出題キュー(用語問題を網羅してから繰り返す) ----------
 
   let termQueue = [];
@@ -164,6 +174,7 @@
     progressText: document.getElementById("progressText"),
     levelButtons: document.getElementById("levelButtons"),
     categoryButtons: document.getElementById("categoryButtons"),
+    categorySelect: document.getElementById("categorySelect"),
     questionCategory: document.getElementById("questionCategory"),
     questionLevel: document.getElementById("questionLevel"),
     questionSerial: document.getElementById("questionSerial"),
@@ -228,6 +239,20 @@
   }
 
   function renderCategoryButtons() {
+    // ジャンルはプルダウンで選ぶ(150超のジャンルをボタンで並べるとクイズが画面外に押し出されるため)
+    if (el.categorySelect) {
+      const cats = ["all"].concat(allCategories());
+      if (!cats.includes(categoryFilter)) categoryFilter = "all";
+      el.categorySelect.innerHTML = "";
+      cats.forEach((cat) => {
+        const opt = document.createElement("option");
+        opt.value = cat;
+        opt.textContent = cat === "all" ? "すべてのジャンル" : cat;
+        if (categoryFilter === cat) opt.selected = true;
+        el.categorySelect.appendChild(opt);
+      });
+      return;
+    }
     if (!el.categoryButtons) return;
     const cats = ["all"].concat(allCategories());
     el.categoryButtons.innerHTML = "";
@@ -327,6 +352,13 @@
 
     if (el.nextBtn) el.nextBtn.addEventListener("click", loadNextQuestion);
     if (el.resetBtn) el.resetBtn.addEventListener("click", resetProgress);
+    if (el.categorySelect) {
+      el.categorySelect.addEventListener("change", () => {
+        categoryFilter = el.categorySelect.value;
+        refillQueue();
+        loadNextQuestion();
+      });
+    }
 
     document.addEventListener("keydown", (e) => {
       if (!answered && ["1", "2", "3", "4"].includes(e.key)) {
