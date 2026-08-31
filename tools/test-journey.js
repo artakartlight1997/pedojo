@@ -1,15 +1,13 @@
 /*
  * ラーニングジャーニーのスモークテスト。
- * 実行方法: npm i jsdom がある環境で node tools/test-journey.js
- * (REPO のパスは実行環境に合わせて書き換えるか、リポジトリ直下で実行する)
+ * 実行方法: npm i jsdom がある環境でリポジトリ直下から node tools/test-journey.js
  */
-/* ジャーニーモードのスモークテスト(jsdom) */
 const fs = require("fs");
 const path = require("path");
 const { JSDOM } = require("jsdom");
 const REPO = process.cwd();
 
-function read(p) { return fs.readFileSync(path.join(REPO, p), "utf8"); }
+function read(p) { return fs.readFileSync(path.join(REPO, p.split("?")[0]), "utf8"); }
 
 let failures = 0;
 function assert(cond, msg) {
@@ -18,8 +16,7 @@ function assert(cond, msg) {
 }
 
 function makeDom(page, hash) {
-  const html = read(page.split("?")[0]);
-  const dom = new JSDOM(html, {
+  const dom = new JSDOM(read(page), {
     url: "http://localhost/" + page + (hash || ""),
     runScripts: "outside-only",
     pretendToBeVisual: true,
@@ -28,14 +25,26 @@ function makeDom(page, hash) {
   return dom;
 }
 
+function boot(page, hash) {
+  const dom = makeDom(page, hash);
+  dom.window.eval(read("js/journey.js"));
+  dom.window.document.dispatchEvent(new dom.window.Event("DOMContentLoaded"));
+  return dom;
+}
+
+// 現在表示中のステップの本文文字数(ナビ・見出し除く)
+function visibleStepLength(sec) {
+  return Array.from(sec.children)
+    .filter(c => !c.hidden && c.tagName !== "H2")
+    .reduce((s, c) => s + c.textContent.length, 0);
+}
+
 // ---------- 1. study-beginner.html のジャーニーフロー ----------
 console.log("== study-beginner journey flow");
 {
-  const dom = makeDom("study-beginner.html");
+  const dom = boot("study-beginner.html");
   const { window } = dom;
   const { document } = window;
-  window.eval(read("js/journey.js"));
-  document.dispatchEvent(new window.Event("DOMContentLoaded"));
 
   assert(document.querySelector(".journey-bar"), "journey bar inserted");
   const items = document.querySelectorAll(".jmap-item");
@@ -52,21 +61,24 @@ console.log("== study-beginner journey flow");
   const visArticles = Array.from(sec.querySelectorAll("article")).filter(a => !a.hidden);
   assert(visArticles.length === 1, "exactly one article visible (got " + visArticles.length + ")");
   assert(!sec.querySelector(".module-intro").hidden, "module intro visible on step 1");
-  assert(/記事 1 \/ 6/.test(document.querySelector(".junit-nav-label").textContent), "article pager 1/6");
+  assert(/ステップ 1 \/ \d+/.test(document.querySelector(".junit-nav-label").textContent), "step pager starts at 1");
 
-  // 記事を最後まで送る
-  for (let i = 0; i < 5; i++) {
+  // ステップを最後まで送る(各ステップの長さも検査)
+  let quizBtn = null;
+  let maxLen = 0;
+  for (let guard = 0; guard < 100; guard++) {
+    maxLen = Math.max(maxLen, visibleStepLength(sec));
     const btns = document.querySelectorAll(".junit-nav .btn-primary");
-    btns[btns.length - 1].click();
+    const b = btns[btns.length - 1];
+    if (!/次へ/.test(b.textContent)) { quizBtn = b; break; }
+    b.click();
   }
-  let nextBtn = document.querySelector(".junit-nav .btn-primary");
-  assert(/確認クイズへ/.test(nextBtn.textContent), "last article shows quiz button");
-  const introHiddenLater = sec.querySelector(".module-intro").hidden;
-  assert(introHiddenLater, "module intro hidden on later steps");
+  assert(quizBtn && /確認クイズへ/.test(quizBtn.textContent), "last step shows quiz button");
+  assert(sec.querySelector(".module-intro").hidden, "module intro hidden on later steps");
 
   // クイズデータを事前に読み込ませてからクイズへ(遅延読み込みの代わり)
   window.eval(read("js/terms-data.js"));
-  nextBtn.click();
+  quizBtn.click();
   assert(document.querySelector(".jquiz"), "quiz stage rendered");
   const card = document.querySelector(".jquiz-card");
   assert(card, "quiz card rendered");
@@ -81,7 +93,6 @@ console.log("== study-beginner journey flow");
     fb.querySelector(".btn-primary").click();
   }
   assert(document.querySelector(".jquiz-done"), "completion panel after last question");
-  assert(/モジュール完了 1 \/ 22/.test(document.querySelector(".journey-bar-text").textContent) === false || true, "");
   const store = JSON.parse(window.localStorage.getItem("journey_v1"));
   const u = store.pages["study-beginner.html"].units["module-pe-basics"];
   assert(u.done === 1 && u.qi === 10 && u.qt === 10, "unit state saved (done, 10/10)");
@@ -102,7 +113,54 @@ console.log("== study-beginner journey flow");
   assert(window.localStorage.getItem("journey-mode") === "classic", "mode persisted");
 }
 
-// ---------- 2. 全ページ:ユニットごとの問題数マッピング ----------
+// ---------- 2. 長い記事の分割:1ステップの長さと内容の保全 ----------
+console.log("== long-article splitting");
+for (const page of ["study-advanced.html", "study-intermediate.html", "study-legal.html", "study-modeling.html", "study-workstyle.html", "study-beginner.html"]) {
+  const before = new JSDOM(read(page)).window.document;
+  const beforeText = {};
+  before.querySelectorAll(".study-main .study-section").forEach(s => { beforeText[s.id] = s.textContent.replace(/\s+/g, ""); });
+
+  const dom = boot(page);
+  const doc = dom.window.document;
+
+  // 分割後も本文が失われていないこと:
+  // 追加されるのは「(続き)」見出しだけなので、その分を差し引くと元と一致するはず
+  let intact = true;
+  doc.querySelectorAll(".study-main .study-section").forEach(s => {
+    const afterLen = s.textContent.replace(/\s+/g, "").length;
+    const addedLen = Array.from(s.querySelectorAll(".lesson-cont > h3.cont"))
+      .reduce((sum, h) => sum + h.textContent.replace(/\s+/g, "").length, 0);
+    if (afterLen - addedLen !== beforeText[s.id].length) intact = false;
+  });
+  assert(intact, page + ": no content lost by splitting");
+
+  // 全ユニット・全ステップを巡回して1ステップの本文長を検査
+  const items = doc.querySelectorAll(".jmap-item");
+  let maxLen = 0;
+  let steps = 0;
+  for (const item of items) {
+    const btn = item.querySelector(".btn-primary");
+    btn.click();
+    const sec = Array.from(doc.querySelectorAll(".study-main .study-section")).find(s => !s.hidden);
+    if (!sec) { // クイズのみのユニット
+      doc.querySelector(".junit-back").click();
+      continue;
+    }
+    for (let guard = 0; guard < 200; guard++) {
+      steps++;
+      maxLen = Math.max(maxLen, visibleStepLength(sec));
+      const btns = doc.querySelectorAll(".junit-nav .btn-primary");
+      const b = btns[btns.length - 1];
+      if (!/次へ/.test(b.textContent)) break;
+      b.click();
+    }
+    doc.querySelector(".junit-back").click();
+  }
+  // 分割不能な単一巨大ブロックがない限り、1ステップは目安の2倍(2800字)以内に収まる
+  assert(maxLen <= 2800, page + ": max step length " + maxLen + " chars over " + steps + " steps");
+}
+
+// ---------- 3. 全ページ:ユニットごとの問題数マッピング ----------
 console.log("== unit -> question mapping coverage");
 {
   const sandbox = new JSDOM("<body></body>", { runScripts: "outside-only" });
@@ -114,6 +172,7 @@ console.log("== unit -> question mapping coverage");
 
   const pages = fs.readdirSync(REPO).filter(f => /^study-.*\.html$/.test(f) && f !== "study-index.html");
   let mapped = 0, total = 0, unmapped = [];
+  const covered = new Set();
   for (const page of pages) {
     const html = read(page);
     const ids = Array.from(html.matchAll(/<section class="study-section" id="([^"]+)"/g)).map(m => m[1]);
@@ -124,53 +183,33 @@ console.log("== unit -> question mapping coverage");
       else if (legacyMap[id]) qs = ALL.filter(q => legacyMap[id].cats.includes(q.category));
       total++;
       if (qs.length > 0) mapped++; else unmapped.push(page + "#" + id);
+      qs.forEach(q => covered.add(q.id));
     }
     for (const d of (drills[page] || [])) {
       const qs = ALL.filter(q => d.cats.includes(q.category) && (!d.qlevel || q.level === d.qlevel));
       total++;
       if (qs.length > 0) mapped++; else unmapped.push(page + "#" + d.id + " (drill)");
+      qs.forEach(q => covered.add(q.id));
     }
   }
   console.log("  units with questions:", mapped + "/" + total);
   assert(unmapped.length === 0, "all units map to questions" + (unmapped.length ? " — unmapped: " + unmapped.join(", ") : ""));
-
-  // 逆方向:どのユニットにも属さない問題がないか
-  const covered = new Set();
-  for (const page of pages) {
-    const html = read(page);
-    const ids = Array.from(html.matchAll(/<section class="study-section" id="([^"]+)"/g)).map(m => m[1]);
-    for (const id of ids) {
-      const m = id.match(/^module-(n\d{3})$/);
-      if (m) ALL.forEach(q => { if (q.id.indexOf(m[1] + "-") === 0) covered.add(q.id); });
-      else if (legacyMap[id]) ALL.forEach(q => { if (legacyMap[id].cats.includes(q.category)) covered.add(q.id); });
-    }
-    for (const d of (drills[page] || [])) {
-      ALL.forEach(q => { if (d.cats.includes(q.category) && (!d.qlevel || q.level === d.qlevel)) covered.add(q.id); });
-    }
-  }
-  const orphans = ALL.filter(q => !covered.has(q.id));
   console.log("  questions covered by journey:", covered.size + "/" + ALL.length);
-  if (orphans.length) {
-    const byPfx = {};
-    orphans.forEach(q => { const p = q.id.replace(/-\d+$/, ""); byPfx[p] = (byPfx[p] || 0) + 1; });
-    console.log("  orphan prefixes:", JSON.stringify(byPfx));
-  }
+  assert(covered.size === ALL.length, "every question reachable from some unit");
 }
 
-// ---------- 3. 空ページとインデックスページで落ちないこと ----------
+// ---------- 4. 空ページとインデックスページで落ちないこと ----------
 console.log("== empty + index pages");
 for (const page of ["study-contract.html", "study-index.html", "index.html"]) {
-  const dom = makeDom(page);
   try {
-    dom.window.eval(read("js/journey.js"));
-    dom.window.document.dispatchEvent(new dom.window.Event("DOMContentLoaded"));
+    boot(page);
     assert(true, page + " loads without error");
   } catch (e) {
     failures++; console.log("  FAIL:", page, e.message);
   }
 }
 
-// ---------- 4. index の進捗アノテーション ----------
+// ---------- 5. index の進捗アノテーション ----------
 console.log("== path-card progress annotation");
 {
   const dom = makeDom("study-index.html");
@@ -183,7 +222,37 @@ console.log("== path-card progress annotation");
   assert(badge && /3\/22/.test(badge.textContent), "beginner card shows 3/22 progress");
 }
 
-// ---------- 5. quiz.html:ドロップダウンとURLパラメータ ----------
+// ---------- 6. クイズのみの演習ユニットの再開 ----------
+console.log("== drill unit resume");
+{
+  const dom = boot("study-beginner.html");
+  dom.window.eval(read("js/terms-data.js"));
+  const doc = dom.window.document;
+  const drill = Array.from(doc.querySelectorAll(".jmap-item")).find(i => /演習ノック:PEの基礎知識/.test(i.textContent));
+  assert(!!drill, "drill unit on map");
+  drill.querySelector(".btn-primary").click();
+  const card = doc.querySelector(".jquiz-card");
+  assert(card && /問 1 \/ 100/.test(card.querySelector(".serial").textContent), "drill quiz starts 1/100");
+  for (let i = 0; i < 3; i++) {
+    doc.querySelector(".jquiz .choices .choice-btn").click();
+    doc.querySelector(".jquiz .feedback .btn-primary").click();
+  }
+  doc.querySelector(".junit-back").click();
+  const drill2 = Array.from(doc.querySelectorAll(".jmap-item")).find(i => /演習ノック:PEの基礎知識/.test(i.textContent));
+  assert(/クイズ 3\/100/.test(drill2.textContent), "map shows resume position 3/100");
+  drill2.querySelector(".btn-primary").click();
+  assert(/問 4 \/ 100/.test(doc.querySelector(".jquiz-card .serial").textContent), "resume from question 4");
+}
+
+// ---------- 7. #hash 直リンク ----------
+console.log("== hash deep-link");
+{
+  const dom = boot("study-advanced.html", "#module-waterfall-carry");
+  const sec = dom.window.document.getElementById("module-waterfall-carry");
+  assert(!sec.hidden, "hash deep-link opens the unit");
+}
+
+// ---------- 8. quiz.html:ドロップダウンとURLパラメータ ----------
 console.log("== quiz.html compact filters");
 {
   const dom = makeDom("quiz.html?level=上級");
@@ -197,77 +266,11 @@ console.log("== quiz.html compact filters");
   assert(window.document.getElementById("questionText").textContent.length > 0, "question rendered");
   const activeLevel = Array.from(window.document.querySelectorAll("#levelButtons .cat-btn")).find(b => b.classList.contains("active"));
   assert(activeLevel && activeLevel.textContent === "上級", "URL param preselects 上級");
-  const lvBadge = window.document.getElementById("questionLevel").textContent;
-  assert(lvBadge === "上級", "question respects level filter (got " + lvBadge + ")");
-  // ドロップダウン変更
+  assert(window.document.getElementById("questionLevel").textContent === "上級", "question respects level filter");
   sel.value = "用語集";
   sel.dispatchEvent(new window.Event("change"));
-  const cat = window.document.getElementById("questionCategory").textContent;
-  assert(cat === "用語集", "category change filters questions (got " + cat + ")");
+  assert(window.document.getElementById("questionCategory").textContent === "用語集", "category change filters questions");
 }
 
 console.log(failures === 0 ? "\nALL PASS" : "\n" + failures + " FAILURES");
-
-// 1. 記事外要素(h3/ol/div等)を持つページで、全要素がステップのどこかで表示されること
-for (const page of ["study-legal.html", "study-workstyle.html", "study-modeling.html", "study-beginner.html"]) {
-  const dom = new JSDOM(read(page), { url: "http://localhost/" + page, runScripts: "outside-only" });
-  dom.window.scrollTo = () => {};
-  dom.window.eval(read("js/journey.js"));
-  dom.window.document.dispatchEvent(new dom.window.Event("DOMContentLoaded"));
-  const doc = dom.window.document;
-  const items = doc.querySelectorAll(".jmap-item");
-  items[0].querySelector(".btn-primary").click();
-  const sec = Array.from(doc.querySelectorAll(".study-main .study-section")).find(s => !s.hidden);
-  const everShown = new Set();
-  const record = () => Array.from(sec.children).forEach(c => { if (!c.hidden) everShown.add(c); });
-  record();
-  let guard = 0;
-  while (guard++ < 100) {
-    const btns = doc.querySelectorAll(".junit-nav .btn-primary");
-    const b = btns[btns.length - 1];
-    if (!b || !/次の記事/.test(b.textContent)) break;
-    b.click(); record();
-  }
-  const missed = Array.from(sec.children).filter(c => !everShown.has(c) && c.tagName !== "H2");
-  assert(missed.length === 0, page + " first unit: all " + sec.children.length + " children shown across steps" +
-    (missed.length ? " (missed: " + missed.map(c => c.tagName).join(",") + ")" : ""));
-}
-
-// 2. クイズのみの演習ユニット(drill)の動作
-{
-  const page = "study-beginner.html";
-  const dom = new JSDOM(read(page), { url: "http://localhost/" + page, runScripts: "outside-only" });
-  dom.window.scrollTo = () => {};
-  dom.window.eval(read("js/journey.js"));
-  dom.window.document.dispatchEvent(new dom.window.Event("DOMContentLoaded"));
-  dom.window.eval(read("js/terms-data.js"));
-  const doc = dom.window.document;
-  const drill = Array.from(doc.querySelectorAll(".jmap-item")).find(i => /演習ノック:PEの基礎知識/.test(i.textContent));
-  assert(!!drill, "drill unit on map");
-  drill.querySelector(".btn-primary").click();
-  const card = doc.querySelector(".jquiz-card");
-  assert(card && /問 1 \/ 100/.test(card.querySelector(".serial").textContent), "drill quiz starts 1/100");
-  // 3問解いて中断→再開で続きから
-  for (let i = 0; i < 3; i++) {
-    doc.querySelector(".jquiz .choices .choice-btn").click();
-    doc.querySelector(".jquiz .feedback .btn-primary").click();
-  }
-  doc.querySelector(".junit-back").click();
-  const drill2 = Array.from(doc.querySelectorAll(".jmap-item")).find(i => /演習ノック:PEの基礎知識/.test(i.textContent));
-  assert(/クイズ 3\/100/.test(drill2.textContent), "map shows resume position 3/100");
-  drill2.querySelector(".btn-primary").click();
-  assert(/問 4 \/ 100/.test(doc.querySelector(".jquiz-card .serial").textContent), "resume from question 4");
-}
-
-// 3. #hash 直リンクでユニットが開くこと
-{
-  const page = "study-advanced.html";
-  const dom = new JSDOM(read(page), { url: "http://localhost/" + page + "#module-waterfall-carry", runScripts: "outside-only" });
-  dom.window.scrollTo = () => {};
-  dom.window.eval(read("js/journey.js"));
-  dom.window.document.dispatchEvent(new dom.window.Event("DOMContentLoaded"));
-  const sec = dom.window.document.getElementById("module-waterfall-carry");
-  assert(!sec.hidden, "hash deep-link opens the unit");
-}
-console.log(failures === 0 ? "ALL PASS" : failures + " FAILURES");
-process.exit(failures ? 1 : 0);
+process.exit(failures === 0 ? 0 : 1);

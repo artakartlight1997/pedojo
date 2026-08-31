@@ -200,6 +200,64 @@
 
   // ---------- ユニットの組み立て ----------
 
+  // 長い記事を、スマホでも1〜2画面で読み切れる長さに分割する。
+  // 記事のブロック要素(p, callout, example等)単位で切り、続きの記事には
+  // 「(続き)」付きの見出しを与える。一気読みモードでは続き見出しをCSSで隠す。
+  var SPLIT_THRESHOLD = 1400; // これを超える記事は分割する
+  var CHUNK_TARGET = 900;     // 1ステップの目安文字数
+  var CHUNK_MIN_TAIL = 350;   // 末尾チャンクがこれ未満なら前のチャンクへ併合
+
+  function splitLongArticles(root) {
+    var articles = root.querySelectorAll(".study-section > article");
+    Array.prototype.forEach.call(articles, function (art) {
+      var text = art.textContent || "";
+      if (text.length <= SPLIT_THRESHOLD) return;
+      var h3 = art.querySelector("h3");
+      var blocks = Array.prototype.slice.call(art.children).filter(function (c) { return c !== h3; });
+      if (blocks.length < 2) return;
+
+      // ブロックを文字数でチャンクに分ける
+      var chunks = [];
+      var cur = [];
+      var curLen = 0;
+      blocks.forEach(function (b) {
+        var len = (b.textContent || "").length;
+        if (cur.length && curLen + len > CHUNK_TARGET) {
+          chunks.push(cur);
+          cur = [];
+          curLen = 0;
+        }
+        cur.push(b);
+        curLen += len;
+      });
+      if (cur.length) {
+        if (chunks.length && curLen < CHUNK_MIN_TAIL) {
+          chunks[chunks.length - 1] = chunks[chunks.length - 1].concat(cur);
+        } else {
+          chunks.push(cur);
+        }
+      }
+      if (chunks.length < 2) return;
+
+      // 2つ目以降のチャンクを「(続き)」記事として元記事の後ろに挿入する
+      var title = h3 ? h3.textContent.trim() : "";
+      var after = art;
+      chunks.slice(1).forEach(function (chunk) {
+        var cont = document.createElement("article");
+        cont.className = "lesson lesson-cont";
+        if (title) {
+          var ch = document.createElement("h3");
+          ch.className = "cont";
+          ch.textContent = title + "(続き)";
+          cont.appendChild(ch);
+        }
+        chunk.forEach(function (b) { cont.appendChild(b); });
+        after.parentNode.insertBefore(cont, after.nextSibling);
+        after = cont;
+      });
+    });
+  }
+
   // section の子要素を「記事ステップ」に分解する。
   // article が1ステップ、article 以外の要素(導入文・まとめ等)は直後の article に付く。
   function buildSteps(section) {
@@ -310,7 +368,14 @@
     dom.map.hidden = true;
     units.forEach(function (u) { if (u.section) u.section.hidden = u !== unit; });
     renderUnit();
-    window.scrollTo(0, 0);
+    scrollToContent();
+  }
+
+  function scrollToContent() {
+    // ページ最上部(サイトナビ)ではなく、学習コンテンツの先頭へ戻す
+    if (!dom.unitView || dom.unitView.hidden) { window.scrollTo(0, 0); return; }
+    var top = dom.unitView.getBoundingClientRect().top + (window.pageYOffset || 0) - 64;
+    window.scrollTo(0, Math.max(0, top));
   }
 
   // ---------- 進捗バー ----------
@@ -345,7 +410,7 @@
       body.appendChild(t);
 
       var metaParts = [];
-      if (u.steps.length) metaParts.push("記事" + u.steps.length + "本");
+      if (u.steps.length) metaParts.push("読むステップ" + u.steps.length);
       if (hasQuiz(u)) metaParts.push(u.drill ? "クイズのみ" : "確認クイズ");
       var progressParts = [];
       if (u.steps.length && s.r > 0) progressParts.push("読了 " + Math.min(s.r, u.steps.length) + "/" + u.steps.length);
@@ -405,16 +470,16 @@
 
     var nav = el("div", "junit-nav");
 
-    var prev = el("button", "btn junit-nav-btn", "← 前の記事");
+    var prev = el("button", "btn junit-nav-btn", "← 戻る");
     prev.type = "button";
     prev.disabled = view.step === 0;
     prev.addEventListener("click", function () {
-      if (view.step > 0) { view.step -= 1; renderUnit(); window.scrollTo(0, 0); }
+      if (view.step > 0) { view.step -= 1; renderUnit(); scrollToContent(); }
     });
     nav.appendChild(prev);
 
     var mid = el("div", "junit-nav-mid");
-    mid.appendChild(el("span", "junit-nav-label", "記事 " + (view.step + 1) + " / " + u.steps.length));
+    mid.appendChild(el("span", "junit-nav-label", "ステップ " + (view.step + 1) + " / " + u.steps.length));
     var mini = el("div", "jminibar");
     var miniFill = el("div", "jminibar-fill");
     miniFill.style.width = (u.steps.length ? Math.round(((view.step + 1) / u.steps.length) * 100) : 0) + "%";
@@ -424,7 +489,7 @@
 
     var isLast = view.step >= u.steps.length - 1;
     var next = el("button", "btn btn-primary junit-nav-btn",
-      !isLast ? "次の記事 →" : hasQuiz(u) ? "確認クイズへ →" : "モジュール完了 ✓");
+      !isLast ? "次へ →" : hasQuiz(u) ? "確認クイズへ →" : "モジュール完了 ✓");
     next.type = "button";
     next.addEventListener("click", function () {
       var s = unitState(u.id);
@@ -433,12 +498,12 @@
         view.step += 1;
         saveSummary();
         renderUnit();
-        window.scrollTo(0, 0);
+        scrollToContent();
       } else if (hasQuiz(u)) {
         view.stage = "quiz";
         saveSummary();
         renderUnit();
-        window.scrollTo(0, 0);
+        scrollToContent();
       } else {
         s.done = 1;
         saveSummary();
@@ -581,7 +646,7 @@
         s.qi += 1;
         saveSummary();
         show();
-        window.scrollTo(0, 0);
+        scrollToContent();
       });
       fb.appendChild(next);
       card.appendChild(fb);
@@ -638,6 +703,7 @@
       return;
     }
 
+    splitLongArticles(studyMain);
     units = buildUnits();
     if (!units.length) return;
 

@@ -79,6 +79,9 @@ grep -h '<article' study-*.html | wc -l
   `js/journey.js` の `LEGACY_MAP` / `DRILLS` に対応を追記すること。
 - 検証: `node tools/test-journey.js`(要 jsdom。全ユニットが1問以上に対応し、
   全4,140問がいずれかのユニットから解けることを確認する)。
+- 長い記事(1,400字超)は表示時にブロック単位で約900字のステップへ自動分割される
+  (`js/journey.js` の `splitLongArticles`)。HTML自体は分割しないので、
+  記事を書くときに長さを気にする必要はない。
 
 ## 未完了の作業（2026-08-31 時点）
 

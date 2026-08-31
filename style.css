@@ -628,3 +628,56 @@ body.journey-active .study-section h2 { margin-top: 0; }
   font-size: 0.85rem;
   max-width: 100%;
 }
+
+/* ---------- 分割記事の「(続き)」見出し ---------- */
+/* 一気読みモードでは続き見出しを隠し、元の1本の記事として読めるようにする */
+body:not(.journey-active) .lesson-cont { margin-top: -12px; }
+body:not(.journey-active) .lesson-cont > h3.cont { display: none; }
+.lesson-cont > h3.cont { color: var(--text-muted); font-size: 0.95rem; }
+
+/* ---------- モバイル最適化 ---------- */
+/* 長い語(英字・数式)のはみ出しで横スクロール+自動縮小が起きないようにする */
+.lesson p, .lesson li, .callout, .example, .question-text, .choice-btn,
+.feedback-explain, .jmap-title, .jquiz-body { overflow-wrap: anywhere; }
+
+@media (max-width: 640px) {
+  /* 9リンクで折り返すヘッダーが固定されると画面の1/3を占有するため、
+     モバイルでは固定を解除してコンパクトにする */
+  .site-header { position: static; }
+  .site-header-inner { padding: 10px 12px; gap: 8px; }
+  .site-nav a { padding: 5px 8px; font-size: 0.8rem; }
+  .brand { font-size: 0.95rem; }
+
+  .container, .container-wide { padding: 14px 12px; }
+
+  .level-banner { padding: 14px 16px; margin-bottom: 14px; }
+  .level-banner h1 { font-size: 1.1rem; }
+  .level-banner p { font-size: 0.85rem; }
+
+  .study-section h2 { font-size: 1.12rem; padding-bottom: 8px; }
+  .lesson h3 { font-size: 1rem; }
+  .lesson p { font-size: 0.95rem; line-height: 1.9; }
+  .callout, .example { padding: 12px 14px; font-size: 0.88rem; }
+
+  .hero { padding: 20px 4px 8px; }
+  .hero h1 { font-size: 1.35rem; }
+  .hero p.lead { font-size: 0.92rem; }
+
+  /* ジャーニーバーはスマホでは薄く固定する(ヘッダー固定解除とセット) */
+  .journey-bar { top: 0; padding: 8px 12px; margin-bottom: 12px; border-radius: 0 0 12px 12px; }
+  .journey-bar-text { font-size: 0.78rem; }
+  .journey-toggle-btn { padding: 4px 10px; font-size: 0.72rem; }
+
+  .jmap-item { padding: 12px; gap: 10px; }
+  .jmap-title { font-size: 0.92rem; }
+  .jmap-num { width: 28px; height: 28px; font-size: 0.8rem; }
+
+  /* ステップ移動ナビ:進捗を上段いっぱいに、ボタンを下段に並べる */
+  .junit-nav { flex-wrap: wrap; gap: 10px; padding: 10px 12px; }
+  .junit-nav-mid { order: -1; flex: 1 1 100%; }
+  .junit-nav-btn { flex: 1; }
+
+  .quiz-card { padding: 16px 14px; }
+  .question-text { font-size: 1.02rem; }
+  .choice-btn { padding: 12px; font-size: 0.92rem; }
+}
