@@ -83,6 +83,37 @@ grep -h '<article' study-*.html | wc -l
   (`js/journey.js` の `splitLongArticles`)。HTML自体は分割しないので、
   記事を書くときに長さを気にする必要はない。
 
+## 座学の用語解説と図解 — 2026-08-31 追加
+
+**記事下の用語解説(自動)**: `js/term-notes.js` が、座学の各記事に出てきた
+用語集(glossary.html)の用語を検出し、記事の下に「📖 この記事に出てきた用語」
+ボックス(名称・一行定義・用語集へのリンク)を自動表示する。
+同じモジュール内では最初に出てきた記事の下にだけ載せる。
+
+- データは `js/glossary-data.js`(自動生成)。**glossary.html に用語を
+  追加・修正したら `node tools/build-glossary-data.js` で再生成してコミット**すること。
+- 表記ゆれ(例: ヴィンテージ/ビンテージ)は同ツール内の `EXTRA_ALIASES` に追記する。
+- 読み込み順は `glossary-data.js` → `term-notes.js` → `journey.js`(全 study-*.html)。
+  ステップ学習の記事分割より前にDOMへ挿入する必要があるため、この順を崩さないこと。
+
+**図解・表・グラフ**: `style.css` に共通コンポーネントを追加した。
+新しい座学記事にも積極的に使うこと。
+
+- `<figure class="study-figure">` + インラインSVG + `<figcaption>`。
+  SVGは `viewBox` 必須、色は必ずCSS変数(`var(--accent)` 等)と
+  `currentColor` / `class="fig-muted"` / `class="fig-line"` を使う
+  (ダークテーマ対応のため色コード直書き禁止)。横長のSVGは
+  `<div class="fig-scroll">` で包む(スマホでは横スクロールになる)。
+  SVG内の `<marker>` 等の id はページ内で一意にすること。
+- 表は `<div class="table-scroll"><table class="study-table">`。
+  数値セルは `class="num"`。
+- 挿入位置は必ず `<article>` の内側(ステップ学習で記事と一緒に移動させるため)。
+- 現在の設置箇所: 初級9(GP/LP構造図・ライフサイクル・キャリア表・財務3表・
+  EVブリッジ・S&U表・レバレッジ比較グラフ・資本構成図・ミニLBOフロー図)、
+  中級5(DD一覧表・ストラクチャー階層図・ステーク/アセット表・トランシェ表・
+  コベナンツ比較表)、上級4(ウォーターフォール図・欧州/米国型表・
+  トランシェ表・Exit比較表)。専門・営業ほか他ページはまだ図解なし(今後の課題)。
+
 ## 未完了の作業（2026-08-31 時点）
 
 ### 1. 波6（座学14モジュール）が API 利用上限で中断

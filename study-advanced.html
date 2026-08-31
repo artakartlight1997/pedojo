@@ -77,6 +77,21 @@
     <h3>複数トランシェの優先劣後構造</h3>
     <p>大型LBOの資金調達は、単一の借入ではなく複数の階層(<strong>トランシェ</strong>)に分かれるのが普通だ。返済・弁済の優先順位が高い順に、シニア担保付ローン(タームローン、リボルビング枠)、セカンドリーエン(第二順位担保)、<strong>メザニン(劣後ローン)</strong>、そして最下層のエクイティ(株式)と並ぶ。メザニンはしばしば現金でなく元本に利息が積み上がる<strong>PIK(ペイメント・イン・カインド、現物払い利息)</strong>形式を取り、追加で新株予約権(ワラント)などの「エクイティキッカー」が付くこともある。</p>
     <div class="callout callout-metaphor"><strong>たとえるなら:</strong> 会社が沈没しかけたときに救命ボートに乗る順番だと考えるといい。シニア担保付の貸し手が一番先に、メザニンはその次に、エクイティ(スポンサーである君たちPEファンド)は一番最後にしか取り分がない。その代わり、シニアは金利が低く、メザニンは金利が高く、エクイティは青天井のアップサイドを狙える。リスクとリターンの階層構造そのものだ。</div>
+    <figure class="study-figure">
+      <div class="table-scroll">
+        <table class="study-table">
+          <caption>表:大型LBOの資金調達トランシェ(弁済順位が高い順)</caption>
+          <thead><tr><th>トランシェ</th><th>弁済順位</th><th>コスト(金利)</th><th>特徴</th></tr></thead>
+          <tbody>
+            <tr><th>シニア担保付ローン</th><td>① 最優先</td><td>低い</td><td>タームローン・リボルビング枠。資産に第一順位の担保権</td></tr>
+            <tr><th>セカンドリーエン</th><td>②</td><td>やや高い</td><td>第二順位の担保権を持つローン</td></tr>
+            <tr><th>メザニン(劣後ローン)</th><td>③</td><td>高い</td><td>PIK(元本に利息が積み上がる現物払い)やワラント等のエクイティキッカー付きが多い</td></tr>
+            <tr><th>エクイティ</th><td>④ 最後</td><td>―(青天井のアップサイド)</td><td>PEファンドと経営陣の出資。リスクは最大</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <figcaption>救命ボートに乗る順番と同じで、下の行(劣後する層)ほど最後にしか取り分がない代わりに、成功時のリターンは大きい。</figcaption>
+    </figure>
   </article>
 
   <article class="lesson">
@@ -113,12 +128,57 @@
     ④残り利益の80:20分配:LPに24億円、GPに6億円。<br>
     最終結果:LPは合計140億円(元本100+優先分配16+80%分配24)、MOIC(投資倍率)1.4倍。GPのキャリーは合計10億円(キャッチアップ4+20%分配6)、これは利益総額50億円のちょうど20%に一致する。</div>
     <div class="callout callout-pitfall"><strong>落とし穴:</strong> 「キャリーは常に利益の20%になる」と機械的に覚えると危険だ。上の例のようにキャッチアップが100%かつ利益が十分大きい場合はきれいに20%になるが、利益がハードルとキャッチアップを満たすほど大きくない場合、GPの取り分は20%を下回る。逆に、ハードルがなくキャッチアップが即100%発生する設計なら、GPの取り分比率は変わってくる。必ず自分の担当ファンドのLPA(組合契約書)の条項を確認する癖をつけてほしい。</div>
+    <figure class="study-figure">
+      <svg viewBox="0 0 480 440" role="img" aria-label="ウォーターフォール分配の流れ図。Exit総額150億円が、元本返還、優先分配、キャッチアップ、80対20分配の順に上から流れ、最終的にLPが140億円、GPが10億円を受け取る。">
+        <defs><marker id="figWfArw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--text-muted)"/></marker></defs>
+        <text x="240" y="20" text-anchor="middle" font-size="13" font-weight="600" fill="currentColor">Exit総額150億円(うち利益50億円)</text>
+        <rect x="40" y="32" width="400" height="54" rx="10" fill="var(--lv-beginner-bg)" stroke="var(--lv-beginner)"/>
+        <text x="240" y="54" text-anchor="middle" font-size="14" font-weight="600" fill="currentColor">① 元本返還 → LPへ100億円</text>
+        <text x="240" y="74" text-anchor="middle" font-size="12" class="fig-muted">残りの分配可能利益 50億円</text>
+        <line x1="240" y1="86" x2="240" y2="106" class="fig-line" stroke-width="1.5" marker-end="url(#figWfArw)"/>
+        <rect x="40" y="110" width="400" height="54" rx="10" fill="var(--lv-beginner-bg)" stroke="var(--lv-beginner)"/>
+        <text x="240" y="132" text-anchor="middle" font-size="14" font-weight="600" fill="currentColor">② 優先分配(ハードル8%) → LPへ16億円</text>
+        <text x="240" y="152" text-anchor="middle" font-size="12" class="fig-muted">残り 34億円</text>
+        <line x1="240" y1="164" x2="240" y2="184" class="fig-line" stroke-width="1.5" marker-end="url(#figWfArw)"/>
+        <rect x="40" y="188" width="400" height="54" rx="10" fill="var(--accent-soft)" stroke="var(--accent)"/>
+        <text x="240" y="210" text-anchor="middle" font-size="14" font-weight="600" fill="currentColor">③ キャッチアップ → GPへ4億円</text>
+        <text x="240" y="230" text-anchor="middle" font-size="12" class="fig-muted">GPの取り分が全体の20%に「追いつく」まで / 残り 30億円</text>
+        <line x1="240" y1="242" x2="240" y2="262" class="fig-line" stroke-width="1.5" marker-end="url(#figWfArw)"/>
+        <rect x="40" y="266" width="400" height="54" rx="10" fill="var(--lv-intermediate-bg)" stroke="var(--lv-intermediate)"/>
+        <text x="240" y="288" text-anchor="middle" font-size="14" font-weight="600" fill="currentColor">④ 残り30億円を80:20で分配</text>
+        <text x="240" y="308" text-anchor="middle" font-size="12" class="fig-muted">LPへ24億円・GPへ6億円</text>
+        <line x1="150" y1="320" x2="120" y2="350" class="fig-line" stroke-width="1.5" marker-end="url(#figWfArw)"/>
+        <line x1="330" y1="320" x2="360" y2="350" class="fig-line" stroke-width="1.5" marker-end="url(#figWfArw)"/>
+        <rect x="20" y="354" width="215" height="66" rx="10" fill="var(--lv-beginner-bg)" stroke="var(--lv-beginner)"/>
+        <text x="127" y="380" text-anchor="middle" font-size="14" font-weight="600" fill="currentColor">LP合計 140億円</text>
+        <text x="127" y="402" text-anchor="middle" font-size="12" class="fig-muted">100+16+24(MOIC 1.4倍)</text>
+        <rect x="245" y="354" width="215" height="66" rx="10" fill="var(--accent-soft)" stroke="var(--accent)"/>
+        <text x="352" y="380" text-anchor="middle" font-size="14" font-weight="600" fill="currentColor">GPキャリー合計 10億円</text>
+        <text x="352" y="402" text-anchor="middle" font-size="12" class="fig-muted">4+6(利益50億円の20%)</text>
+      </svg>
+      <figcaption>図解:ウォーターフォール(滝)の分配順序(本文の数値例)。上の段が満たされて初めて、下の段にお金が流れていく。</figcaption>
+    </figure>
   </article>
 
   <article class="lesson">
     <h3>ヨーロピアン型とアメリカン型ウォーターフォールの違い</h3>
     <p>ウォーターフォールには大きく2つの設計思想がある。<strong>ヨーロピアン・ウォーターフォール(ファンド全体型)</strong>は、ファンドが投資した全案件の元本をLPに完全に返還し終えるまで、GPはキャリーを一切受け取れない設計だ。LPにとって最も保守的で安全な仕組みで、欧州系ファンドや近年設立されるファンドで主流になっている。一方<strong>アメリカン・ウォーターフォール(ディール・バイ・ディール型)</strong>は、個々の投資案件がExitするたびに、その案件単体で利益が出ていればGPがキャリーを受け取れる設計だ。GPにとってはキャッシュフローが早く得られる利点があるが、後から損失を出す案件が出てくると「もらいすぎ」が発生するリスクがある。</p>
     <div class="callout callout-metaphor"><strong>たとえるなら:</strong> ヨーロピアン型は「テストの全科目が終わって平均点が基準を超えて初めてご褒美」、アメリカン型は「1科目ごとに基準点を超えたら都度ご褒美」だ。アメリカン型の方が嬉しいのは早いが、後の科目で赤点を取ったら、もらったご褒美を返さなければならない場合がある。</div>
+    <figure class="study-figure">
+      <div class="table-scroll">
+        <table class="study-table">
+          <caption>表:ヨーロピアン型とアメリカン型ウォーターフォールの比較</caption>
+          <thead><tr><th>観点</th><th>ヨーロピアン型(ファンド全体型)</th><th>アメリカン型(ディール・バイ・ディール型)</th></tr></thead>
+          <tbody>
+            <tr><th>GPがキャリーを受け取れる時期</th><td>全案件の元本をLPに返し終えた後</td><td>案件ごとのExitの都度</td></tr>
+            <tr><th>LPから見た安全性</th><td>最も保守的で安全</td><td>「もらいすぎ」が発生するリスクあり</td></tr>
+            <tr><th>GPのキャッシュフロー</th><td>遅い</td><td>早い</td></tr>
+            <tr><th>必要になる安全弁</th><td>―</td><td>クローバック条項・エスクロー留保</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <figcaption>近年設立されるファンドではLPに有利なヨーロピアン型が主流。アメリカン型を採用する場合はクローバック条項(次の記事)が不可欠になる。</figcaption>
+    </figure>
   </article>
 
   <article class="lesson">
@@ -187,6 +247,20 @@
     <h3>IPO:株式市場に上場する</h3>
     <p><strong>IPO(新規株式公開)</strong>は、企業を証券取引所に上場させ、株式市場を通じて資金化するExit手法だ。大規模な調達が可能で、企業ブランドの向上にもつながるが、上場準備には長い時間とコストがかかり、上場後もPEファンドの持ち株には一定期間の売却制限(ロックアップ)がかかるため、資金の全額回収には時間差が生じる。何より株式市場のコンディション(市況)に強く左右され、市況が悪化すればIPO自体を延期・中止せざるを得ないこともある。</p>
     <div class="callout callout-pitfall"><strong>落とし穴:</strong> IPOを「一番かっこいいExit」と考えて安易に選ぶのは危険だ。ロックアップ解除後も株価が振るわなければ、結局トレードセールより回収に時間がかかり、実質的なリターンが下がることもある。IPOは「最も華やかな選択肢」ではなく「条件が揃った時だけ機能する選択肢」だと理解しておこう。</div>
+    <figure class="study-figure">
+      <div class="table-scroll">
+        <table class="study-table">
+          <caption>表:主要なExit手法の比較</caption>
+          <thead><tr><th>Exit手法</th><th>売却先</th><th>価格の期待値</th><th>スピード・確実性</th><th>主な留意点</th></tr></thead>
+          <tbody>
+            <tr><th>トレードセール</th><td>事業会社(ストラテジック)</td><td>シナジー分、最も高値がつきやすい</td><td>買い手候補の数に左右される</td><td>競合への内部情報開示リスク</td></tr>
+            <tr><th>セカンダリーバイアウト</th><td>別のPEファンド</td><td>中庸</td><td>プロセスが速く、確実性が高め</td><td>「旨味が残っているのか」という懐疑を呼びやすい</td></tr>
+            <tr><th>IPO</th><td>株式市場</td><td>市況次第で大きく変動</td><td>準備に時間がかかり、ロックアップで回収も遅い</td><td>市況悪化による延期・中止リスク</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <figcaption>どの出口も一長一短。だからこそ複数の選択肢をギリギリまで並走させるデュアルトラックプロセス(次の記事)が交渉力の源泉になる。</figcaption>
+    </figure>
   </article>
 
   <article class="lesson">
@@ -1451,6 +1525,8 @@
 
 </div>
 <script src="js/toc.js"></script>
+<script src="js/glossary-data.js"></script>
+<script src="js/term-notes.js"></script>
 <script src="js/journey.js"></script>
 </body>
 </html>
