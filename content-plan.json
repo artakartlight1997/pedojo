@@ -3214,6 +3214,29 @@
         "対価スキーム",
         "モデル診断"
       ]
+    },
+    {
+      "key": "n155",
+      "prefix": "n155",
+      "page": "study-beginner.html",
+      "id": "module-n155",
+      "title": "LBOモデル実装ブループリント――行番号つき完全設計図",
+      "level": "初級",
+      "category": "LBOモデル構築",
+      "articles": 10,
+      "quizzes": 20,
+      "status": "done",
+      "topics": [
+        "売上ドライバー",
+        "開始B/S",
+        "のれん",
+        "行マップ",
+        "CF計算書3区分",
+        "B/S完全ロール",
+        "検収",
+        "Outputシート",
+        "FAQ"
+      ]
     }
   ]
 }

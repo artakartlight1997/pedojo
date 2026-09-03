@@ -2566,7 +2566,7 @@
     <h3>9. キャッシュフロー計算書とB/Sチェック:モデルに嘘発見器を仕込む</h3>
     <p>ここまでで数字は流れていますが、「どこかで現金が湧いたり消えたりしていないか」を機械的に見張る仕組みがまだありません。そこで簡易版のキャッシュフロー計算書とB/Sチェックを載せます。初級モデルでは、次の2本のチェック行で十分です。</p>
     <p><strong>チェック1(現金):</strong> 期首現金 + FCF − TLA約定弁済 − TLBスイープ = 期末現金。T社は100%スイープなので、期末現金は毎年ちょうど3.0億円(最低手元現金)に戻るはずです。<code>=期末現金-3</code> の行を作り、全年0であることを確認します。<br>
-    <strong>チェック2(バランス):</strong> 簡易B/Sを「資産=現金+固定資産等」「負債純資産=借入+資本」で転がし、<code>=資産合計-負債純資産合計</code> の行が全年0であることを確認します。固定資産はD&amp;Aで減り設備投資で増える(T社は8.0−8.0で不変)、資本は当期純利益で増える、と接続します。</p>
+    <strong>チェック2(バランス):</strong> 簡易B/Sを「資産=現金+固定資産等」「負債純資産=借入+資本」で転がし、<code>=資産合計-負債純資産合計</code> の行が全年0であることを確認します。固定資産はD&amp;Aで減り設備投資で増える(T社は8.0−8.0で不変)、資本は当期純利益で増える、と接続します。なお、のれんを含む開始B/Sから行番号レベルで完全なB/Sを実装する手順は、モジュール13(実装ブループリント)で扱います。</p>
     <div class="callout callout-metaphor"><strong>たとえるなら:</strong> レジ締めです。「理論上の売上」と「レジの中の現金」を毎晩突き合わせるから、ズレたその日のうちに原因を探せる。チェック行のないモデルは、レジ締めをしない店と同じで、ズレに気づくのが数か月後(=IC直前)になります。</div>
     <div class="example"><strong>具体例:</strong> チェック行が0.5億円ズレたときの潰し方を、実務の手順で書きます。①ズレが「全年同じ額」か「特定の年から発生」かを見る(全年同じなら期首=クロージングB/Sの設定ミス、特定年からならその年の式)。②その年の現金の入りと出を1行ずつ電卓で足す。③典型犯人は(a)スイープの符号(足すべき所で引いた)、(b)運転資本増加の引き忘れ、(c)固定資産のD&amp;A二重控除、の3つ。この順に見れば、経験上9割は10分で見つかります。</div>
     <div class="callout callout-pitfall"><strong>落とし穴:</strong> チェック行のズレを <code>=IF(ABS(差)&lt;0.5,0,差)</code> のような式で「丸めてしまう」のは粉飾と同じです。0.5億円のズレの裏には、たいてい数億円規模の式の誤りが複数、偶然打ち消し合って隠れています。チェック行は素の引き算のまま置き、条件付き書式で0以外を赤くする――これが実務の作法です。</div>
@@ -2633,7 +2633,235 @@
     ・MOIC <strong>約2.95倍</strong>、IRR <strong>約24.2%</strong><br>
     最後に感応度表(Exit倍率5.5〜7.5×5年目EBITDA 15〜19)を自作し、IRRが20%を割る領域を自分の言葉で説明できたら卒業です。</div>
     <div class="callout callout-metaphor"><strong>たとえるなら:</strong> 自動車教習所の卒業検定です。路上(実案件)に出る前に、教官(この教材)なしで一周走りきれるかを確認する。途中でエンスト(チェック行が0にならない)したら、対応する記事に戻って部品単位で直せばいい。</div>
-    <div class="callout callout-pitfall"><strong>落とし穴:</strong> 課題を「T社のファイルをコピーして数字だけ差し替える」やり方でクリアした気になるのが一番もったいない。それは実務では正しい省力化ですが、学習では白紙から組んでこそ、6ブロックの接続順が手に染みつきます。白紙から2時間で組めるようになったら、次は中級モジュール(LBOモデルのレビューと応用)で「レビューする側の目」を身につけてください。</div>
+    <div class="callout callout-pitfall"><strong>落とし穴:</strong> 課題を「T社のファイルをコピーして数字だけ差し替える」やり方でクリアした気になるのが一番もったいない。それは実務では正しい省力化ですが、学習では白紙から組んでこそ、6ブロックの接続順が手に染みつきます。白紙から2時間で組めるようになったら、モジュール13(実装ブループリント)で売上ドライバーと開始B/Sまで含めた完全実装に進み、その後、中級モジュール(LBOモデルのレビューと応用)で「レビューする側の目」を身につけてください。</div>
+  </article>
+</section>
+
+<section class="study-section" id="module-n155">
+  <h2>モジュール13:LBOモデル実装ブループリント――行番号つき完全設計図</h2>
+  <p class="module-intro">モジュール12でLBOモデルの設計思想と計算の流れを学びました。しかし「考え方が分かること」と「白紙のブックを前に手が動くこと」の間には、まだ3枚の設計図が足りません。①<strong>売上から始まる完全なP/L</strong>(モジュール12ではEBITDAを前提として与えていました。実物は売上・粗利・販管費から組みます)、②<strong>クロージング時点の開始B/S</strong>(のれんの計算。これがないとB/Sは構造的に閉じません)、③<strong>行番号レベルのシートレイアウト</strong>(どの行に何を置き、どのセルにどの数式を打つか)。このモジュールはその3枚を渡す「実装編」です。題材は引き続きT社案件(EBITDA20億円・7.0倍・TLA50億円+TLB40億円・エクイティ60億円)。読み終えたら――正確には、写経し終えたら――あなたのブックには記事8の検収表と<strong>全行一致する</strong>モデルが建っているはずです。一致しなければ記事10のFAQへ。それがこのモジュールの使い方です。</p>
+
+  <article class="lesson">
+    <h3>1. なぜ「実装編」が要るのか:設計思想と設計図は別物</h3>
+    <p>モジュール12を読んだ人が白紙のエクセルで最初に詰まる場所は決まっています。「EBITDA 22億円って、どの行から来るの?」(売上がない)、「B/Sを閉じろと言われても、買収した瞬間のB/Sがそもそも書けない」(のれんがない)、「<code>=Input!EBITDA</code>って打ったらエラーになった」(セル番地の設計がない)。この3つです。考え方の理解は済んでいるのに、物理的な設計図がないから手が止まる。</p>
+    <p>そこでこのモジュールは、通常の座学と逆の構成を取ります。文章は最小限にして、<strong>表=設計図を主役</strong>にします。Inputシートの全行(記事2)、P/Lのドライバー構造(記事3)、開始B/S(記事4)、Calcシートの行マップ前半・後半(記事5・6)、CF計算書(記事7)、検収表(記事8)、Outputシート(記事9)、詰まりどころFAQ(記事10)。写経→検収→FAQで自力修理、のループで進めてください。</p>
+    <div class="callout callout-metaphor"><strong>たとえるなら:</strong> モジュール12は建築の「構造力学の教科書」、このモジュールは「施工図」です。力学を理解した人でも、柱の位置と寸法が書かれた施工図なしには家は建ちません。逆に施工図だけ写しても力学が分かっていなければ、設計変更(前提の差し替え)に対応できません。両方で1セットです。</div>
+    <div class="example"><strong>具体例:</strong> 完成の定義(検収基準)を先に決めます。①記事8のB/S完全ロール表と全行・全年が一致する(チェック行が丸めではなく厳密に0.000)。②Inputの買収倍率を7.0→7.5に変えたとき、Exitエクイティ・IRR・B/Sチェックの3つが すべて連動して動き、チェックは0のまま。③元に戻すとMOIC 2.87倍・IRR 23.5%に戻る。この3点を満たしたら合格です。</div>
+    <div class="callout callout-pitfall"><strong>落とし穴:</strong> 「写経は時間の無駄。テンプレートをもらえばいい」という考え方は、学習段階では逆効果です。テンプレートを使う人は、壊れたときに直せません。一度だけ、全行を自分の手で打つ。そうすると各行が「なぜそこにあるのか」が体に入り、以後は他人のどんなモデルを渡されても地図が読めるようになります。写経は一度でいい。二度目からはテンプレートで構いません。</div>
+  </article>
+
+  <article class="lesson">
+    <h3>2. Inputシートの完全レイアウト:B列に値、1行1前提</h3>
+    <p>Inputシートは「A列に項目名、B列に値」の縦一列で組みます。これが最も事故が起きにくい配置です。モジュール12の前提に、今回の実装で必要になる<strong>売上ドライバー(14〜18行)とB/S用の簿価(25・27行)、感応度用の調整額(26行)</strong>を加えた完全版がこちらです。青字(直接入力)はこのシートだけ、という規律は変わりません。</p>
+    <div class="table-scroll"><table class="study-table">
+      <thead><tr><th>行</th><th>A列(項目)</th><th class="num">B列(値)</th><th>メモ</th></tr></thead>
+      <tbody>
+        <tr><td>2</td><td>LTM EBITDA</td><td class="num">20.0</td><td>エントリー評価の基準</td></tr>
+        <tr><td>3</td><td>買収倍率(EV/EBITDA)</td><td class="num">7.0</td><td></td></tr>
+        <tr><td>4</td><td>既存借入</td><td class="num">40.0</td><td>クロージングで返済</td></tr>
+        <tr><td>5</td><td>対象会社現金</td><td class="num">10.0</td><td>調達源に充当</td></tr>
+        <tr><td>6</td><td>TLA当初残高</td><td class="num">50.0</td><td></td></tr>
+        <tr><td>7</td><td>TLA金利</td><td class="num">2.5%</td><td>期首残高方式</td></tr>
+        <tr><td>8</td><td>TLA年間約定弁済</td><td class="num">5.0</td><td></td></tr>
+        <tr><td>9</td><td>TLB当初残高</td><td class="num">40.0</td><td></td></tr>
+        <tr><td>10</td><td>TLB金利</td><td class="num">4.5%</td><td>100%スイープ</td></tr>
+        <tr><td>11</td><td>取引フィー</td><td class="num">4.0</td><td>FA・弁護士等</td></tr>
+        <tr><td>12</td><td>ファイナンスフィー</td><td class="num">3.0</td><td>簡略化: 取得時に資本負担</td></tr>
+        <tr><td>13</td><td>最低手元現金</td><td class="num">3.0</td><td></td></tr>
+        <tr><td>14</td><td>売上(直近12か月)</td><td class="num">200.0</td><td>0年目の売上</td></tr>
+        <tr><td>15</td><td>売上増加額(年)</td><td class="num">10.0</td><td>チャネル拡大・値上げ計画</td></tr>
+        <tr><td>16</td><td>粗利率</td><td class="num">40%</td><td>5年間一定と仮定</td></tr>
+        <tr><td>17</td><td>販管費(1年目)</td><td class="num">62.0</td><td></td></tr>
+        <tr><td>18</td><td>販管費増加額(年)</td><td class="num">2.0</td><td>人件費・物流費の増加</td></tr>
+        <tr><td>19</td><td>減価償却費(年)</td><td class="num">8.0</td><td></td></tr>
+        <tr><td>20</td><td>設備投資(年)</td><td class="num">8.0</td><td>維持投資のみ</td></tr>
+        <tr><td>21</td><td>運転資本比率(対売上)</td><td class="num">10%</td><td>売掛+棚卸−買掛の純額</td></tr>
+        <tr><td>22</td><td>実効税率</td><td class="num">30%</td><td></td></tr>
+        <tr><td>23</td><td>Exit倍率</td><td class="num">7.0</td><td></td></tr>
+        <tr><td>24</td><td>保有年数</td><td class="num">5</td><td></td></tr>
+        <tr><td>25</td><td>対象会社純資産(簿価)</td><td class="num">30.0</td><td>のれん計算に使用</td></tr>
+        <tr><td>26</td><td>EBITDA調整額(全年一律)</td><td class="num">0.0</td><td>感応度分析用スイッチ</td></tr>
+        <tr><td>27</td><td>固定資産(簿価)</td><td class="num">40.0</td><td>開始B/Sに使用</td></tr>
+      </tbody>
+    </table></div>
+    <div class="example"><strong>具体例:</strong> 前提同士の整合を最初に検算します。純資産簿価30億円(25行)は、対象会社の取得直前B/S「現金10+運転資本20(=売上200×10%)+固定資産40−既存借入40」と一致しているか: 10+20+40−40=30 ✓。EBITDAの検算: 1年目売上210(=200+10)×粗利率40%−販管費62=84−62=<strong>22億円</strong> ✓。Inputの段階で矛盾があると、後の全工程が砂上の楼閣になります。</div>
+    <div class="callout callout-metaphor"><strong>たとえるなら:</strong> 料理の「計量を全部済ませてから火をつける」です。B列の縦一列は計量カップを一列に並べた調理台。火をつけてから(Calcを組み始めてから)砂糖の量を測り直す料理人は、必ずどこかで鍋を焦がします。</div>
+    <div class="callout callout-pitfall"><strong>落とし穴:</strong> 「名前付き範囲(EBITDAという名前をセルに付ける機能)を使えば番地を覚えなくていいのでは」という発想は半分正しく半分危険です。名前付き範囲は読みやすい反面、大量に作ると管理が破綻し、他人のモデルとの互換性も落ちます。初級の実装は<code>Input!$B$2</code>形式の絶対参照で統一し、名前付き範囲は使うとしてもEBITDA等の主要5個まで。この設計図では全て番地方式で書きます。</div>
+  </article>
+
+  <article class="lesson">
+    <h3>3. P/L完全版:EBITDAは「与える」のではなく「作る」</h3>
+    <p>モジュール12ではEBITDAのパス(22→30億円)を前提として与えました。実物のモデルでは、EBITDAは<strong>売上ドライバーから作ります</strong>。T社の構造は3行です: 売上(毎年+10億円)× 粗利率40% − 販管費(毎年+2億円)。この3行が、モジュール12とまったく同じEBITDAパスを生成することを確認してください。</p>
+    <div class="table-scroll"><table class="study-table">
+      <thead><tr><th>億円</th><th class="num">0年目</th><th class="num">1年目</th><th class="num">2年目</th><th class="num">3年目</th><th class="num">4年目</th><th class="num">5年目</th></tr></thead>
+      <tbody>
+        <tr><td>売上</td><td class="num">200</td><td class="num">210</td><td class="num">220</td><td class="num">230</td><td class="num">240</td><td class="num">250</td></tr>
+        <tr><td>粗利(×40%)</td><td class="num">80</td><td class="num">84</td><td class="num">88</td><td class="num">92</td><td class="num">96</td><td class="num">100</td></tr>
+        <tr><td>販管費</td><td class="num">60</td><td class="num">62</td><td class="num">64</td><td class="num">66</td><td class="num">68</td><td class="num">70</td></tr>
+        <tr><td><strong>EBITDA</strong></td><td class="num">20</td><td class="num"><strong>22</strong></td><td class="num"><strong>24</strong></td><td class="num"><strong>26</strong></td><td class="num"><strong>28</strong></td><td class="num"><strong>30</strong></td></tr>
+        <tr><td>運転資本(売上×10%)</td><td class="num">20</td><td class="num">21</td><td class="num">22</td><td class="num">23</td><td class="num">24</td><td class="num">25</td></tr>
+        <tr><td>運転資本の増加</td><td class="num">―</td><td class="num">1.0</td><td class="num">1.0</td><td class="num">1.0</td><td class="num">1.0</td><td class="num">1.0</td></tr>
+      </tbody>
+    </table></div>
+    <p>運転資本もここでドライバー化されます。モジュール12で「ΔWC=1.0億円/年」と置いた数字の正体は、「運転資本=売上の10%、売上が毎年10億円増える」という構造でした。売上の前提を変えればΔWCも自動で動く――これがドライバー化の意味です。</p>
+    <div class="callout callout-metaphor"><strong>たとえるなら:</strong> モジュール12のEBITDA直置きは「他人が焼いたパンをもらう」、ドライバー化は「小麦粉から焼く」です。味(数値)は同じでも、レシピを持っている人だけが「砂糖を減らしたら(値上げが通らなかったら)どうなるか」に答えられます。</div>
+    <div class="example"><strong>具体例:</strong> Input26行の「EBITDA調整額」の使い方。感応度分析(データテーブル)で「5年目EBITDAが26億円だったら」を流したいとき、売上や販管費のどれを動かすかで結果は微妙に変わって扱いにくい。そこでEBITDAの行を<code>=粗利−販管費+Input!$B$26</code>としておき、調整額に−4を入れると全年のEBITDAが一律4億円下がる(5年目30→26)。データテーブルの代入セルにはこのB26を指定します。ドライバー構造と感応度の操作性を両立させる、実務の定番スイッチです。</div>
+    <div class="callout callout-pitfall"><strong>落とし穴:</strong> ドライバーを増やしすぎないこと。初級の実装では「売上・粗利率・販管費」の3行で十分です。製品別×地域別×数量単価分解のような多段ドライバーは、DDで実データを得てから足すもの。前提の解像度が低い段階で構造だけ細かくすると、根拠のない数字が20個並ぶ「精密風のガラクタ」になります。粗くても検証可能な3行から始めてください。</div>
+  </article>
+
+  <article class="lesson">
+    <h3>4. 開始B/S:のれんを計算しないとB/Sは永遠に閉じない</h3>
+    <p>モジュール12の読者が最も高い確率で挫折する場所がここです。買収した瞬間(0年目末=クロージング時点)のB/Sを作らないまま1年目のB/Sを閉じようとしても、構造的に不可能です。なぜなら、110億円で買った会社の純資産簿価は30億円しかない。差額の80億円はどこへ行くのか――この答えが<strong>のれん</strong>(買収対価が受け入れた純資産を上回る部分。超過収益力の対価として資産計上される)です。</p>
+    <div class="example"><strong>具体例(T社の開始B/S、簡略PPA):</strong><br>
+    のれん = 株式取得対価110 − 対象会社純資産簿価30 = <strong>80億円</strong><br>
+    <div class="table-scroll"><table class="study-table">
+      <thead><tr><th>資産</th><th class="num">億円</th><th>負債・純資産</th><th class="num">億円</th></tr></thead>
+      <tbody>
+        <tr><td>現金(最低手元現金)</td><td class="num">3.0</td><td>TLA</td><td class="num">50.0</td></tr>
+        <tr><td>運転資本(純額)</td><td class="num">20.0</td><td>TLB</td><td class="num">40.0</td></tr>
+        <tr><td>固定資産</td><td class="num">40.0</td><td>資本(=出資60−フィー7)</td><td class="num">53.0</td></tr>
+        <tr><td>のれん</td><td class="num">80.0</td><td></td><td class="num"></td></tr>
+        <tr><td><strong>合計</strong></td><td class="num"><strong>143.0</strong></td><td><strong>合計</strong></td><td class="num"><strong>143.0</strong></td></tr>
+      </tbody>
+    </table></div>
+    資本が60ではなく53になっている点が急所です。ファンドは60億円出資しましたが、フィー7億円(取引4+ファイナンス3)は誰の資産にもならずクロージングで消えるため、開始B/Sの資本は53億円から始まります(本モデルの簡略化。実務ではファイナンスフィーを資産計上して償却する処理が一般的で、それはモジュール12(中級)の精緻化論点です)。この「7億円」は、中級のバリューブリッジで登場した「投資額60億円起点とEVベース53億円起点の差」と同じものです。伏線がここで回収されます。</div>
+    <p>のれんの後続処理はこのモデルでは「5年間動かさない」と置きます(減損なしの簡略化)。なお日本基準ではのれんは規則償却(20年以内)が原則で、償却するとP/Lと税・純資産のロールが変わります。会計基準の選択と税務上の取り扱い(株式取得では税務上ののれんは通常生じない等)は案件ごとに会計士・税理士へ必ず確認してください。学習用モデルでは「非償却・減損なし」で骨格を先に固めます。</p>
+    <div class="callout callout-metaphor"><strong>たとえるなら:</strong> のれんは「ラーメン屋の行列の値段」です。店の鍋と椅子(純資産簿価30億円)しか買っていないなら30億円で済むはずが、110億円払ったのは行列(ブランド・顧客関係・レシピ)ごと買ったから。会計はその差額80億円に「のれん」という名前を付けて、貸借を合わせるのです。</div>
+    <div class="callout callout-pitfall"><strong>落とし穴:</strong> 開始B/Sの現金を10億円(対象会社が持っていた額)と置く間違いが頻発します。その10億円はSources &amp; Usesで買収資金に充当済みで、クロージング後の会社に残っているのは積み直した最低手元現金3億円だけです。開始B/Sは「取引前のB/S」ではなく「取引が終わった瞬間のB/S」――S&amp;Uを通過した後の姿を書いてください。</div>
+  </article>
+
+  <article class="lesson">
+    <h3>5. Calcシート行マップ(前半):エントリー・S&amp;U・P/L</h3>
+    <p>ここからが施工図の本体です。Calcシートは<strong>A列=項目名、B列=0年目(開始時点)、C〜G列=1〜5年目</strong>。以下の行マップどおりに打てば、そのまま動きます。数式は1年目(C列)のものを示します。「右コピー」とある行はC列の式をD〜G列へコピー(D列で式が変わる行は個別に注記)。$記号の位置まで正確に写してください――右コピーで壊れないための絶対参照です。</p>
+    <div class="table-scroll"><table class="study-table">
+      <thead><tr><th>行</th><th>項目</th><th>数式(C列=1年目)</th><th class="num">検算値(1年目)</th></tr></thead>
+      <tbody>
+        <tr><td>2</td><td>エントリーEV</td><td>B2: <code>=Input!B2*Input!B3</code></td><td class="num">140.0</td></tr>
+        <tr><td>3</td><td>ネットデット(既存)</td><td>B3: <code>=Input!B4-Input!B5</code></td><td class="num">30.0</td></tr>
+        <tr><td>4</td><td>株式取得対価</td><td>B4: <code>=B2-B3</code></td><td class="num">110.0</td></tr>
+        <tr><td>5</td><td>のれん</td><td>B5: <code>=B4-Input!B25</code></td><td class="num">80.0</td></tr>
+        <tr><td>7〜11</td><td>Uses(5行)</td><td>B7: <code>=B4</code> / B8: <code>=Input!B4</code> / B9: <code>=Input!B11</code> / B10: <code>=Input!B12</code> / B11: <code>=Input!B13</code></td><td class="num">110/40/4/3/3</td></tr>
+        <tr><td>12</td><td>Uses合計</td><td>B12: <code>=SUM(B7:B11)</code></td><td class="num">160.0</td></tr>
+        <tr><td>13〜15</td><td>Sources(デット・現金)</td><td>B13: <code>=Input!B6</code> / B14: <code>=Input!B9</code> / B15: <code>=Input!B5</code></td><td class="num">50/40/10</td></tr>
+        <tr><td>16</td><td>エクイティ(プラグ)</td><td>B16: <code>=B12-SUM(B13:B15)</code></td><td class="num">60.0</td></tr>
+        <tr><td>17</td><td><strong>S&amp;Uチェック</strong></td><td>B17: <code>=SUM(B13:B16)-B12</code></td><td class="num">0.0</td></tr>
+        <tr><td>19</td><td>売上</td><td>B19: <code>=Input!B14</code> / C19: <code>=B19+Input!$B$15</code>(右コピー)</td><td class="num">210.0</td></tr>
+        <tr><td>20</td><td>粗利</td><td><code>=C19*Input!$B$16</code>(右コピー)</td><td class="num">84.0</td></tr>
+        <tr><td>21</td><td>販管費</td><td>C21: <code>=Input!B17</code> / D21: <code>=C21+Input!$B$18</code>(右コピー)</td><td class="num">62.0</td></tr>
+        <tr><td>22</td><td>EBITDA</td><td><code>=C20-C21+Input!$B$26</code>(右コピー)</td><td class="num">22.0</td></tr>
+        <tr><td>23</td><td>減価償却費</td><td><code>=Input!$B$19</code>(右コピー)</td><td class="num">8.0</td></tr>
+        <tr><td>24</td><td>EBIT</td><td><code>=C22-C23</code>(右コピー)</td><td class="num">14.0</td></tr>
+        <tr><td>25</td><td>支払利息</td><td><code>=C36+C41</code>(右コピー。デットスケジュールの利息2行を参照)</td><td class="num">3.05</td></tr>
+        <tr><td>26</td><td>税引前利益</td><td><code>=C24-C25</code>(右コピー)</td><td class="num">10.95</td></tr>
+        <tr><td>27</td><td>税金</td><td><code>=MAX(0,C26)*Input!$B$22</code>(右コピー)</td><td class="num">3.285</td></tr>
+        <tr><td>28</td><td>当期純利益</td><td><code>=C26-C27</code>(右コピー)</td><td class="num">7.665</td></tr>
+        <tr><td>30</td><td>運転資本の増加</td><td><code>=(C19-B19)*Input!$B$21</code>(右コピー)</td><td class="num">1.0</td></tr>
+        <tr><td>31</td><td>返済原資FCF</td><td><code>=C28+Input!$B$19-Input!$B$20-C30</code>(右コピー)</td><td class="num">6.665</td></tr>
+      </tbody>
+    </table></div>
+    <div class="callout callout-metaphor"><strong>たとえるなら:</strong> プラモデルの組立説明書の「パーツ番号」です。「C36とC41を貼り合わせてC25を作る」と書いてあれば、誰が組んでも同じ完成品になる。説明書に番号がなければ、上手い人しか組めません。行番号はモデルのパーツ番号です。</div>
+    <div class="example"><strong>具体例:</strong> 25行の支払利息は、この時点ではまだ参照先(36行・41行)が空なのでゼロか#REF!になります。それで正しい。モジュール12の記事5で学んだ「仮置きで前進」を、実装ではこう処理します: いったん<code>=50*0.025+40*0.045</code>(→3.05)と直書きし、セルを黄色に塗って「仮」の印を付ける。記事6でデットスケジュールが建ったら<code>=C36+C41</code>に差し替えて黄色を消す。黄色が残っているうちは未完成、が実務の合図です。</div>
+    <div class="callout callout-pitfall"><strong>落とし穴:</strong> 19行の売上のB列(0年目=200)を省略しないこと。0年目列は「過去の実績」を置くだけの飾りに見えますが、30行のΔWC計算(<code>=(C19-B19)×10%</code>)と、後で作る開始B/Sの運転資本(=B19×10%)の両方が参照します。0年目列は飾りではなく、モデルの土台の一部です。</div>
+  </article>
+
+  <article class="lesson">
+    <h3>6. Calcシート行マップ(後半):デットスケジュール・現金・B/S</h3>
+    <p>後半はモデルの心臓部です。トランシェごとに「期首→返済→期末→利息」の4行ブロック。スイープの式でC34(約定弁済)を<strong>足している</strong>のは、34行がマイナスで入っているからです(FCF−約定弁済=C31+C34)。符号の規律が効いてくる場面です。</p>
+    <div class="table-scroll"><table class="study-table">
+      <thead><tr><th>行</th><th>項目</th><th>数式(C列=1年目)</th><th class="num">検算値(1年目)</th></tr></thead>
+      <tbody>
+        <tr><td>33</td><td>TLA期首残高</td><td>C33: <code>=Input!B6</code> / D33: <code>=C35</code>(右コピー)</td><td class="num">50.0</td></tr>
+        <tr><td>34</td><td>TLA約定弁済</td><td><code>=-MIN(C33,Input!$B$8)</code>(右コピー)</td><td class="num">-5.0</td></tr>
+        <tr><td>35</td><td>TLA期末残高</td><td><code>=C33+C34</code>(右コピー)</td><td class="num">45.0</td></tr>
+        <tr><td>36</td><td>TLA利息</td><td><code>=C33*Input!$B$7</code>(右コピー)</td><td class="num">1.25</td></tr>
+        <tr><td>38</td><td>TLB期首残高</td><td>C38: <code>=Input!B9</code> / D38: <code>=C40</code>(右コピー)</td><td class="num">40.0</td></tr>
+        <tr><td>39</td><td>TLBスイープ</td><td><code>=-MIN(C38,MAX(0,C31+C34))</code>(右コピー)</td><td class="num">-1.665</td></tr>
+        <tr><td>40</td><td>TLB期末残高</td><td><code>=C38+C39</code>(右コピー)</td><td class="num">38.335</td></tr>
+        <tr><td>41</td><td>TLB利息</td><td><code>=C38*Input!$B$10</code>(右コピー)</td><td class="num">1.80</td></tr>
+        <tr><td>43</td><td>営業CF</td><td><code>=C28+Input!$B$19-C30</code>(右コピー)</td><td class="num">14.665</td></tr>
+        <tr><td>44</td><td>投資CF</td><td><code>=-Input!$B$20</code>(右コピー)</td><td class="num">-8.0</td></tr>
+        <tr><td>45</td><td>財務CF</td><td><code>=C34+C39</code>(右コピー)</td><td class="num">-6.665</td></tr>
+        <tr><td>46</td><td>現金増減</td><td><code>=SUM(C43:C45)</code>(右コピー)</td><td class="num">0.0</td></tr>
+        <tr><td>47</td><td>期首現金</td><td>C47: <code>=Input!B13</code> / D47: <code>=C48</code>(右コピー)</td><td class="num">3.0</td></tr>
+        <tr><td>48</td><td>期末現金</td><td><code>=C47+C46</code>(右コピー)</td><td class="num">3.0</td></tr>
+        <tr><td>50</td><td>B/S: 現金</td><td>B50: <code>=Input!B13</code> / C50: <code>=C48</code>(右コピー)</td><td class="num">3.0</td></tr>
+        <tr><td>51</td><td>B/S: 運転資本</td><td>B51: <code>=B19*Input!$B$21</code> / C51: <code>=C19*Input!$B$21</code>(右コピー)</td><td class="num">21.0</td></tr>
+        <tr><td>52</td><td>B/S: 固定資産</td><td>B52: <code>=Input!B27</code> / C52: <code>=B52+Input!$B$20-Input!$B$19</code>(右コピー)</td><td class="num">40.0</td></tr>
+        <tr><td>53</td><td>B/S: のれん</td><td><code>=$B$5</code>(右コピー)</td><td class="num">80.0</td></tr>
+        <tr><td>54</td><td>資産合計</td><td><code>=SUM(C50:C53)</code>(右コピー)</td><td class="num">144.0</td></tr>
+        <tr><td>55</td><td>借入合計</td><td>B55: <code>=Input!B6+Input!B9</code> / C55: <code>=C35+C40</code>(右コピー)</td><td class="num">83.335</td></tr>
+        <tr><td>56</td><td>資本</td><td>B56: <code>=B16-B9-B10</code>(=出資−フィー計) / C56: <code>=B56+C28</code>(右コピー)</td><td class="num">60.665</td></tr>
+        <tr><td>57</td><td>負債資本合計</td><td><code>=C55+C56</code>(右コピー)</td><td class="num">144.0</td></tr>
+        <tr><td>58</td><td><strong>B/Sチェック</strong></td><td><code>=C54-C57</code>(右コピー)</td><td class="num">0.000</td></tr>
+      </tbody>
+    </table></div>
+    <div class="callout callout-metaphor"><strong>たとえるなら:</strong> 56行の資本ロール(前年の資本+当期純利益)は「貯金箱の残高計算」です。配当を払わないモデルでは、稼いだ純利益がそのまま貯金箱(純資産)に積まれる。この単純な一行と、資産側の全部の動き(現金・運転資本・固定資産・のれん)が毎年ぴったり釣り合う――複式簿記が数式になった瞬間で、58行の0.000はその証明書です。</div>
+    <div class="example"><strong>具体例:</strong> ここまで打ったら、25行の支払利息を仮置きから<code>=C36+C41</code>に差し替えます(黄色を消す)。そして最初の検収: 1年目のB/Sチェック(C58)が0.000になるか。ならない場合、差額そのものがヒントです。差が+7.0なら56行の開始資本からフィーを引き忘れ(60のまま)、+1.0前後なら51行の運転資本、−80なら53行ののれんの繰越漏れ。差額は犯人の名札です。</div>
+    <div class="callout callout-pitfall"><strong>落とし穴:</strong> 45行の財務CFを<code>=C34+C39</code>ではなく<code>=-C34-C39</code>と書いてしまう(符号の二重反転)ミスが最多です。34行・39行はすでにマイナスの値なので、そのまま足せば「返済でお金が出ていく」が表現できています。符号を「行の中で1回だけ」持たせる規律――マイナスは発生源の行(返済行)に置き、集計行では素直に足す――を守ってください。</div>
+  </article>
+
+  <article class="lesson">
+    <h3>7. キャッシュフロー計算書:3区分の意味と「増減ゼロ」の読み方</h3>
+    <p>行マップ43〜48行がCF計算書です。<strong>営業CF</strong>(本業が生んだ現金: 純利益+D&amp;A−ΔWC)、<strong>投資CF</strong>(設備投資)、<strong>財務CF</strong>(借入の返済)の3区分は、会社の現金の物語を3章に分ける世界共通の形式です。T社の1年目は 営業+14.665、投資−8.0、財務−6.665で、合計の現金増減は<strong>ちょうどゼロ</strong>。これはバグではありません。100%キャッシュスイープの契約では「稼いで、投資して、残りを全部返す」ので、現金は最低水準の3億円から動かないのです。</p>
+    <div class="example"><strong>具体例:</strong> 3区分それぞれの検算。営業CF=7.665+8.0−1.0=14.665(税金と利息は純利益の中で控除済み)。投資CF=−8.0(維持投資のみ)。財務CF=−5.0(TLA約定)−1.665(TLBスイープ)=−6.665。合計0.000。もし契約がスイープ率75%なら財務CFは−6.249になり、現金増減+0.416が48行の期末現金に積み上がる――中級モジュール12(レビューと応用)の記事3で学んだ「現金ロール」が、この48行の意味です。</div>
+    <div class="callout callout-metaphor"><strong>たとえるなら:</strong> 家計簿の「給料・住宅購入・ローン返済」の3ページ分けです。1ページ目(営業)が黒字でも、3ページ目(財務)で全部返済に回せば財布の中身(現金残高)は変わらない。財布が膨らまないことと家計が健全なことは別の話で、それを区別して見せるのが3区分の仕事です。</div>
+    <div class="callout callout-pitfall"><strong>落とし穴:</strong> 営業CFに支払利息を「もう一度」引くミス(<code>=C28+D&amp;A−ΔWC−C25</code>)が定番です。純利益(C28)はすでに利息控除後なので、二重に引くと営業CFが3.05億円過小になり、B/Sチェックが崩れます。「純利益から出発するCF計算書では、P/Lで引いたものを二度と引かない。足し戻すのは非現金費用だけ」――この一文を覚えれば防げます。</div>
+  </article>
+
+  <article class="lesson">
+    <h3>8. 検収表:B/S完全ロール5年分と全行一致させる</h3>
+    <p>これが完成品の姿です。あなたのブックのB/Sブロック(50〜58行)が、この表と<strong>全行・全年一致</strong>したら合格。チェック行(58行)は丸めの結果ではなく、数式の構造として厳密にゼロになります(資産側の増分=運転資本+1.0/年、負債資本側の増分=純利益−返済、の差が恒等的にゼロ)。</p>
+    <div class="table-scroll"><table class="study-table">
+      <thead><tr><th>億円</th><th class="num">開始(0年目)</th><th class="num">1年目</th><th class="num">2年目</th><th class="num">3年目</th><th class="num">4年目</th><th class="num">5年目</th></tr></thead>
+      <tbody>
+        <tr><td>現金</td><td class="num">3.00</td><td class="num">3.00</td><td class="num">3.00</td><td class="num">3.00</td><td class="num">3.00</td><td class="num">3.00</td></tr>
+        <tr><td>運転資本</td><td class="num">20.00</td><td class="num">21.00</td><td class="num">22.00</td><td class="num">23.00</td><td class="num">24.00</td><td class="num">25.00</td></tr>
+        <tr><td>固定資産</td><td class="num">40.00</td><td class="num">40.00</td><td class="num">40.00</td><td class="num">40.00</td><td class="num">40.00</td><td class="num">40.00</td></tr>
+        <tr><td>のれん</td><td class="num">80.00</td><td class="num">80.00</td><td class="num">80.00</td><td class="num">80.00</td><td class="num">80.00</td><td class="num">80.00</td></tr>
+        <tr><td><strong>資産合計</strong></td><td class="num"><strong>143.00</strong></td><td class="num"><strong>144.00</strong></td><td class="num"><strong>145.00</strong></td><td class="num"><strong>146.00</strong></td><td class="num"><strong>147.00</strong></td><td class="num"><strong>148.00</strong></td></tr>
+        <tr><td>TLA残高</td><td class="num">50.00</td><td class="num">45.00</td><td class="num">40.00</td><td class="num">35.00</td><td class="num">30.00</td><td class="num">25.00</td></tr>
+        <tr><td>TLB残高</td><td class="num">40.00</td><td class="num">38.34</td><td class="num">35.13</td><td class="num">30.34</td><td class="num">23.90</td><td class="num">15.78</td></tr>
+        <tr><td>資本</td><td class="num">53.00</td><td class="num">60.67</td><td class="num">69.87</td><td class="num">80.66</td><td class="num">93.10</td><td class="num">107.22</td></tr>
+        <tr><td><strong>負債資本合計</strong></td><td class="num"><strong>143.00</strong></td><td class="num"><strong>144.00</strong></td><td class="num"><strong>145.00</strong></td><td class="num"><strong>146.00</strong></td><td class="num"><strong>147.00</strong></td><td class="num"><strong>148.00</strong></td></tr>
+        <tr><td><strong>チェック(58行)</strong></td><td class="num"><strong>0.000</strong></td><td class="num"><strong>0.000</strong></td><td class="num"><strong>0.000</strong></td><td class="num"><strong>0.000</strong></td><td class="num"><strong>0.000</strong></td><td class="num"><strong>0.000</strong></td></tr>
+      </tbody>
+    </table></div>
+    <div class="example"><strong>具体例(最終連動テスト):</strong> 記事1で決めた検収基準②を実行します。Input!B3(買収倍率)を7.0→7.5へ。株式対価は120、のれんは90、開始資産は153へ増え、エクイティ(プラグ)は70に――そしてB/Sチェックは全年0のままのはずです。続けてInput!B26(EBITDA調整額)に−4を入れ、EBITDAが全年4億円下がってもチェックが0のままか。両方通れば、あなたのモデルは「前提を差し替えても壊れない」実戦仕様です。忘れずに元へ戻すこと(7.0/0.0)。</div>
+    <div class="callout callout-metaphor"><strong>たとえるなら:</strong> 検収表は航空機の飛行前チェックリストです。ベテランでも省略しません。省略しない理由は「たいてい大丈夫」だからではなく、「落ちたときの代償が大きすぎる」から。ICメモに載る数字の出荷前検査だと思ってください。</div>
+    <div class="callout callout-pitfall"><strong>落とし穴:</strong> この表と1〜2か所だけ違う場合に、そのセルだけ手打ちで直して「一致した」ことにするのは、検収の自殺行為です。表と違うセルは、上流の数式の誤りが流れ着いた河口にすぎません。差額と発生年から上流(記事6の具体例の要領)へ遡ってください。手打ちで川を堰き止めても、汚染源は残っています。</div>
+  </article>
+
+  <article class="lesson">
+    <h3>9. Outputシート:リターン計算と「1枚で全部見える」レイアウト</h3>
+    <p>最後にOutputシートです。役割は2つ。①リターン計算の置き場所、②VPやICが「1枚で全部見る」ためのダッシュボード。レイアウトの定石は上から: 案件サマリー(EV・倍率・S&amp;U要約)/リターン(MOIC・IRR)/クレジット指標の推移(レバレッジ・ICR)/感応度表。印刷プレビューでA4縦1枚に収まることまで含めて「完成」です。</p>
+    <div class="example"><strong>具体例(リターンブロックの数式):</strong><br>
+    Exit EV: <code>=Calc!G22*Input!B23</code> → 30×7.0=210.0<br>
+    Exit時負債: <code>=Calc!G35+Calc!G40</code> → 25.00+15.78=40.78<br>
+    Exitエクイティ: <code>=ExitEV−Exit時負債+Calc!G48</code> → 210−40.78+3=172.22<br>
+    エクイティCF行(B〜G列): B列 <code>=-Calc!B16</code>(−60)、C〜F列 0、G列 <code>=Exitエクイティ</code><br>
+    IRR: <code>=IRR(B行:G行)</code> → <strong>23.5%</strong> / MOIC: <code>=G/(-B)</code> → <strong>2.87倍</strong><br>
+    期中配当を将来足すことを見越してCF「行」で組むのはモジュール12で学んだとおり。日付ベースで厳密にやりたければ、CF行の上に日付行(クロージング日、各期末日)を置き<code>=XIRR(CF行,日付行)</code>。年数がちょうど整数なら両者はほぼ一致し、期中クロージング(例: 9月末クローズで初年度が9か月)ならXIRRだけが正しい年率を返します。</div>
+    <div class="callout callout-metaphor"><strong>たとえるなら:</strong> Outputシートは車のダッシュボードです。エンジンルーム(Calc)を開けなくても、速度(IRR)・燃料(現金)・水温警告(チェック行のステータス)が運転席から見える。逆に、ダッシュボードに配線(計算ロジック)を這わせてはいけません――Outputシートには参照式だけを置き、計算はすべてCalcで行う。この分離が「見る人」と「作る人」の両方を守ります。</div>
+    <div class="callout callout-pitfall"><strong>落とし穴:</strong> IRR関数の範囲に0年目(B列の−60)を含め忘れると、回収側だけの計算になりIRRが異常な高率になります(中級モジュール12の診断記事で「IRR41%」の症状として扱った事故の実装形)。もう一つ: 感応度のデータテーブルはOutputシートに置きますが、代入セルの指定は必ずInputシートのセル(B23やB26)。Calcのセルを指定した瞬間、全マス同値の壊れた表になります。</div>
+  </article>
+
+  <article class="lesson">
+    <h3>10. 詰まりどころFAQ:症状→原因→処置の10連</h3>
+    <p>写経して検収表と合わなかった人のための修理マニュアルです。実際にこのブループリントを組んだ人が詰まる場所は、経験上ほぼこの10個に収束します。<strong>症状から引く</strong>のがコツです。</p>
+    <div class="example"><strong>具体例(FAQ 10選):</strong><br>
+    <strong>1. 支払利息が0のまま</strong> → 25行が仮置きのまま、または参照先が空。<code>=C36+C41</code>への差し替えを確認。<br>
+    <strong>2. B/Sチェックが全年−7.0</strong> → 56行の開始資本が60のまま(負債資本側が7大きい)。フィー控除(<code>=B16-B9-B10</code>)を確認。<br>
+    <strong>3. チェックが全年−80.0</strong> → 53行ののれんが繰り越されていない。<code>=$B$5</code>の$を確認。<br>
+    <strong>4. チェックが1年目から約−20で毎年1.0ずつ深くなる</strong> → 51行の運転資本が残高でなく増加額になっている(30行と混同)。残高=売上×10%。<br>
+    <strong>5. 2年目以降のTLA期首が0</strong> → D33の<code>=C35</code>(前年期末参照)が<code>=C33</code>になっている。ロールの繋ぎを確認。<br>
+    <strong>6. スイープが正の値で出る</strong> → 39行の先頭のマイナスが抜けている。符号は発生源の行に1回だけ。<br>
+    <strong>7. 循環参照の警告が出た</strong> → 25行の利息が36・41行(期首基準)でなく期末残高(35・40行)を参照している。初級は期首方式。<br>
+    <strong>8. 右コピーでInput参照がズレて#REF!やゼロに</strong> → $が抜けている。<code>Input!$B$15</code>のように列行とも固定。<br>
+    <strong>9. データテーブルが全マス同値</strong> → 代入セルにCalcのセルを指定している。Input!B23/B26に変更。<br>
+    <strong>10. IRRが40%超の異常値</strong> → IRR範囲に0年目の−60が入っていない。B列から範囲を取り直す。</div>
+    <p>10個すべてに共通する教訓はひとつ――<strong>症状は河口、原因は上流</strong>。差額の大きさ(7.0ならフィー、80ならのれん、1.0なら運転資本)と発生パターン(全年一定か、年々拡大か)が、上流のどこを見るべきかを教えてくれます。これはモジュール12(中級)の「壊れたモデルの診断」で学ぶ体系の、初級実装版です。</p>
+    <div class="callout callout-metaphor"><strong>たとえるなら:</strong> 家電の取扱説明書の巻末「故障かな?と思ったら」のページです。メーカー(このモジュール)は、ユーザーがどこで詰まるかを事前に知っている。まず表を引く、直らなければ分解(数式の全行トレース)に進む。分解から始める人は、たいてい直せるものまで壊します。</div>
+    <div class="callout callout-pitfall"><strong>落とし穴:</strong> FAQで直った後、「なぜその間違いをしたのか」を言語化せずに先へ進むと、次のモデルで同じ場所を踏みます。修理のたびに一行、自分の言葉でメモを残す(例:「符号は発生源に1回だけ、を忘れた」)。この自家製FAQが3件溜まった頃には、あなたはもう白紙からLBOモデルを組める側の人間です。仕上げにモジュール12の卒業課題(S社)を、今度はこのブループリントの行構成で――売上ドライバーと開始B/S込みで――組み直してみてください。それが本当の卒業制作です。</div>
   </article>
 </section>
 

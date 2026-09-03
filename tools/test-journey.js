@@ -48,11 +48,11 @@ console.log("== study-beginner journey flow");
 
   assert(document.querySelector(".journey-bar"), "journey bar inserted");
   const items = document.querySelectorAll(".jmap-item");
-  assert(items.length === 23, "map has 12 modules + 11 drills = 23 (got " + items.length + ")");
+  assert(items.length === 24, "map has 13 modules + 11 drills = 24 (got " + items.length + ")");
   assert(document.body.classList.contains("journey-active"), "journey mode active");
   const sectionsHidden = Array.from(document.querySelectorAll(".study-main .study-section")).every(s => s.hidden);
   assert(sectionsHidden, "all sections hidden on map view");
-  assert(/モジュール完了 0 \/ 23/.test(document.querySelector(".journey-bar-text").textContent), "progress text 0/23");
+  assert(/モジュール完了 0 \/ 24/.test(document.querySelector(".journey-bar-text").textContent), "progress text 0/24");
 
   // 最初のユニットを開く
   items[0].querySelector(".btn-primary").click();
@@ -214,12 +214,12 @@ console.log("== path-card progress annotation");
 {
   const dom = makeDom("study-index.html");
   dom.window.localStorage.setItem("journey_v1", JSON.stringify({
-    pages: { "study-beginner.html": { units: {}, summary: { done: 3, total: 23 } } }
+    pages: { "study-beginner.html": { units: {}, summary: { done: 3, total: 24 } } }
   }));
   dom.window.eval(read("js/journey.js"));
   dom.window.document.dispatchEvent(new dom.window.Event("DOMContentLoaded"));
   const badge = dom.window.document.querySelector(".path-progress-text");
-  assert(badge && /3\/23/.test(badge.textContent), "beginner card shows 3/23 progress");
+  assert(badge && /3\/24/.test(badge.textContent), "beginner card shows 3/24 progress");
 }
 
 // ---------- 6. クイズのみの演習ユニットの再開 ----------
