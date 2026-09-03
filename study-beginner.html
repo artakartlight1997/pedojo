@@ -466,7 +466,7 @@
     MOIC = 100億円 ÷ 30億円 = <strong>3.33倍</strong><br>
     IRR ≈ 3.33^(1/5) − 1 ≈ <strong>27%</strong>
     </div>
-    <p>この6つのステップこそが、あらゆるLBOモデルの背骨です。実務ではこれに税金、金利、詳細な事業計画などが加わってはるかに複雑になりますが、「① 買収価格を決める → ② 資金調達の内訳を決める → ③ 保有期間中に借金を減らす → ④ 売却価格を決める → ⑤ 株主の取り分を出す → ⑥ 倍率と年率リターンに変換する」という骨格は、初級から上級まで一切変わりません。</p>
+    <p>この6つのステップこそが、あらゆるLBOモデルの背骨です。実務ではこれに税金、金利、詳細な事業計画などが加わってはるかに複雑になりますが、「① 買収価格を決める → ② 資金調達の内訳を決める → ③ 保有期間中に借金を減らす → ④ 売却価格を決める → ⑤ 株主の取り分を出す → ⑥ 倍率と年率リターンに変換する」という骨格は、初級から上級まで一切変わりません。この骨格をエクセル上の本物のモデル(デットスケジュール・キャッシュスイープ・感応度分析つき)に育て上げる完全版は、本ページのモジュール12「LBOモデル完全構築」で扱います。</p>
     <div class="callout callout-pitfall"><strong>落とし穴:</strong> このミニモデルはあくまで「考え方を理解するための簡略版」です。実際のExit倍率が買収時と同じ保証はどこにもなく(市況次第で上下します)、フリーキャッシュフローも毎年一定額とは限りません。初級のうちは、まずこの骨格をしっかり体に染み込ませることを優先してください。</div>
     <figure class="study-figure">
       <svg viewBox="0 0 480 470" role="img" aria-label="ミニLBOモデルの6ステップを上から順に示すフロー図。">
@@ -2399,6 +2399,241 @@
     留意点(自己申告):(1)DCFの継続価値比率は77.5%と高く、DCFは補完的位置づけ。(2)ネットデット44億円のうち、売り手未同意項目が4.5億円ある。全額を飲む場合、同じEVでエクイティバリューは80.5億円となり、IRRは約1.5ポイント低下する。」<br>
     <br>
     この1ページに、結論・根拠・不確実性・打ち手がすべて入っています。ここまで作れれば、バリュエーション実務の基礎は身についたと言えます。</div>
+  </article>
+</section>
+
+<section class="study-section" id="module-n153">
+  <h2>モジュール12:LBOモデル完全構築――白紙のブックから感応度分析まで</h2>
+  <p class="module-intro">モジュール5の「電卓でできるミニLBO」は、考え方の骨格でした。このモジュールはその完全版です。読み終えたとき、あなたは白紙のエクセルブックから、Sources &amp; Uses、5年分のP/L、トランシェ別のデットスケジュール、キャッシュスイープ、リターン計算、そして感応度分析(データテーブル)までを備えた一本のLBOモデルを、<strong>自分の手で最後まで</strong>組めるようになります。教材として使うのは、菓子メーカー「T社」の架空案件です。EBITDA20億円の会社を7.0倍・企業価値140億円で買収し、シニアローン2本で調達して5年後に売却する――この一件を、最初のセルから最後の感応度表まで通しで組みます。各記事には実際に打つ数式と、答え合わせ用の検算値を載せてあります。エクセル(または好みの表計算ソフト)を開いて、読みながら一緒に作ってください。なお、税率・金利・倍率はすべて学習用の仮置きです。</p>
+
+  <article class="lesson">
+    <h3>1. 完成形から逆算する:これから作るモデルの全体図</h3>
+    <p>着手初日のアソシエイトが最初にやるべきことは、売上予測を打ち込むことではなく、<strong>完成形の絵を決めること</strong>です。LBOモデルの完成形は、次の6ブロックが一本の線でつながったものです。①Sources &amp; Uses(入口でいくら集めて何に使ったか)→②P/L予測(毎年いくら稼ぐか)→③デットスケジュール(借金がどう減るか)→④キャッシュフロー(現金がいくら残るか)→⑤B/Sチェック(全部つじつまが合っているか)→⑥リターン計算と感応度(結局いくら儲かるか、前提が動いたらどうなるか)。</p>
+    <figure class="study-figure">
+      <div class="fig-scroll">
+      <svg viewBox="0 0 740 200" role="img" aria-label="LBOモデルの6ブロックの流れ図。Sources&amp;Uses→P/L→デットスケジュール→キャッシュフロー→B/Sチェック→リターン・感応度の順に接続され、デットスケジュールからP/Lの支払利息へ矢印が戻る。">
+        <defs><marker id="n153-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="currentColor"/></marker></defs>
+        <rect x="10" y="40" width="110" height="52" rx="6" fill="var(--lv-beginner-bg)" stroke="var(--lv-beginner)"/>
+        <text x="65" y="62" text-anchor="middle" font-size="12" fill="currentColor">① Sources</text>
+        <text x="65" y="79" text-anchor="middle" font-size="12" fill="currentColor">&amp; Uses</text>
+        <rect x="132" y="40" width="110" height="52" rx="6" fill="var(--surface-alt)" stroke="var(--text-muted)"/>
+        <text x="187" y="70" text-anchor="middle" font-size="12" fill="currentColor">② P/L予測</text>
+        <rect x="254" y="40" width="120" height="52" rx="6" fill="var(--surface-alt)" stroke="var(--text-muted)"/>
+        <text x="314" y="62" text-anchor="middle" font-size="12" fill="currentColor">③ デット</text>
+        <text x="314" y="79" text-anchor="middle" font-size="12" fill="currentColor">スケジュール</text>
+        <rect x="386" y="40" width="110" height="52" rx="6" fill="var(--surface-alt)" stroke="var(--text-muted)"/>
+        <text x="441" y="62" text-anchor="middle" font-size="12" fill="currentColor">④ キャッシュ</text>
+        <text x="441" y="79" text-anchor="middle" font-size="12" fill="currentColor">フロー</text>
+        <rect x="508" y="40" width="100" height="52" rx="6" fill="var(--surface-alt)" stroke="var(--text-muted)"/>
+        <text x="558" y="62" text-anchor="middle" font-size="12" fill="currentColor">⑤ B/S</text>
+        <text x="558" y="79" text-anchor="middle" font-size="12" fill="currentColor">チェック</text>
+        <rect x="620" y="40" width="110" height="52" rx="6" fill="var(--lv-beginner-bg)" stroke="var(--lv-beginner)"/>
+        <text x="675" y="62" text-anchor="middle" font-size="12" fill="currentColor">⑥ リターン</text>
+        <text x="675" y="79" text-anchor="middle" font-size="12" fill="currentColor">・感応度</text>
+        <line x1="120" y1="66" x2="132" y2="66" stroke="currentColor" marker-end="url(#n153-ar)"/>
+        <line x1="242" y1="66" x2="254" y2="66" stroke="currentColor" marker-end="url(#n153-ar)"/>
+        <line x1="374" y1="66" x2="386" y2="66" stroke="currentColor" marker-end="url(#n153-ar)"/>
+        <line x1="496" y1="66" x2="508" y2="66" stroke="currentColor" marker-end="url(#n153-ar)"/>
+        <line x1="608" y1="66" x2="620" y2="66" stroke="currentColor" marker-end="url(#n153-ar)"/>
+        <path d="M314,92 L314,130 L187,130 L187,92" fill="none" class="fig-line" marker-end="url(#n153-ar)"/>
+        <text x="250" y="147" text-anchor="middle" font-size="11" class="fig-muted">支払利息はデットスケジュールからP/Lへ戻る</text>
+        <text x="370" y="180" text-anchor="middle" font-size="11" class="fig-muted">このモジュールでは①→⑥を13記事かけて1本ずつ組む</text>
+      </svg>
+      </div>
+      <figcaption>図解:これから作るLBOモデルの6ブロック。③から②へ矢印が戻っている(利息は借入残高で決まる)ことが、後で学ぶ「作る順番」の理由になる。</figcaption>
+    </figure>
+    <p>シートは<strong>Input(前提)/Calc(計算)/Output(出力)</strong>の3枚に分けます。前提の生数字はInputシートだけに置き、Calcシートには数式しか書かない――これが実務のモデルで最も大事な規律です。VP(あなたの上司)が「買収倍率を7.5倍にしたら?」と聞いてきたとき、Inputの1セルを直すだけで全部が連動して動く。それがモデルの価値です。</p>
+    <div class="callout callout-metaphor"><strong>たとえるなら:</strong> 家を建てるとき、いきなり壁を塗り始める大工はいません。まず設計図を描き、基礎→柱→屋根の順に組みます。Inputシートは設計図、6ブロックは柱です。塗装(見た目の整形)は最後でいい。</div>
+    <div class="example"><strong>具体例:</strong> T社案件の登場人物を設定します。対象は菓子メーカーT社(売上200億円、EBITDA20億円)。買収倍率7.0倍で企業価値(EV)140億円。T社は既存借入40億円と現金10億円を持っています。買収資金はタームローンA(TLA)50億円とタームローンB(TLB)40億円で調達し、残りをファンドのエクイティで埋めます。保有5年、Exit倍率は入口と同じ7.0倍を仮置き。この一件を最後まで組みます。</div>
+    <div class="callout callout-pitfall"><strong>落とし穴:</strong> 「まず全部の数字を集めてから作り始めよう」と考えると、永遠に着手できません。実務では前提の9割が後から差し替わります。だからこそ生数字をInputに隔離し、差し替えに強い構造を先に作るのです。構造が正しければ、数字の入れ替えは10分で済みます。</div>
+  </article>
+
+  <article class="lesson">
+    <h3>2. Inputシート:前提を1枚に集める</h3>
+    <p>最初に作るのはInputシートです。ここに置くのは「議論の対象になる数字」だけ。逆に言うと、計算の途中結果は絶対に置きません。T社案件の前提は次の1枚に収まります。</p>
+    <div class="table-scroll"><table class="study-table">
+      <thead><tr><th>区分</th><th>項目</th><th class="num">値</th><th>メモ</th></tr></thead>
+      <tbody>
+        <tr><td rowspan="3">エントリー</td><td>LTM EBITDA</td><td class="num">20.0億円</td><td>直近12か月</td></tr>
+        <tr><td>買収倍率(EV/EBITDA)</td><td class="num">7.0倍</td><td>交渉中の目線</td></tr>
+        <tr><td>既存借入/現金</td><td class="num">40.0/10.0億円</td><td>クロージングで返済/充当</td></tr>
+        <tr><td rowspan="4">ファイナンス</td><td>TLA(金利2.5%)</td><td class="num">50.0億円</td><td>毎年5億円の約定弁済</td></tr>
+        <tr><td>TLB(金利4.5%)</td><td class="num">40.0億円</td><td>約定弁済なし・スイープで返済</td></tr>
+        <tr><td>取引フィー/ファイナンスフィー</td><td class="num">4.0/3.0億円</td><td>FA・弁護士等/貸付手数料</td></tr>
+        <tr><td>最低手元現金</td><td class="num">3.0億円</td><td>会社の運転上必要な残し金</td></tr>
+        <tr><td rowspan="4">事業計画</td><td>EBITDA(1〜5年目)</td><td class="num">22/24/26/28/30</td><td>バリューアップ計画ベース</td></tr>
+        <tr><td>減価償却費/設備投資</td><td class="num">各8.0億円/年</td><td>維持投資のみと仮定</td></tr>
+        <tr><td>運転資本の増加</td><td class="num">1.0億円/年</td><td>売上成長に伴う増加</td></tr>
+        <tr><td>実効税率</td><td class="num">30%</td><td>仮置き</td></tr>
+        <tr><td>Exit</td><td>Exit倍率/時期</td><td class="num">7.0倍/5年目末</td><td>入口と同倍率を仮置き</td></tr>
+      </tbody>
+    </table></div>
+    <p>セルの色分けも実務の約束事です。<strong>直接入力(ハードコード)のセルは青字、数式のセルは黒字</strong>。この色分けをしておくと、レビューする人が「どこが前提でどこが計算か」を一目で判別できます。</p>
+    <div class="callout callout-metaphor"><strong>たとえるなら:</strong> 料理番組の「材料は以上です」の一枚画面です。調理(計算)が始まってから冷蔵庫(他シート)を漁り出すと、あとで「この塩どこから来た?」が必ず起きます。</div>
+    <div class="example"><strong>具体例:</strong> 検算を2つ。エントリーEV = 20.0 × 7.0 = <strong>140.0億円</strong>。入口のグロスレバレッジ = (50 + 40) ÷ 20 = <strong>4.5倍</strong>。この2つの数字はこの先ずっと使うので、Inputシートの下に「主要指標」欄を作って数式で表示しておきます(=EBITDA×倍率、=総借入÷EBITDA)。</div>
+    <div class="callout callout-pitfall"><strong>落とし穴:</strong> 「EBITDA22億円」のようにCalcシートに直接打ち込むと、その瞬間からモデルは差し替え不能になります。過去に実務で起きた事故の典型は、倍率変更の指示を受けてInputを直したのに、Calcのどこかに古い数字が1個だけハードコードで残っていて、ICメモの数表が微妙にズレていた、というものです。生数字は必ずInputへ。</div>
+  </article>
+
+  <article class="lesson">
+    <h3>3. エントリー計算:EVから「株主にいくら払うか」へ</h3>
+    <p>EV140億円は「事業全体の値段」であって、売主の口座に振り込む金額ではありません。T社には既存借入40億円と現金10億円があります。買い手は既存借入を引き受ける(またはクロージングで返済する)ので、その分だけ株主への支払いは安くなり、逆に会社が持っている現金の分だけ高くなります。<strong>株式取得対価 = EV − 既存借入 + 現金</strong> = 140 − 40 + 10 = <strong>110億円</strong>。これが<strong>ネットデット調整</strong>(企業価値から純有利子負債を差し引いて株式価値に変換する操作)です。</p>
+    <div class="callout callout-metaphor"><strong>たとえるなら:</strong> 住宅ローン残債付きの中古住宅の売買です。「物件の価値は4,000万円、ただしローンが1,500万円残っていて、家の金庫に300万円入ったまま引き渡す」なら、前オーナーに払う現金は 4,000 − 1,500 + 300 = 2,800万円。物件価値(EV)と手渡すお金(株式対価)は別物です。</div>
+    <div class="example"><strong>具体例:</strong> Calcシートの先頭に次の3行を作ります(値はすべてInput参照)。<br>
+    エントリーEV:<code>=Input!EBITDA*Input!倍率</code> → 140.0<br>
+    ネットデット:<code>=Input!既存借入-Input!現金</code> → 30.0<br>
+    株式取得対価:<code>=EV-ネットデット</code> → <strong>110.0億円</strong><br>
+    ここで電卓でも同じ計算をして、モデルと一致することを確認する癖をつけてください。「モデルと電卓の二重検算」はこの先すべての記事で繰り返します。</div>
+    <div class="callout callout-pitfall"><strong>落とし穴:</strong> 現金の符号ミスはこの計算の定番エラーです。「現金も引くんですよね?」と 140 − 40 − 10 = 90億円 としてしまうと、売主に20億円も少ない提示をすることになります。会社の金庫に入っている現金は買った後に自分のものになるのだから、その分は上乗せして払う――と理屈で覚えれば符号は間違えません。</div>
+  </article>
+
+  <article class="lesson">
+    <h3>4. Sources &amp; Uses:エクイティは「プラグ」で決まる</h3>
+    <p>次はお金の出入りの一覧表、<strong>Sources &amp; Uses</strong>(調達と使途)です。重要な設計思想はひとつ。<strong>Usesを先に全部積み上げ、デットと会社の現金を引いた「残り」がエクイティ</strong>になる、という順番です。エクイティを先に決めるのではなく、差額(プラグ)として計算式で出します。こうすると、フィーが1億円増えれば必要エクイティが自動で1億円増え、表は常に一致します。</p>
+    <div class="table-scroll"><table class="study-table">
+      <thead><tr><th>Uses(使途)</th><th class="num">億円</th><th>Sources(調達)</th><th class="num">億円</th></tr></thead>
+      <tbody>
+        <tr><td>株式取得対価</td><td class="num">110.0</td><td>TLA(シニアローンA)</td><td class="num">50.0</td></tr>
+        <tr><td>既存借入の返済</td><td class="num">40.0</td><td>TLB(シニアローンB)</td><td class="num">40.0</td></tr>
+        <tr><td>取引フィー</td><td class="num">4.0</td><td>対象会社の現金</td><td class="num">10.0</td></tr>
+        <tr><td>ファイナンスフィー</td><td class="num">3.0</td><td><strong>スポンサーエクイティ(プラグ)</strong></td><td class="num"><strong>60.0</strong></td></tr>
+        <tr><td>最低手元現金の積み置き</td><td class="num">3.0</td><td></td><td class="num"></td></tr>
+        <tr><td><strong>合計</strong></td><td class="num"><strong>160.0</strong></td><td><strong>合計</strong></td><td class="num"><strong>160.0</strong></td></tr>
+      </tbody>
+    </table></div>
+    <p>エクイティのセルは <code>=Uses合計-TLA-TLB-対象会社現金</code> = 160 − 50 − 40 − 10 = <strong>60.0億円</strong>。表の下に必ず<strong>チェック行</strong> <code>=Sources合計-Uses合計</code> を置き、常に0であることを見張らせます。</p>
+    <div class="callout callout-metaphor"><strong>たとえるなら:</strong> 引っ越しの費用精算です。物件代・敷金・業者代・当面の生活費(=最低手元現金)を全部リストアップしてから、ローンと手持ちで足りない分を親に借りる(=エクイティ)。先に「親からは60万円借りる」と決めてしまうと、費用が1つ増えるたびに表が合わなくなります。</div>
+    <div class="example"><strong>具体例:</strong> S&amp;Uが合わないときの潰し方も練習しておきます。チェック行に「−2.0」が出た(Sourcesが2億円足りない)としましょう。手順は①Uses側に拾い漏れがないか上から確認(フィー、最低現金、既存借入の返済額)→②Sources側の各行がInputと一致しているか確認→③株式対価がネットデット調整済みの値になっているか確認。この案件で言えば、よくある原因は「最低手元現金3億円をUsesに入れ忘れて、後から足したのにエクイティを手打ちの60で固定していた」パターン。エクイティがプラグ(数式)なら、この事故は構造的に起きません。</div>
+    <div class="callout callout-pitfall"><strong>落とし穴:</strong> 対象会社の現金10億円の扱いに注意。記事3で株式対価に上乗せした10億円を、ここではSources(調達側)として使っています。「払って、すぐ取り返している」ように見えますが、これで正しい。逆にこの10億円をSourcesに入れ忘れると、エクイティが70億円に膨らみ、リターンが実力より悪く見えます。現金は「対価で払い、原資として回収」――両側に1回ずつ登場するのが正解です。</div>
+  </article>
+
+  <article class="lesson">
+    <h3>5. P/L予測:EBITDAから当期純利益まで(利息はいったん仮置き)</h3>
+    <p>P/Lは上から、EBITDA → 減価償却費(D&amp;A)を引いて営業利益(EBIT)→ 支払利息を引いて税引前利益 → 税金を引いて当期純利益、と降りていきます。ここで問題がひとつ。<strong>支払利息は借入残高で決まるのに、その借入残高はまだ計算していません</strong>(デットスケジュールは次の記事)。実務ではここで悩まず、利息の行に「後でデットスケジュールから参照する」と決めて、いったん初年度の概算(TLA 50×2.5% + TLB 40×4.5% = 3.05億円)を仮置きし、先へ進みます。</p>
+    <div class="callout callout-metaphor"><strong>たとえるなら:</strong> プラモデルの仮組みです。接着剤で固める前に、パーツを仮にはめて全体の形を確認する。利息のセルは「あとで本物のパーツ(デットスケジュールへの参照式)に差し替える」前提の仮パーツです。</div>
+    <div class="example"><strong>具体例:</strong> 1年目のP/Lを電卓で通します。EBITDA 22.0 − D&amp;A 8.0 = EBIT <strong>14.0</strong>。支払利息 3.05 を引いて税引前利益 <strong>10.95</strong>。税金 = 10.95 × 30% = <strong>3.285</strong>。当期純利益 = <strong>7.665億円</strong>。Calcシートでは年を列(1〜5年目)、科目を行にして、この計算を5列分横にコピーできる形で組みます。数式は必ず「1本書いて右にコピー」。列ごとに手打ちすると、どこかの年だけ式が違う事故が起きます。</div>
+    <div class="callout callout-pitfall"><strong>落とし穴:</strong> 税金の行を <code>=税引前利益*税率</code> とだけ書くと、赤字の年に税金がマイナス(=国からお金が返ってくる)になります。初級モデルの範囲では <code>=MAX(0,税引前利益)*税率</code> として「赤字なら税金ゼロ」に丸めておくのが安全です(繰越欠損金の精緻な扱いは中級の論点)。T社は全期黒字なので結果は変わりませんが、感応度分析で悪いケースを振ったときにこの式が効いてきます。</div>
+  </article>
+
+  <article class="lesson">
+    <h3>6. デットスケジュール①:TLAの約定弁済を組む</h3>
+    <p>デットスケジュールは、トランシェ(借入の種類)ごとに<strong>期首残高 → 返済 → 期末残高</strong>という3行のロール(転がし)構造で作ります。期末残高が翌年の期首残高につながる。まずは単純なTLAから。TLAは<strong>約定弁済</strong>(契約で決まった毎年の元本返済。T社案件では年5億円)を持つトランシェです。</p>
+    <div class="example"><strong>具体例:</strong> TLAブロックの数式は3行だけです。<br>
+    期首残高:<code>=前年の期末残高</code>(1年目だけ <code>=Input!TLA当初額</code> → 50.0)<br>
+    約定弁済:<code>=-MIN(期首残高, Input!年間約定額)</code> → 1年目は −5.0<br>
+    期末残高:<code>=期首残高+約定弁済</code> → 45.0<br>
+    5年分をコピーすると、期末残高は 45 → 40 → 35 → 30 → <strong>25.0億円</strong> ときれいな階段になります。</div>
+    <p>肝は約定弁済の <code>MIN</code> です。「契約上の5億円」と「いま残っている残高」の小さいほうしか返せない。この一手間がないと、残高が5億円未満になった年に返しすぎて、<strong>期末残高がマイナスに突き抜ける</strong>――LBOモデルの初心者が最初に踏む地雷です。T社のTLAは5年で25億円しか減らないので実害はありませんが、感応度で前提を振ると残高が小さくなるケースは普通に発生します。</p>
+    <div class="callout callout-metaphor"><strong>たとえるなら:</strong> 自動販売機のお釣りです。「お釣りは130円」でも、機械の中に90円しか残っていなければ90円しか出せません。MINは「残っている分までしか動かせない」という物理法則をセルに教える関数です。</div>
+    <div class="callout callout-pitfall"><strong>落とし穴:</strong> 返済の行を正の数で書くかマイナスで書くかは、モデル全体で必ず統一してください。この教材では「残高を減らすものはマイナス表示」で通します(期末=期首+返済、と足し算で書ける)。行によって符号ルールが違うモデルは、レビューする人が最初に赤ペンを入れる箇所です。</div>
+  </article>
+
+  <article class="lesson">
+    <h3>7. デットスケジュール②:キャッシュスイープでTLBを返す</h3>
+    <p>TLBには約定弁済がありません。その代わり、<strong>キャッシュスイープ</strong>(毎年の余った現金を強制的に繰上返済へ回す仕組み。T社の契約では余剰現金の100%)で返していきます。スイープの計算はLBOモデルの心臓部なので、式の意味を分解して理解してください。</p>
+    <p>まず「返済に回せる現金」を定義します。<strong>返済原資FCF = 当期純利益 + D&amp;A − 設備投資 − 運転資本増加</strong>。D&amp;Aを足し戻すのは現金の出ていかない費用だから、設備投資と運転資本を引くのは現金が出ていくのにP/Lに載らないからです。この原資からTLAの約定弁済5億円を先に払い、<strong>残りが全部TLBのスイープ</strong>になります。</p>
+    <div class="example"><strong>具体例:</strong> 1年目を通しで計算します。FCF = 7.665 + 8.0 − 8.0 − 1.0 = <strong>6.665億円</strong>。TLA約定弁済に5.0を使い、残り 6.665 − 5.0 = <strong>1.665億円</strong>がTLBのスイープ。TLB期末残高 = 40.0 − 1.665 = <strong>38.335億円</strong>。数式にすると:<br>
+    スイープ:<code>=-MIN(TLB期首残高, MAX(0, FCF-TLA約定弁済))</code><br>
+    <code>MAX(0,…)</code>は「FCFが約定弁済にも足りない年は、スイープをゼロにする(マイナスの返済=勝手な追加借入をさせない)」、外側の<code>MIN</code>は記事6と同じ「残高以上には返せない」の保険です。二重の安全装置になっています。</div>
+    <div class="callout callout-metaphor"><strong>たとえるなら:</strong> 給料日のたびに、家賃(約定弁済)を払った残りを全額繰上返済に突っ込む家計です。ただし「財布がマイナスなら繰上返済はしない」(MAX)、「ローン残高より多くは返せない」(MIN)という2つの当たり前を、セルに明文化しているのです。</div>
+    <div class="callout callout-pitfall"><strong>落とし穴:</strong> 最低手元現金3億円をどう扱うか。T社モデルでは、クロージング時にSourcesで3億円を積んであり、期中の現金は常に3億円のまま、稼いだ現金は全額スイープに回る、という設計です(だからFCFをそのままスイープ原資にできる)。もしスイープ率が100%未満の契約なら、余った現金がB/Sに貯まっていく行(現金ロール)が必要になります。それは中級モジュールで扱います。自分のモデルがどちらの設計かを言葉で説明できないまま組むのが、一番危ない状態です。</div>
+  </article>
+
+  <article class="lesson">
+    <h3>8. 金利計算と5年間の完成:期首残高方式で循環参照を避ける</h3>
+    <p>いよいよ記事5で仮置きした利息を本物に差し替えます。ここに初級最大の理論的難所があります。利息を「期中平均残高×金利」で計算すると、<strong>利息→純利益→FCF→返済→期末残高→平均残高→利息…</strong>という無限ループ(<strong>循環参照</strong>)が生まれます。初級モデルの答えはシンプルで、<strong>利息は期首残高×金利で計算する</strong>。期首残高は前年末に確定しているので、ループは発生しません。年央の返済分だけ利息をわずかに多めに払う保守的な近似ですが、初級ではこの明快さを取ります(平均残高方式と循環参照の制御は中級の論点です)。</p>
+    <div class="example"><strong>具体例:</strong> 利息の式は <code>=TLA期首残高*2.5%+TLB期首残高*4.5%</code>。これをP/Lの支払利息行に接続し、5年分をコピーすると、モデル全体が一気につながります。答え合わせ用の完成テーブルがこちらです(小数第2位で四捨五入。端数は丸めによるズレです)。
+    <div class="table-scroll"><table class="study-table">
+      <thead><tr><th>億円</th><th class="num">1年目</th><th class="num">2年目</th><th class="num">3年目</th><th class="num">4年目</th><th class="num">5年目</th></tr></thead>
+      <tbody>
+        <tr><td>EBITDA</td><td class="num">22.00</td><td class="num">24.00</td><td class="num">26.00</td><td class="num">28.00</td><td class="num">30.00</td></tr>
+        <tr><td>支払利息</td><td class="num">3.05</td><td class="num">2.85</td><td class="num">2.58</td><td class="num">2.24</td><td class="num">1.83</td></tr>
+        <tr><td>当期純利益</td><td class="num">7.67</td><td class="num">9.20</td><td class="num">10.79</td><td class="num">12.43</td><td class="num">14.12</td></tr>
+        <tr><td>返済原資FCF</td><td class="num">6.67</td><td class="num">8.20</td><td class="num">9.79</td><td class="num">11.43</td><td class="num">13.12</td></tr>
+        <tr><td>TLA約定弁済</td><td class="num">-5.00</td><td class="num">-5.00</td><td class="num">-5.00</td><td class="num">-5.00</td><td class="num">-5.00</td></tr>
+        <tr><td>TLBスイープ</td><td class="num">-1.66</td><td class="num">-3.20</td><td class="num">-4.79</td><td class="num">-6.43</td><td class="num">-8.12</td></tr>
+        <tr><td>TLA期末残高</td><td class="num">45.00</td><td class="num">40.00</td><td class="num">35.00</td><td class="num">30.00</td><td class="num">25.00</td></tr>
+        <tr><td>TLB期末残高</td><td class="num">38.34</td><td class="num">35.13</td><td class="num">30.34</td><td class="num">23.90</td><td class="num">15.78</td></tr>
+        <tr><td>総負債(期末)</td><td class="num">83.34</td><td class="num">75.13</td><td class="num">65.34</td><td class="num">53.90</td><td class="num">40.78</td></tr>
+        <tr><td>ネットレバレッジ(倍)</td><td class="num">3.65</td><td class="num">3.01</td><td class="num">2.40</td><td class="num">1.82</td><td class="num">1.26</td></tr>
+      </tbody>
+    </table></div>
+    あなたのモデルの数字がこの表と一致したら、①〜④ブロックは完成です。1つでも違ったら、違い始めた最初の年のFCFから逆にたどってください(利息→税金→純利益→FCFの順に上流へ)。</div>
+    <div class="callout callout-metaphor"><strong>たとえるなら:</strong> 循環参照は「鏡と鏡を向かい合わせにした状態」です。期首残高方式は、片方を鏡ではなく「昨日撮った写真」に差し替える工夫。像は一瞬で確定します。</div>
+    <div class="callout callout-pitfall"><strong>落とし穴:</strong> エクセルが「循環参照の警告」を出したとき、設定で反復計算をオンにして警告を黙らせるのは、初級では絶対にやってはいけない対処です。意図しない循環(単なる参照ミス)まで飲み込んで、開くたびに数字が変わるモデルになります。警告が出たら、まず<code>数式&gt;参照元のトレース</code>でループの場所を特定し、設計として本当に必要な循環なのかを判断する。初級モデルに必要な循環はひとつもありません。</div>
+  </article>
+
+  <article class="lesson">
+    <h3>9. キャッシュフロー計算書とB/Sチェック:モデルに嘘発見器を仕込む</h3>
+    <p>ここまでで数字は流れていますが、「どこかで現金が湧いたり消えたりしていないか」を機械的に見張る仕組みがまだありません。そこで簡易版のキャッシュフロー計算書とB/Sチェックを載せます。初級モデルでは、次の2本のチェック行で十分です。</p>
+    <p><strong>チェック1(現金):</strong> 期首現金 + FCF − TLA約定弁済 − TLBスイープ = 期末現金。T社は100%スイープなので、期末現金は毎年ちょうど3.0億円(最低手元現金)に戻るはずです。<code>=期末現金-3</code> の行を作り、全年0であることを確認します。<br>
+    <strong>チェック2(バランス):</strong> 簡易B/Sを「資産=現金+固定資産等」「負債純資産=借入+資本」で転がし、<code>=資産合計-負債純資産合計</code> の行が全年0であることを確認します。固定資産はD&amp;Aで減り設備投資で増える(T社は8.0−8.0で不変)、資本は当期純利益で増える、と接続します。</p>
+    <div class="callout callout-metaphor"><strong>たとえるなら:</strong> レジ締めです。「理論上の売上」と「レジの中の現金」を毎晩突き合わせるから、ズレたその日のうちに原因を探せる。チェック行のないモデルは、レジ締めをしない店と同じで、ズレに気づくのが数か月後(=IC直前)になります。</div>
+    <div class="example"><strong>具体例:</strong> チェック行が0.5億円ズレたときの潰し方を、実務の手順で書きます。①ズレが「全年同じ額」か「特定の年から発生」かを見る(全年同じなら期首=クロージングB/Sの設定ミス、特定年からならその年の式)。②その年の現金の入りと出を1行ずつ電卓で足す。③典型犯人は(a)スイープの符号(足すべき所で引いた)、(b)運転資本増加の引き忘れ、(c)固定資産のD&amp;A二重控除、の3つ。この順に見れば、経験上9割は10分で見つかります。</div>
+    <div class="callout callout-pitfall"><strong>落とし穴:</strong> チェック行のズレを <code>=IF(ABS(差)&lt;0.5,0,差)</code> のような式で「丸めてしまう」のは粉飾と同じです。0.5億円のズレの裏には、たいてい数億円規模の式の誤りが複数、偶然打ち消し合って隠れています。チェック行は素の引き算のまま置き、条件付き書式で0以外を赤くする――これが実務の作法です。</div>
+  </article>
+
+  <article class="lesson">
+    <h3>10. Exitとリターン:エクイティブリッジからMOIC・IRRへ</h3>
+    <p>5年目末に7.0倍で売却します。リターン計算は<strong>Exitエクイティブリッジ</strong>という1本の橋で書きます。Exit EV → 残っている借金を引く → 会社に残る現金を足す → 株主(ファンド)の取り分。ミニLBO(モジュール5)と同じ骨格ですが、今回は借金の残高がデットスケジュールから機械的に出てくる点が違います。</p>
+    <div class="example"><strong>具体例:</strong> Exit EV = 30.0 × 7.0 = <strong>210.0億円</strong>。5年目末の総負債は40.78億円(記事8の表)、現金は3.0億円。Exitエクイティ = 210.0 − 40.78 + 3.0 = <strong>172.22億円</strong>。<br>
+    MOIC = 172.22 ÷ 60.0 = <strong>約2.87倍</strong><br>
+    IRR = 2.87^(1/5) − 1 ≈ <strong>約23.5%</strong><br>
+    エクセルでは、投資キャッシュフローの行(0年目:−60、1〜4年目:0、5年目:+172.22)を作り、<code>=IRR(範囲)</code>で検算します。期中の配当がないモデルでは、べき乗の近似式とIRR関数は同じ値になります。この行を作っておくと、中級で学ぶ期中配当(リキャップ)を足したときもIRR関数がそのまま使えます。</div>
+    <div class="callout callout-metaphor"><strong>たとえるなら:</strong> マンション売却の手取り計算です。売値(Exit EV)からローン残債(残存負債)を引き、部屋に置いてある金庫の中身(現金)を足したものが手取り。手取りを頭金(エクイティ60億円)と比べたのがMOIC、それを年率に直したのがIRRです。</div>
+    <div class="callout callout-pitfall"><strong>落とし穴:</strong> Exitの現金3.0億円の足し忘れ、逆に「Exit時のフィー」の存在を忘れることが定番ミスです(実際の売却にはFAフィー等が数億円かかります。本モジュールでは簡略化のためゼロ仮置きですが、Output欄に「Exitフィー:0(仮)」と明示的に書いておく――ゼロ仮置きを「書いてゼロ」にするのと「忘れてゼロ」にするのは、レビューする側から見るとまったく別物です)。</div>
+  </article>
+
+  <article class="lesson">
+    <h3>11. 感応度分析①:データテーブルでIRRマトリクスを作る</h3>
+    <p>ここからが、ミニLBOと実務モデルの決定的な違いです。ICで必ず聞かれるのは「その前提が外れたらどうなるの?」。答えを毎回手で計算し直すのではなく、<strong>データテーブル</strong>(エクセルのWhat-If分析機能。2つの前提の組み合わせを総当たりで流し、結果を表にする)で先回りして持っておきます。振るのは、自分ではコントロールできない市場変数の代表<strong>Exit倍率</strong>と、事業計画の達成度の代表<strong>5年目EBITDA</strong>です。</p>
+    <div class="example"><strong>具体例:</strong> 作り方の手順。①空きエリアに表の枠を作り、左上角のセルにIRRセルへの参照 <code>=IRR結果</code> を置く。②上の行に5年目EBITDA(26/28/30/32/34)、左の列にExit倍率(6.0〜8.0)を並べる。③範囲を選択し「データ&gt;What-If分析&gt;データテーブル」で、行の代入セル=Inputの5年目EBITDA、列の代入セル=InputのExit倍率を指定。結果がこの表です(IRR、%)。
+    <div class="table-scroll"><table class="study-table">
+      <thead><tr><th>Exit倍率＼5年目EBITDA</th><th class="num">26</th><th class="num">28</th><th class="num">30</th><th class="num">32</th><th class="num">34</th></tr></thead>
+      <tbody>
+        <tr><td>6.0倍</td><td class="num">14.0</td><td class="num">16.5</td><td class="num">18.8</td><td class="num">21.0</td><td class="num">23.0</td></tr>
+        <tr><td>6.5倍</td><td class="num">16.4</td><td class="num">18.9</td><td class="num">21.2</td><td class="num">23.4</td><td class="num">25.4</td></tr>
+        <tr><td>7.0倍</td><td class="num">18.7</td><td class="num">21.2</td><td class="num"><strong>23.5</strong></td><td class="num">25.6</td><td class="num">27.6</td></tr>
+        <tr><td>7.5倍</td><td class="num">20.8</td><td class="num">23.3</td><td class="num">25.6</td><td class="num">27.7</td><td class="num">29.7</td></tr>
+        <tr><td>8.0倍</td><td class="num">22.8</td><td class="num">25.2</td><td class="num">27.5</td><td class="num">29.6</td><td class="num">31.6</td></tr>
+      </tbody>
+    </table></div>
+    必ず1マス手検算します。左上の最悪ケース(Exit 6.0倍・EBITDA 26)なら、Exit EV = 26×6.0 = 156.0。EBITDAが計画未達だと期中のスイープも減って5年目末の負債は約43.6億円残り、Exitエクイティ ≈ 156 − 43.6 + 3 ≈ 115.4億円、MOIC ≈ 1.92倍、IRR ≈ 14.0%。表の値と一致します。<strong>データテーブルは期中のキャッシュフローまで再計算してくれる</strong>(だからEBITDA未達なら負債残高も増える)ことを、この手検算で体感してください。</div>
+    <div class="callout callout-metaphor"><strong>たとえるなら:</strong> 天気予報の「降水確率マップ」です。晴れの予報(ベースケース)を1点だけ持って山に登る人はいません。どこまで崩れたら引き返すか(=この案件なら、どの組み合わせでIRR20%を割るか)を、登る前に地図として持っておくのです。</div>
+    <div class="callout callout-pitfall"><strong>落とし穴:</strong> データテーブルの全マスが同じ値になる事故は、ほぼ100%「行・列の代入セルにInputのセルではなくCalc上の計算セルを指定した」ことが原因です。データテーブルはあくまで「Inputのセルを差し替えて全体を流し直す」機能。差し替え先が数式セルだと、代入した瞬間に上書きされず何も変わりません。記事2の「生数字はInputだけ」の規律は、実は感応度分析のための布石だったのです。</div>
+  </article>
+
+  <article class="lesson">
+    <h3>12. 感応度分析②:レバレッジを振る、そして「壊れる点」を見つける</h3>
+    <p>もうひとつの重要な感応度は、<strong>自分たちで決められる変数</strong>=資本構成です。TLBを増やせばエクイティが減り、同じExitエクイティでも分母が小さいのでリターンは上がる。ただしタダではありません。利息負担が増え、返済の安全余裕(<strong>ICR</strong>:インタレストカバレッジレシオ=EBITDA÷支払利息)が薄くなります。T社モデルでTLBを振った結果がこの表です(総調達160億円は不変、TLBの増減はエクイティで吸収)。</p>
+    <div class="table-scroll"><table class="study-table">
+      <thead><tr><th>資本構成</th><th class="num">TLB 30億円</th><th class="num">TLB 40億円(ベース)</th><th class="num">TLB 50億円</th></tr></thead>
+      <tbody>
+        <tr><td>エクイティ</td><td class="num">70.0</td><td class="num">60.0</td><td class="num">50.0</td></tr>
+        <tr><td>入口グロスレバレッジ</td><td class="num">4.00倍</td><td class="num">4.50倍</td><td class="num">5.00倍</td></tr>
+        <tr><td>IRR</td><td class="num">21.3%</td><td class="num">23.5%</td><td class="num">26.3%</td></tr>
+        <tr><td>MOIC</td><td class="num">2.63倍</td><td class="num">2.87倍</td><td class="num">3.21倍</td></tr>
+        <tr><td>1年目ICR</td><td class="num">8.46倍</td><td class="num">7.21倍</td><td class="num">6.29倍</td></tr>
+      </tbody>
+    </table></div>
+    <p>この表の読み方が、投資家としての第一歩です。レバレッジを0.5倍上げるごとにIRRは2〜3%pt改善するが、ICRは確実に薄くなる。ではどこまでなら安全か?見るべきは<strong>悪いケースと組み合わせたときに壊れないか</strong>です。記事11の最悪ケース(EBITDA未達)とTLB50億円を同時に起こしてみて、FCFが約定弁済を割り込む年が出ないか、最低手元現金3億円を食い潰さないかを確認する――これが「壊れる点を探す」ストレスの入口です。</p>
+    <div class="callout callout-metaphor"><strong>たとえるなら:</strong> レバレッジはシーソーの支点をずらす操作です。支点を端に寄せるほど小さな力(エクイティ)で大きな物が持ち上がりますが、板が支点から外れた(=返済が回らなくなった)ときの落ち方も激しくなります。</div>
+    <div class="example"><strong>具体例:</strong> 提出前チェックリスト(実務でVPに出す直前に必ず回す15項目の抜粋):①S&amp;Uチェック行=0、②現金チェック行=全年0、③B/Sチェック行=全年0、④Calcシートにハードコードなし(<code>Ctrl+G&gt;セル選択&gt;定数</code>で機械的に検出)、⑤全数式が右コピーで整合(1年目と2年目の式を比較)、⑥MIN/MAXの安全装置が両トランシェに入っている、⑦利息が期首残高参照になっている、⑧税金がMAX(0,…)、⑨IRRを近似式とIRR関数の両方で検算、⑩感応度表の1マスを手検算、⑪Inputの単位(億円/百万円)が全シート統一、⑫青字=入力・黒字=数式の色分け、⑬Exitフィー等の「ゼロ仮置き」を明示、⑭前提の出所メモ(誰がいつくれた数字か)、⑮ファイル名に日付とバージョン。</div>
+    <div class="callout callout-pitfall"><strong>落とし穴:</strong> 感応度表を「上振れ方向だけ」広げるのは初心者の癖です(楽観の悪癖)。ICが見たいのは下です。ベースケースを表の中央に置き、上下対称に振る。そして下側で20%を割るマスがどこから始まるかを、自分の言葉で説明できるようにしておくこと。</div>
+  </article>
+
+  <article class="lesson">
+    <h3>13. 卒業課題:S社案件を白紙から一人で組む</h3>
+    <p>最後は答えを見ずに、別案件を白紙から組む卒業課題です。前提だけ渡します。制限時間の目安は、初回は半日、2回目は2時間。実務のアソシエイトは、この規模の骨格なら初日に組み上げます。</p>
+    <div class="example"><strong>具体例(S社案件の前提一式):</strong> 対象は理化学機器商社S社。LTM EBITDA 12.0億円、買収倍率6.5倍。既存借入20.0億円・現金6.0億円。調達はTLA 30.0億円(金利2.5%、約定弁済 年3.0億円)+TLB 24.0億円(金利4.5%、100%スイープ)+対象会社現金6.0億円+エクイティ(プラグ)。取引フィー2.0億円、ファイナンスフィー1.0億円、最低手元現金2.0億円。事業計画:EBITDA 13/14/15/16/17億円、D&amp;A・設備投資 各5.0億円/年、運転資本増加 0.5億円/年、税率30%。Exitは5年目末・6.5倍。<br><br>
+    <strong>チェックポイント解答(ここだけ見て答え合わせ):</strong><br>
+    ・株式取得対価 = 78.0 − 20.0 + 6.0 = <strong>64.0億円</strong>/Uses合計 = <strong>89.0億円</strong>/エクイティ = <strong>29.0億円</strong><br>
+    ・1年目:支払利息 <strong>1.83</strong>、FCF <strong>3.82</strong>、スイープ <strong>0.82</strong>、TLB期末 <strong>23.18億円</strong><br>
+    ・3年目末:TLA <strong>21.0</strong>/TLB <strong>19.18億円</strong><br>
+    ・5年目末:総負債 <strong>26.87億円</strong>、Exit EV <strong>110.5</strong>、Exitエクイティ <strong>85.63億円</strong><br>
+    ・MOIC <strong>約2.95倍</strong>、IRR <strong>約24.2%</strong><br>
+    最後に感応度表(Exit倍率5.5〜7.5×5年目EBITDA 15〜19)を自作し、IRRが20%を割る領域を自分の言葉で説明できたら卒業です。</div>
+    <div class="callout callout-metaphor"><strong>たとえるなら:</strong> 自動車教習所の卒業検定です。路上(実案件)に出る前に、教官(この教材)なしで一周走りきれるかを確認する。途中でエンスト(チェック行が0にならない)したら、対応する記事に戻って部品単位で直せばいい。</div>
+    <div class="callout callout-pitfall"><strong>落とし穴:</strong> 課題を「T社のファイルをコピーして数字だけ差し替える」やり方でクリアした気になるのが一番もったいない。それは実務では正しい省力化ですが、学習では白紙から組んでこそ、6ブロックの接続順が手に染みつきます。白紙から2時間で組めるようになったら、次は中級モジュール(LBOモデルのレビューと応用)で「レビューする側の目」を身につけてください。</div>
   </article>
 </section>
 

@@ -110,6 +110,20 @@
       "title": "営業（ソーシング）実践",
       "banner": "lv-intermediate",
       "lead": "案件は待っていても来ません。誰にどう会い、何を話し、どう信頼を積み上げて「あなたに任せたい」と言ってもらうか。相対案件を自分で取ってくるための営業を、場面ごとに分解します。"
+    },
+    {
+      "file": "study-beginner.html",
+      "marker": "BEGINNER",
+      "title": "初級座学",
+      "banner": "lv-beginner",
+      "lead": "PEの仕事の全体像から、LBOモデルの完全構築まで。"
+    },
+    {
+      "file": "study-intermediate.html",
+      "marker": "INTERMEDIATE",
+      "title": "中級座学",
+      "banner": "lv-intermediate",
+      "lead": "実務の各論を、レビューする側の視点まで含めて。"
     }
   ],
   "modules": [
@@ -1303,7 +1317,7 @@
       "category": "DD各論",
       "articles": 10,
       "quizzes": 20,
-      "status": "pending",
+      "status": "done",
       "topics": [
         "兆候の見つけ方",
         "フォレンジックの手法",
@@ -1323,7 +1337,7 @@
       "category": "DD各論",
       "articles": 10,
       "quizzes": 20,
-      "status": "pending",
+      "status": "done",
       "topics": [
         "見積りの取り方",
         "スコープの切り方",
@@ -1343,7 +1357,7 @@
       "category": "DD各論",
       "articles": 10,
       "quizzes": 20,
-      "status": "pending",
+      "status": "done",
       "topics": [
         "エグゼクティブサマリー",
         "発見事項の重み付け",
@@ -1644,7 +1658,7 @@
       "category": "ストラクチャー・資金調達",
       "articles": 10,
       "quizzes": 20,
-      "status": "pending",
+      "status": "done",
       "topics": [
         "再投資の意味",
         "評価の考え方",
@@ -1664,7 +1678,7 @@
       "category": "ストラクチャー・資金調達",
       "articles": 10,
       "quizzes": 20,
-      "status": "pending",
+      "status": "done",
       "topics": [
         "タームローンの種類",
         "コミットメントレター",
@@ -1684,7 +1698,7 @@
       "category": "ストラクチャー・資金調達",
       "articles": 10,
       "quizzes": 20,
-      "status": "pending",
+      "status": "done",
       "topics": [
         "位置づけ",
         "金利構成(現金とPIK)",
@@ -1704,7 +1718,7 @@
       "category": "ストラクチャー・資金調達",
       "articles": 10,
       "quizzes": 20,
-      "status": "pending",
+      "status": "done",
       "topics": [
         "公募と私募",
         "コベナンツの型",
@@ -1724,7 +1738,7 @@
       "category": "ストラクチャー・資金調達",
       "articles": 10,
       "quizzes": 20,
-      "status": "pending",
+      "status": "done",
       "topics": [
         "資産担保の考え方",
         "掛け目",
@@ -1744,7 +1758,7 @@
       "category": "ストラクチャー・資金調達",
       "articles": 10,
       "quizzes": 20,
-      "status": "pending",
+      "status": "done",
       "topics": [
         "担保の種類",
         "対抗要件",
@@ -1764,7 +1778,7 @@
       "category": "ストラクチャー・資金調達",
       "articles": 10,
       "quizzes": 20,
-      "status": "pending",
+      "status": "done",
       "topics": [
         "変動金利のリスク",
         "スワップとキャップ",
@@ -1784,7 +1798,7 @@
       "category": "ストラクチャー・資金調達",
       "articles": 10,
       "quizzes": 20,
-      "status": "pending",
+      "status": "done",
       "topics": [
         "タイミング",
         "レンダーリスト",
@@ -1804,7 +1818,7 @@
       "category": "契約・交渉各論",
       "articles": 10,
       "quizzes": 20,
-      "status": "pending",
+      "status": "done",
       "topics": [
         "NDAの主要条項",
         "期間と目的外使用",
@@ -1824,7 +1838,7 @@
       "category": "契約・交渉各論",
       "articles": 10,
       "quizzes": 20,
-      "status": "pending",
+      "status": "done",
       "topics": [
         "記載すべき項目",
         "価格の示し方",
@@ -1844,7 +1858,7 @@
       "category": "契約・交渉各論",
       "articles": 10,
       "quizzes": 20,
-      "status": "pending",
+      "status": "done",
       "topics": [
         "定義",
         "売買の合意",
@@ -1864,7 +1878,7 @@
       "category": "契約・交渉各論",
       "articles": 10,
       "quizzes": 20,
-      "status": "pending",
+      "status": "done",
       "topics": [
         "表明保証",
         "補償",
@@ -1884,7 +1898,7 @@
       "category": "契約・交渉各論",
       "articles": 10,
       "quizzes": 20,
-      "status": "pending",
+      "status": "done",
       "topics": [
         "取締役の指名",
         "重要事項の決議",
@@ -1904,7 +1918,7 @@
       "category": "契約・交渉各論",
       "articles": 10,
       "quizzes": 20,
-      "status": "pending",
+      "status": "done",
       "topics": [
         "対象サービスの洗い出し",
         "期間と料金",
@@ -1924,7 +1938,7 @@
       "category": "契約・交渉各論",
       "articles": 10,
       "quizzes": 20,
-      "status": "pending",
+      "status": "done",
       "topics": [
         "報酬設計",
         "任期",
@@ -1944,7 +1958,7 @@
       "category": "契約・交渉各論",
       "articles": 10,
       "quizzes": 20,
-      "status": "pending",
+      "status": "done",
       "topics": [
         "貸付の条件",
         "実行前提条件",
@@ -3152,6 +3166,53 @@
         "個人とチームの目標設定",
         "情報共有の仕組み",
         "評価のされ方"
+      ]
+    },
+    {
+      "key": "n153",
+      "prefix": "n153",
+      "page": "study-beginner.html",
+      "id": "module-n153",
+      "title": "LBOモデル完全構築――白紙のブックから感応度分析まで",
+      "level": "初級",
+      "category": "LBOモデル構築",
+      "articles": 13,
+      "quizzes": 24,
+      "status": "done",
+      "topics": [
+        "シート設計",
+        "Sources and Uses",
+        "P/L予測",
+        "デットスケジュール",
+        "キャッシュスイープ",
+        "3表接続",
+        "リターン計算",
+        "感応度分析",
+        "卒業課題"
+      ]
+    },
+    {
+      "key": "n154",
+      "prefix": "n154",
+      "page": "study-intermediate.html",
+      "id": "module-n154",
+      "title": "LBOモデルのレビューと応用――VPは何を見て、どう使い倒すか",
+      "level": "中級",
+      "category": "LBOモデルのレビューと応用",
+      "articles": 12,
+      "quizzes": 24,
+      "status": "done",
+      "topics": [
+        "レビューの視点",
+        "平均残高と循環参照",
+        "返済順位とPIK",
+        "コベナンツヘッドルーム",
+        "バリューブリッジ",
+        "感応度の設計",
+        "配当リキャップ",
+        "アドオン",
+        "対価スキーム",
+        "モデル診断"
       ]
     }
   ]
