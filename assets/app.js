@@ -28,6 +28,17 @@
       case 'glossary': UI.glossary(); break;
       case 'progress': UI.progress(); break;
       case 'search': UI.search(decodeURIComponent((qs.match(/q=([^&]*)/) || [])[1] || '')); break;
+      /* ---- v2 「投資プロへの道」 ---- */
+      case 'road': UI.road(); break;
+      case 'ch': UI.chapter(parts[1], parts[2] || 1); break;
+      case 'lec2': UI.lecture2(parts[1]); break;
+      case 'ex': if (parts[1] === 'resume') UI.exercise(null, 1, 'resume'); else UI.exercise(parts[1], parts[2] || 1, parts[3] !== undefined ? parts[3] : 0); break;
+      case 'cases': UI.cases(); break;
+      case 'case': UI.caseView(parts[1], parts[2] || 1); break;
+      case 'company': UI.company(); break;
+      case 'skills': UI.skills(); break;
+      case 'journal': UI.journal(); break;
+      case 'library': UI.library(); break;
       default: UI.notfound();
     }
   }
@@ -62,7 +73,11 @@
     document.addEventListener('keydown', function (e) {
       if (/^(INPUT|TEXTAREA|SELECT)$/.test((e.target.tagName || ''))) return;
       var s = DOJO.current;
-      if (!s || s.finished) return;
+      if (!s || s.finished) {
+        var s2 = DOJO.current2;
+        if (s2 && !s2.finished && (e.key === 'Enter')) { var n2 = document.getElementById('nextBtn'); if (n2) { n2.click(); e.preventDefault(); } }
+        return;
+      }
       if (/^[1-6]$/.test(e.key)) {
         var b = appEl.querySelector('[data-pick="' + (parseInt(e.key, 10) - 1) + '"]');
         if (b && !b.disabled) { b.click(); e.preventDefault(); }
@@ -86,8 +101,10 @@
     appEl.hidden = false;
 
     var o = DOJO.Store.overall();
+    var n2 = DOJO.allQuestions2 ? DOJO.allQuestions2().length : 0;
+    var nl2 = DOJO.LECTURES2 ? Object.keys(DOJO.LECTURES2).length : 0;
     document.getElementById('footStats').textContent =
-      DOJO.TOPICS.length + 'トピック / ' + o.total + '問収録';
+      '道：' + DOJO.CHAPTERS.length + '章×3周 / 工程講義' + nl2 + '本 / 演習' + n2 + '問　｜　資料庫：' + o.total + '問';
 
     route();
   }

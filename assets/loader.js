@@ -82,8 +82,11 @@
     DOJO.TOPICS.forEach(function (t) {
       DOJO.LEVELS.forEach(function (l) { urls.push('data/quiz/' + t.id + '-' + l.id + '.js'); });
     });
+    // v2（工程講義・演習・ケース・ルーブリック）。未作成のファイルは静かに飛ばす
+    if (DOJO.v2Files) urls = urls.concat(DOJO.v2Files());
+    if (DOJO.V1MAP_FILE !== false) urls.push('data/v1map.js');
     loadScripts(urls, function (failed) {
-      if (failed.length) console.warn('[dojo] 未収録データ ' + failed.length + ' 件', failed);
+      if (failed.length) console.info('[dojo] 未収録データ ' + failed.length + ' 件');
       done();
     });
   };

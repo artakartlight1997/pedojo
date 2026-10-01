@@ -388,6 +388,178 @@
       return { total: all.length, seen: seen, mastered: mastered, attempts: n, correct: c, acc: n ? c / n : null };
     },
 
+    /* =====================================================================
+       ===== v2 「投資プロへの道」 の記録 =====
+       lec2: 講義ID -> {read}       sets2: "ch-lap-i" -> {best,tries,last}
+       session2: 解きかけの演習      deliverables: taskKey -> {...}
+       journal: [...]  calib: [...]  caseRead: caseId -> {opened}
+       ===================================================================== */
+    v2: function () {
+      var s = load();
+      if (!s.v2) s.v2 = {};
+      var v = s.v2;
+      v.lec2 = v.lec2 || {}; v.sets2 = v.sets2 || {}; v.session2 = v.session2 || null;
+      v.deliverables = v.deliverables || {}; v.journal = v.journal || []; v.calib = v.calib || [];
+      v.caseRead = v.caseRead || {}; v.newInfo = v.newInfo || {};
+      return v;
+    },
+    markRead2: function (id) {
+      var v = this.v2();
+      if (!v.lec2[id]) {
+        var s = load(), k = dkey();
+        var d = s.daily[k] || (s.daily[k] = { n: 0, c: 0, lec: 0 });
+        d.lec++;
+      }
+      v.lec2[id] = { read: Date.now() }; save();
+    },
+    isRead2: function (id) { return !!this.v2().lec2[id]; },
+    saveSession2: function (snap) { this.v2().session2 = snap; save(); },
+    clearSession2: function () { this.v2().session2 = null; save(); },
+    getSession2: function () { return this.v2().session2 || null; },
+    recordSet2: function (ch, lap, i, correct, total) {
+      var v = this.v2(), k = ch + '-' + lap + '-' + i;
+      var r = v.sets2[k] || { best: 0, tries: 0, last: 0 };
+      r.tries++; r.best = Math.max(r.best, total ? correct / total : 0); r.last = Date.now();
+      v.sets2[k] = r; save(); return r;
+    },
+    setSummary2: function (ch, lap) {
+      var v = this.v2(), s = load();
+      var sets = DOJO.setsFor2(ch, lap);
+      var sess = v.session2;
+      var per = sets.map(function (st) {
+        var rec = v.sets2[ch + '-' + lap + '-' + st.i];
+        var attempted = st.qids.filter(function (id) { return !!s.q[id]; }).length;
+        var inSession = !!(sess && sess.ch === ch && sess.lap === lap && sess.set === st.i);
+        var state = 'todo';
+        if (rec && rec.best >= Store.PASS) state = 'clear';
+        else if (rec) state = 'tried';
+        else if (inSession || attempted > 0) state = 'part';
+        return { i: st.i, qids: st.qids, n: st.qids.length, rec: rec || null, attempted: attempted, inSession: inSession, state: state };
+      });
+      var cleared = per.filter(function (x) { return x.state === 'clear'; }).length;
+      return { sets: per, total: per.length, cleared: cleared, next: per.filter(function (x) { return x.state !== 'clear'; })[0] || null };
+    },
+    /* 成果物 */
+    saveDeliverable: function (key, obj) {
+      var v = this.v2();
+      v.deliverables[key] = Object.assign({}, v.deliverables[key] || {}, obj, { at: Date.now() });
+      save(); return v.deliverables[key];
+    },
+    deliverable: function (key) { return this.v2().deliverables[key] || null; },
+    /* 判断ジャーナル */
+    addJournal: function (entry) {
+      var v = this.v2();
+      v.journal.unshift(Object.assign({ at: Date.now() }, entry));
+      v.journal = v.journal.slice(0, 500); save();
+    },
+    journal: function () { return this.v2().journal.slice(); },
+    /* 校正（確信度）の記録 */
+    addCalib: function (entry) {
+      var v = this.v2();
+      v.calib = v.calib.filter(function (c) { return !(c.caseId === entry.caseId && c.point === entry.point); });
+      v.calib.push(Object.assign({ at: Date.now() }, entry)); save();
+    },
+    calib: function (caseId) {
+      return this.v2().calib.filter(function (c) { return !caseId || c.caseId === caseId; });
+    },
+    markCaseOpened: function (caseId, lap) { var v = this.v2(); v.caseRead[caseId + '-' + lap] = Date.now(); save(); },
+    caseOpened: function (caseId, lap) { return !!this.v2().caseRead[caseId + '-' + lap]; },
+    markNewInfo: function (caseId, idx, pick) { var v = this.v2(); v.newInfo[caseId + '#' + idx] = { pick: pick, at: Date.now() }; save(); },
+    newInfoPick: function (caseId, idx) { var r = this.v2().newInfo[caseId + '#' + idx]; return r ? r.pick : null; },
+
+    /** 章×周の状態 */
+    chapterStatus: function (ch, lap) {
+      var self = this;
+      lap = parseInt(lap, 10);
+      var lecs = DOJO.lecturesOf(ch, lap);
+      var lecRead = lecs.filter(function (l) { return self.isRead2(l.id); }).length;
+      var ss = this.setSummary2(ch, lap);
+      var c = DOJO.chapterById(ch);
+      var cs = c && c.caseId ? DOJO.caseById(c.caseId) : null;
+      var tasks = cs ? cs.tasks.filter(function (t) { return (t.lap || 1) === lap; }) : [];
+      var tasksDone = tasks.filter(function (t) { var d = self.deliverable(cs.id + '#' + t.id); return d && d.selfBand; }).length;
+      var journalDone = this.journal().some(function (j) { return j.chapter === ch && j.lap === lap; });
+      var ready = lecs.length > 0 || ss.total > 0 || tasks.length > 0;
+      var done = ready && lecRead === lecs.length && ss.cleared === ss.total && tasksDone === tasks.length && (tasks.length === 0 || journalDone);
+      var started = lecRead > 0 || ss.sets.some(function (x) { return x.state !== 'todo'; }) || tasksDone > 0;
+      return { ch: ch, lap: lap, lectures: lecs.length, lecRead: lecRead, ss: ss, tasks: tasks.length, tasksDone: tasksDone,
+               journalDone: journalDone, ready: ready, done: done, started: started };
+    },
+    /** 道（ルート）の全項目：周→章の順 */
+    roadStatus: function () {
+      var self = this, out = [];
+      DOJO.LAPS2.forEach(function (lap) {
+        DOJO.CHAPTERS.forEach(function (c) { out.push(Object.assign({ chapter: c, lapObj: lap }, self.chapterStatus(c.id, lap.id))); });
+      });
+      return out;
+    },
+    nextOnRoad: function () {
+      var st = this.roadStatus();
+      for (var i = 0; i < st.length; i++) if (st[i].ready && !st[i].done) return st[i];
+      return null;
+    },
+    /** 章内で次にやる1件 */
+    nextInChapter: function (ch, lap) {
+      var self = this;
+      var lecs = DOJO.lecturesOf(ch, lap);
+      for (var i = 0; i < lecs.length; i++) if (!this.isRead2(lecs[i].id)) return { kind: 'lecture', id: lecs[i].id, title: lecs[i].title };
+      var ss = this.setSummary2(ch, lap);
+      if (ss.next) return { kind: 'set', i: ss.next.i, title: '演習セット' + (ss.next.i + 1) };
+      var c = DOJO.chapterById(ch), cs = c && c.caseId ? DOJO.caseById(c.caseId) : null;
+      if (cs) {
+        var tasks = cs.tasks.filter(function (t) { return (t.lap || 1) === parseInt(lap, 10); });
+        for (var j = 0; j < tasks.length; j++) {
+          var d = self.deliverable(cs.id + '#' + tasks[j].id);
+          if (!d || !d.selfBand) return { kind: 'task', id: tasks[j].id, title: 'ケース課題：' + tasks[j].deliverable };
+        }
+        if (tasks.length && !this.journal().some(function (j) { return j.chapter === ch && j.lap === parseInt(lap, 10); })) return { kind: 'journal', title: '判断ジャーナルを書く' };
+      }
+      return null;
+    },
+    /** スキルマップのセル状態: 'none' | 'seen' | 'done' | 'passed' */
+    skillStatus: function () {
+      var self = this, out = {};
+      Object.keys(DOJO.SKILLMAP).forEach(function (k) { out[k] = 'none'; });
+      // 講義を読んだ → seen
+      Object.keys(DOJO.LECTURES2).forEach(function (id) {
+        var l = DOJO.LECTURES2[id];
+        if (self.isRead2(id)) (l.skills || []).forEach(function (k) { if (out[k] === 'none') out[k] = 'seen'; });
+      });
+      // 成果物を作った → done、アソシエイトバンド以上 → passed
+      Object.keys(DOJO.CASES).forEach(function (cid) {
+        var cs = DOJO.CASES[cid];
+        cs.tasks.forEach(function (t) {
+          var d = self.deliverable(cid + '#' + t.id);
+          if (!d || !d.selfBand) return;
+          (t.skills || []).forEach(function (k) {
+            if (!out[k]) return;
+            var good = d.selfBand === 'vp' || d.selfBand === 'associate';
+            if (good) out[k] = 'passed'; else if (out[k] !== 'passed') out[k] = 'done';
+          });
+        });
+      });
+      return out;
+    },
+    /** 校正ギャップ（自己採点と模範の差）の推移 */
+    calibrationGap: function () {
+      var v = this.v2(), gaps = [];
+      var rank = { analyst: 0, associate: 1, vp: 2 };
+      Object.keys(v.deliverables).forEach(function (k) {
+        var d = v.deliverables[k];
+        if (d.selfBand && d.modelBand) gaps.push({ at: d.at, gap: Math.abs(rank[d.selfBand] - rank[d.modelBand]) });
+      });
+      gaps.sort(function (a, b) { return a.at - b.at; });
+      var avg = gaps.length ? gaps.reduce(function (s, g) { return s + g.gap; }, 0) / gaps.length : null;
+      var recent = gaps.slice(-5);
+      var recentAvg = recent.length ? recent.reduce(function (s, g) { return s + g.gap; }, 0) / recent.length : null;
+      return { n: gaps.length, avg: avg, recentAvg: recentAvg, series: gaps };
+    },
+    /** 失敗チェックリスト（ジャーナルの「次に変えること」を集約） */
+    failureChecklist: function () {
+      return this.journal().filter(function (j) { return j.lesson && j.lesson.trim(); })
+        .map(function (j) { return { text: j.lesson.trim(), chapter: j.chapter, lap: j.lap, at: j.at }; });
+    },
+
     exportJSON: function () { return JSON.stringify(load(), null, 2); },
     importJSON: function (txt) {
       var o = JSON.parse(txt);
