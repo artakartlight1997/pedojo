@@ -145,3 +145,30 @@
     return urls;
   };
 })(window);
+
+/* ===== v1問題の v2 タグ付け（data/v1map.js を tools/migrate-v1.js が生成） ===== */
+(function (g) {
+  'use strict';
+  var DOJO = g.DOJO;
+  var TOPIC_DOMAIN = { pe: 'G', process: 'D', acct: 'A', fa: 'A', val: 'A', lbo: 'A', debt: 'C', mezz: 'C', synd: 'C', struct: 'C', tax: 'C',
+    legal: 'D', spa: 'D', bizdd: 'B', fdd: 'B', vc: 'F', exit: 'F', fund: 'G', people: 'E', ops: 'E', network: 'E',
+    craft: 'G', assoc: 'G', sassoc: 'G', vp: 'G', dir: 'G', ed: 'G' };
+  DOJO.applyV1Map = function () {
+    var map = DOJO.V1MAP; if (!map) return 0;
+    var n = 0;
+    DOJO.allQuestions().forEach(function (q) {
+      var r = map[q.id]; if (!r) return;
+      q.type = r.type; q.chapter = r.ch; q.lap = r.lap; q.v1 = true; q.use = r.use; q.calc = !!r.calc;
+      q.skills = [(TOPIC_DOMAIN[q.topic] || 'G') + r.lap];
+      n++;
+    });
+    return n;
+  };
+  /** 章×周に紐づく v1 問題（出題対象のみ） */
+  DOJO.v1QuestionsOf = function (ch, lap) {
+    lap = parseInt(lap, 10);
+    return DOJO.allQuestions().filter(function (q) { return q.v1 && q.use && q.chapter === ch && q.lap === lap; });
+  };
+  var _byId2 = DOJO.questionById2;
+  DOJO.questionById2 = function (id) { return _byId2(id) || DOJO.questionById(id); };
+})(window);

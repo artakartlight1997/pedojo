@@ -152,8 +152,10 @@
     h += '</div>';
 
     // ② 演習セット
-    h += '<div class="card"><div class="spread"><h2 style="margin:0">② 演習セット <span class="small muted">10問・80%で合格</span></h2>'
-      + (st.ss.total ? '<button class="btn sm" data-go="#/ex/' + chId + '/' + lap + '/mix">混合ドリル（既習章と混ぜて10問）</button>' : '') + '</div>';
+    var libN = DOJO.v1QuestionsOf ? DOJO.v1QuestionsOf(chId, lap).length : 0;
+    h += '<div class="card"><div class="spread"><h2 style="margin:0">② 演習セット <span class="small muted">10問・80%で合格</span></h2><div class="row">'
+      + (st.ss.total ? '<button class="btn sm" data-go="#/ex/' + chId + '/' + lap + '/mix">混合ドリル（既習章と混ぜて10問）</button>' : '')
+      + (libN ? '<button class="btn sm" data-go="#/ex/' + chId + '/' + lap + '/lib">資料庫ドリル（旧版の関連問題 ' + libN + '問から10問）</button>' : '') + '</div></div>';
     if (!st.ss.total) h += '<p class="empty">この周の演習は準備中です。</p>';
     else {
       h += '<div class="setgrid" style="margin-top:10px">' + st.ss.sets.map(function (x) {
@@ -462,6 +464,12 @@
     }
     if (!c) return UI.notfound();
     var title = '第' + c.n + '章 ' + c.name + '・' + DOJO.lapById(lap).name;
+    if (which === 'lib') {
+      var ql = DOJO.buildLibrary(ch, lap);
+      if (!ql.length) { app.innerHTML = '<div class="card"><p class="empty">この章に紐づく資料庫の問題はありません。</p><button class="btn" data-go="#/ch/' + ch + '/' + lap + '">章へ</button></div>'; return; }
+      DOJO.current2 = new DOJO.Session2({ questions: ql, mode: 'lib', ch: ch, lap: lap, title: title + '　資料庫ドリル', shuffleQ: false });
+      renderExercise(); return;
+    }
     if (which === 'mix') {
       var qs = DOJO.buildMixed(ch, lap);
       if (!qs.length) { app.innerHTML = '<div class="card"><p class="empty">この章の演習は準備中です。</p><button class="btn" data-go="#/ch/' + ch + '/' + lap + '">章へ</button></div>'; return; }

@@ -174,9 +174,15 @@
     var s = DOJO.Store.state;
     var used = {}, out = [];
     function take(pool, types, k) {
-      var cand = shuffle(pool.filter(function (q) { return !used[q.id] && (!types || types.indexOf(q.type) >= 0); }));
+      var match = pool.filter(function (q) { return !used[q.id] && (!types || types.indexOf(q.type) >= 0); });
+      // v2固有の問題を優先し、足りない分だけ資料庫（v1）から補う
+      var cand = shuffle(match.filter(function (q) { return !q.v1; })).concat(shuffle(match.filter(function (q) { return q.v1; })));
       cand.slice(0, k).forEach(function (q) { used[q.id] = 1; out.push(q); });
       return cand.length >= k ? 0 : k - cand.length;
+    }
+    if (DOJO.v1QuestionsOf) {
+      cur = cur.concat(DOJO.v1QuestionsOf(ch, lap));
+      DOJO.CHAPTERS.slice(0, Math.max(0, chIdx)).forEach(function (c) { prior = prior.concat(DOJO.v1QuestionsOf(c.id, lap)); });
     }
     MIX_PLAN.forEach(function (p) {
       var k = p.n;
@@ -204,6 +210,12 @@
     return out;
   }
 
+  /** 資料庫ドリル：章×周に紐づく v1 問題から n 問 */
+  function buildLibrary(ch, lap, size) {
+    var pool = DOJO.v1QuestionsOf ? DOJO.v1QuestionsOf(ch, lap) : [];
+    return shuffle(pool).slice(0, size || DOJO.SET_SIZE);
+  }
+  DOJO.buildLibrary = buildLibrary;
   DOJO.Session2 = Session2;
   DOJO.grade2 = grade;
   DOJO.buildMixed = buildMixed;

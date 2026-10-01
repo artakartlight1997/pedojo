@@ -81,6 +81,8 @@ const BASE = process.env.E2E_BASE || 'http://localhost:8765/index.html';
   }
   // 混合ドリル
   await goto('#/ex/ch02/1/mix', 'mixed drill');
+  await goto('#/ex/ch04/1/lib', 'library drill');
+  const lp = await page.$('[data-pick="0"]'); if (lp) { await lp.click(); await page.waitForTimeout(100); }
 
   // ケース：各章の1周目を開き、最初の課題を保存→自己採点→プロの成果物→新情報→ジャーナル
   const caseIds = await page.evaluate(() => Object.keys(DOJO.CASES));

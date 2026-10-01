@@ -50,6 +50,7 @@
 
   function boot() {
     var appEl = document.getElementById('app');
+    if (DOJO.applyV1Map) DOJO.applyV1Map();
     DOJO.UI.init(appEl);
     DOJO.UI.delegate();
 
