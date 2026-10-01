@@ -77,7 +77,7 @@
   }
 
   DOJO.loadAll = function (done) {
-    var urls = ['data/glossary.js'];
+    var urls = ['data/glossary.js', 'data/glossary2.js'];   // glossary2 は工程講義§6からの逆引き（tools/glossary2.js が生成）
     DOJO.TOPICS.forEach(function (t) { urls.push('data/lectures/' + t.id + '.js'); });
     DOJO.TOPICS.forEach(function (t) {
       DOJO.LEVELS.forEach(function (l) { urls.push('data/quiz/' + t.id + '-' + l.id + '.js'); });

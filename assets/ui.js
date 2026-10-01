@@ -917,6 +917,13 @@
   };
 
   /* ===================== 用語集 ===================== */
+  function topicLabel(id) {
+    var t = DOJO.topicById(id);
+    if (t) return t.short || id;
+    var c = DOJO.chapterById && DOJO.chapterById(id);
+    if (c) return '第' + c.n + '章 ' + c.name;
+    return id;
+  }
   UI.glossary = function () {
     var terms = (DOJO.GLOSSARY || []).slice().sort(function (a, b) {
       return (a.read || a.term).localeCompare(b.read || b.term, 'ja');
@@ -935,7 +942,8 @@
       el('glist').innerHTML = list.length ? list.map(function (t) {
         return '<div style="border-bottom:1px solid var(--line);padding:11px 0">'
           + '<div><b>' + esc(t.term) + '</b>' + (t.en ? ' <span class="muted small">' + esc(t.en) + '</span>' : '')
-          + ' ' + (t.topic ? '<span class="pill">' + esc((DOJO.topicById(t.topic) || {}).short || t.topic) + '</span>' : '') + '</div>'
+          + ' ' + (t.topic ? '<span class="pill">' + esc(topicLabel(t.topic)) + '</span>' : '')
+          + (t.src ? ' <a class="small" href="#/lec2/' + esc(t.src) + '">初出の講義 →</a>' : '') + '</div>'
           + '<div class="small" style="margin-top:3px">' + MD.inline(t.def) + '</div></div>';
       }).join('') : '<p class="empty">該当なし</p>';
     }
