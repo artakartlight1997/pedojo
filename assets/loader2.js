@@ -151,6 +151,8 @@
       DOJO.LAPS2.forEach(function (l) {
         urls.push('data/lectures2/' + c.id + '-l' + l.id + '.js');
         urls.push('data/quiz2/' + c.id + '-l' + l.id + '.js');
+        urls.push('data/quiz2/' + c.id + '-l' + l.id + '-b.js');   // 追加セット（5,000問に向けた増産分）
+        urls.push('data/quiz2/' + c.id + '-l' + l.id + '-c.js');
       });
       urls.push('data/cases/spine/' + c.id + '.js');
       urls.push('data/cases/spine/' + c.id + '-l2.js');
