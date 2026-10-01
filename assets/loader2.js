@@ -104,6 +104,19 @@
     DOJO.CASES[obj.id] = obj;
   };
   DOJO.caseById = function (id) { return DOJO.CASES[id] || null; };
+  /** 2周目・3周目の課題・資料・新情報を既存ケースに追記する（別ファイルから）。
+      situation の各資料と newInfo には lap を付けると、その周でだけ表示される。 */
+  DOJO.caseAppend = function (obj) {
+    var cs = DOJO.CASES[obj.id];
+    if (!cs) { DOJO.CASES[obj.id] = cs = { id: obj.id, chapter: obj.chapter, title: obj.title || obj.id, tasks: [], situation: [], newInfo: [] }; }
+    (obj.situation || []).forEach(function (d) { if (!d.lap) d.lap = obj.lap || 2; cs.situation.push(d); });
+    (obj.tasks || []).forEach(function (t) { if (!t.lap) t.lap = obj.lap || 2; cs.tasks.push(t); });
+    (obj.newInfo || []).forEach(function (n) { if (!n.lap) n.lap = obj.lap || 2; cs.newInfo.push(n); });
+    if (obj.intro) { cs.introByLap = cs.introByLap || {}; cs.introByLap[obj.lap || 2] = obj.intro; }
+    if (obj.trap) { cs.trapByLap = cs.trapByLap || {}; cs.trapByLap[obj.lap || 2] = obj.trap; }
+    if (obj.openIssue) { cs.openIssueByLap = cs.openIssueByLap || {}; cs.openIssueByLap[obj.lap || 2] = obj.openIssue; }
+    if (obj.calibration) { cs.calibrationByLap = cs.calibrationByLap || {}; cs.calibrationByLap[obj.lap || 2] = obj.calibration; }
+  };
   DOJO.company = function (obj) { DOJO.COMPANY = obj; };
 
   /** ルーブリックの登録 */
@@ -140,6 +153,8 @@
         urls.push('data/quiz2/' + c.id + '-l' + l.id + '.js');
       });
       urls.push('data/cases/spine/' + c.id + '.js');
+      urls.push('data/cases/spine/' + c.id + '-l2.js');
+      urls.push('data/cases/spine/' + c.id + '-l3.js');
     });
     DOJO.BRANCHES.forEach(function (b) { urls.push('data/cases/' + b.id + '.js'); });
     return urls;

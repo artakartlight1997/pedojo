@@ -561,24 +561,30 @@
     var tasks = cs.tasks.filter(function (t) { return (t.lap || 1) === lap; });
     var lapObj = DOJO.lapById(lap);
     var allGraded = tasks.length > 0 && tasks.every(function (t) { var d = S.deliverable(cid + '#' + t.id); return d && d.selfBand; });
+    var situation = cs.situation.filter(function (d) { return !d.lap || d.lap === lap; });
+    var newInfo = cs.newInfo.filter(function (n) { return (n.lap || 1) === lap; });
+    var intro = (cs.introByLap && cs.introByLap[lap]) || (lap === 1 ? cs.intro : null);
+    var trap = (cs.trapByLap && cs.trapByLap[lap]) || (lap === 1 ? cs.trap : null);
+    var openIssue = (cs.openIssueByLap && cs.openIssueByLap[lap]) || (lap === 1 ? cs.openIssue : null);
+    var calibration = (cs.calibrationByLap && cs.calibrationByLap[lap]) || (lap === 1 ? cs.calibration : null);
 
     var h = '<div class="card"><div class="spread"><div>' + lapChip(lap) + (c ? ' <span class="muted small">第' + c.n + '章 ' + esc(c.name) + '</span>' : br ? ' <span class="muted small">枝' + br.letter + '</span>' : '')
       + '<h1 style="margin:2px 0 0">' + esc(cs.title || cid) + '</h1>' + (cs.subtitle ? '<p class="lead" style="margin:4px 0 0">' + esc(cs.subtitle) + '</p>' : '') + '</div>'
       + '<div class="row">' + [1, 2, 3].filter(function (l) { return cs.tasks.some(function (t) { return (t.lap || 1) === l; }); }).map(function (l) { return '<button class="btn sm' + (l === lap ? ' primary' : '') + '" data-go="' + caseHash(cid, l) + '">' + l + '周目</button>'; }).join('')
       + (c ? '<button class="btn sm" data-go="#/ch/' + c.id + '/' + lap + '">← 章へ</button>' : '<button class="btn sm" data-go="#/cases">← ケース一覧</button>') + '</div></div>'
-      + (cs.intro ? '<div class="prose small" style="margin-top:8px">' + MD.render(cs.intro) + '</div>' : '')
+      + (intro ? '<div class="prose small" style="margin-top:8px">' + MD.render(intro) + '</div>' : '')
       + (DOJO.COMPANY && cs.id.indexOf('spine/') === 0 ? '<div class="small muted">会社の全体像は <a href="#/company">会社設定（信州精機）</a>。</div>' : '') + '</div>';
 
     // ① 状況の提示
-    if (cs.situation.length) {
+    if (situation.length) {
       h += '<div class="card"><h2 style="margin-top:0">① 状況の提示 <span class="small muted">いま手元にある資料（実物として読む）</span></h2><div class="doctabs">'
-        + cs.situation.map(function (d, i) { return '<button class="doctab' + (i === 0 ? ' on' : '') + '" data-doc="' + i + '">' + esc(d.type ? d.type + '：' : '') + esc(d.title) + '</button>'; }).join('') + '</div>'
-        + cs.situation.map(function (d, i) { return '<div class="doc docbody prose" data-docbody="' + i + '"' + (i === 0 ? '' : ' hidden') + '>' + MD.render(d.body) + '</div>'; }).join('') + '</div>';
+        + situation.map(function (d, i) { return '<button class="doctab' + (i === 0 ? ' on' : '') + '" data-doc="' + i + '">' + esc(d.type ? d.type + '：' : '') + esc(d.title) + (d.lap && d.lap > 1 ? ' <span class="small">[' + d.lap + '周目]</span>' : '') + '</button>'; }).join('') + '</div>'
+        + situation.map(function (d, i) { return '<div class="doc docbody prose" data-docbody="' + i + '"' + (i === 0 ? '' : ' hidden') + '>' + MD.render(d.body) + '</div>'; }).join('') + '</div>';
     }
     // 校正
-    if (cs.calibration) {
+    if (calibration) {
       var cal = S.calib(cid).filter(function (x) { return x.point === 'lap' + lap; })[0];
-      h += '<div class="card"><h2 style="margin-top:0">校正の記録 <span class="small muted">結果と比較するために、今の確信を数字で残す</span></h2><div class="small">' + MD.inline(cs.calibration.ask) + '</div>'
+      h += '<div class="card"><h2 style="margin-top:0">校正の記録 <span class="small muted">結果と比較するために、今の確信を数字で残す</span></h2><div class="small">' + MD.inline(calibration.ask) + '</div>'
         + '<div class="row" style="margin-top:8px"><input type="number" min="0" max="100" id="calibIn" class="numin" value="' + (cal ? cal.p : '') + '" placeholder="0〜100"><span class="muted">%</span><button class="btn sm" id="calibSave">記録</button>'
         + (cal ? '<span class="small muted">記録済み：' + cal.p + '%</span>' : '') + '</div></div>';
     }
@@ -613,10 +619,11 @@
     h += '</div>';
 
     // ⑧ 新情報の投下（全課題採点後）
-    if (cs.newInfo.length) {
+    if (newInfo.length) {
       h += '<div class="card' + (allGraded ? '' : ' locked') + '"><h2 style="margin-top:0">⑧ 新情報の投下 <span class="small muted">次章へ進む前に。確信は上がるか、下がるか</span></h2>';
       if (!allGraded) h += '<p class="small muted">課題をすべて自己採点すると開きます。</p>';
-      else cs.newInfo.forEach(function (ni, i) {
+      else newInfo.forEach(function (ni, j) {
+        var i = cs.newInfo.indexOf(ni);
         var pick = S.newInfoPick(cid, i);
         h += '<div class="doc newfact"><div class="small muted">新しい事実</div>' + MD.render(ni.fact) + (ni.question ? '<div class="small" style="margin-top:6px"><b>' + MD.inline(ni.question) + '</b></div>' : '') + '<div class="concord">'
           + [-2, -1, 0, 1, 2].map(function (k) {
@@ -628,10 +635,10 @@
       h += '</div>';
     }
     // 罠と答えのない論点（全課題採点後）
-    if (allGraded && (cs.trap || cs.openIssue)) {
+    if (allGraded && (trap || openIssue)) {
       h += '<div class="card"><h2 style="margin-top:0">この章に埋めてあったもの</h2>'
-        + (cs.trap ? '<div class="small"><b>罠：</b><ul>' + cs.trap.map(function (x) { return '<li>' + MD.inline(x) + '</li>'; }).join('') + '</ul></div>' : '')
-        + (cs.openIssue ? '<div class="small"><b>答えのない論点：</b><ul>' + cs.openIssue.map(function (x) { return '<li>' + MD.inline(x) + '</li>'; }).join('') + '</ul></div>' : '') + '</div>';
+        + (trap ? '<div class="small"><b>罠：</b><ul>' + trap.map(function (x) { return '<li>' + MD.inline(x) + '</li>'; }).join('') + '</ul></div>' : '')
+        + (openIssue ? '<div class="small"><b>答えのない論点：</b><ul>' + openIssue.map(function (x) { return '<li>' + MD.inline(x) + '</li>'; }).join('') + '</ul></div>' : '') + '</div>';
     }
     // ⑦ 判断ジャーナル
     if (tasks.length) {
